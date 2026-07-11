@@ -1,4 +1,4 @@
-# Implementation Inbox
+# Frontend Inbox
 
 Messages pending this lane's attention.
 

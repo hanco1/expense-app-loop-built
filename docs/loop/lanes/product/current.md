@@ -9,11 +9,11 @@ model_observed:
 
 ## Current Checkpoint
 
-- None.
+- Lane setup confirmed; intake has not created a request yet.
 
 ## Next Action
 
-- Wait for an assigned request or product direction.
+- Register and verify the four lane threads, then ask the first objective/Done-When question.
 
 ## Blockers
 

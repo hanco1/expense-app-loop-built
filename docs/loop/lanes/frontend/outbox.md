@@ -1,4 +1,4 @@
-# Implementation Outbox
+# Frontend Outbox
 
 Messages sent or queued by this lane.
 
