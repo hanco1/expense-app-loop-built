@@ -1,19 +1,19 @@
 # Product Current State
 
 current_request_id:
-status: idle
-iteration:
-last_updated:
-heartbeat:
+status: intake
+iteration: 0
+last_updated: 2026-07-11T11:02:41Z
+heartbeat: 2026-07-11T11:02:41Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
-- Lane setup confirmed; intake has not created a request yet.
+- Four lanes are registered and verified; objective/Done-When intake is awaiting human confirmation.
 
 ## Next Action
 
-- Register and verify the four lane threads, then ask the first objective/Done-When question.
+- Confirm the proposed MVP objective and concrete Done-When conditions; do not create a request before confirmation.
 
 ## Blockers
 
