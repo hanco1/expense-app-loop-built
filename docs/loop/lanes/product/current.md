@@ -5,7 +5,7 @@ status: idle
 iteration:
 last_updated:
 heartbeat:
-model_observed:
+model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 

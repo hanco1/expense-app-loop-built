@@ -5,7 +5,7 @@ status: idle
 iteration:
 last_updated:
 heartbeat:
-model_observed:
+model_observed: gpt-5.6-sol xhigh (highest)
 
 ## Current Checkpoint
 
