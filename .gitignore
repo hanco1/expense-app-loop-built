@@ -1,0 +1,17 @@
+# Financial and user-provided data
+data/
+uploads/
+private_samples/
+*.db
+*.sqlite
+*.sqlite3
+
+# Local environment and generated artifacts
+.env
+.env.*
+!.env.example
+node_modules/
+.venv/
+__pycache__/
+dist/
+coverage/
