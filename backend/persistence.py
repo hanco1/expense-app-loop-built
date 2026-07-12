@@ -101,6 +101,20 @@ BEGIN
     SELECT RAISE(ABORT, 'import run identity is immutable');
 END;
 
+CREATE TRIGGER IF NOT EXISTS import_runs_no_reactivate
+BEFORE UPDATE OF state ON import_runs
+WHEN OLD.state = 'undone' AND NEW.state != 'undone'
+BEGIN
+    SELECT RAISE(ABORT, 'undone import runs are terminal');
+END;
+
+CREATE TRIGGER IF NOT EXISTS source_records_require_active_run
+BEFORE INSERT ON source_records
+WHEN (SELECT state FROM import_runs WHERE run_id = NEW.run_id) != 'active'
+BEGIN
+    SELECT RAISE(ABORT, 'source records require an active import run');
+END;
+
 CREATE TRIGGER IF NOT EXISTS source_records_no_update
 BEFORE UPDATE ON source_records
 BEGIN
@@ -136,6 +150,13 @@ WHEN NEW.occurrence_id IS NOT OLD.occurrence_id
     OR NEW.created_at IS NOT OLD.created_at
 BEGIN
     SELECT RAISE(ABORT, 'occurrence facts are immutable');
+END;
+
+CREATE TRIGGER IF NOT EXISTS occurrences_require_active_run
+BEFORE INSERT ON imported_occurrences
+WHEN (SELECT state FROM import_runs WHERE run_id = NEW.run_id) != 'active'
+BEGIN
+    SELECT RAISE(ABORT, 'occurrences require an active import run');
 END;
 
 CREATE TRIGGER IF NOT EXISTS occurrences_no_delete
@@ -382,8 +403,6 @@ class CoreStore:
             ).fetchone()
             if run is None:
                 raise KeyError(f"import run not found: {run_id}")
-            if run["state"] == "undone":
-                return
             connection.execute(
                 "UPDATE imported_occurrences "
                 "SET inclusion_state = 'excluded', exclusion_reason = 'run_undone' "

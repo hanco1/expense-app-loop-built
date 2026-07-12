@@ -22,7 +22,9 @@ Foreign keys and uniqueness constraints enforce run/source membership. Triggers
 prevent deletion of domain entities and mutation of source, identity, money, and
 correction facts. Undo is a single SQLite transaction that excludes every
 occurrence in the run and marks the run undone; any failure rolls back the whole
-operation.
+operation. The undone state is terminal: database triggers reject later source
+records or occurrences, and repeated undo still re-applies exclusion so a
+database created before that guard cannot retain a late included occurrence.
 
 ## Public API
 

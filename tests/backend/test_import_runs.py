@@ -120,6 +120,72 @@ class ImportRunTests(StoreTestCase):
             {"included"},
         )
 
+    def test_undone_run_rejects_late_records_and_included_occurrences(self) -> None:
+        run_id = self.store.create_import_run("sha256:terminal-run")
+        existing_source_id = self.store.add_source_record(
+            run_id,
+            source_locator="csv-row:2",
+            retained_input="synthetic,existing-before-undo",
+            parse_status="parsed",
+        )
+        existing_identity_id = self.store.get_or_create_identity(
+            "txn:existing-before-undo"
+        )
+        existing_occurrence_id = self.store.add_occurrence(
+            run_id,
+            source_record_id=existing_source_id,
+            identity_id=existing_identity_id,
+            amount_minor=-50,
+            currency="CAD",
+        )
+        pending_source_id = self.store.add_source_record(
+            run_id,
+            source_locator="csv-row:3",
+            retained_input="synthetic,pending-before-undo",
+            parse_status="parsed",
+        )
+        pending_identity_id = self.store.get_or_create_identity(
+            "txn:pending-before-undo"
+        )
+
+        self.store.undo_import_run(run_id)
+
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.store.add_source_record(
+                run_id,
+                source_locator="csv-row:4",
+                retained_input="synthetic,late-source",
+                parse_status="parsed",
+            )
+        with self.assertRaises(sqlite3.IntegrityError):
+            self.store.add_occurrence(
+                run_id,
+                source_record_id=pending_source_id,
+                identity_id=pending_identity_id,
+                amount_minor=-100,
+                currency="CAD",
+            )
+
+        # Simulate an inconsistent row written before terminal-state guards existed.
+        with closing(sqlite3.connect(self.database_path)) as connection, connection:
+            connection.execute(
+                "UPDATE imported_occurrences "
+                "SET inclusion_state = 'included', exclusion_reason = NULL "
+                "WHERE occurrence_id = ?",
+                (existing_occurrence_id,),
+            )
+
+        self.store.undo_import_run(run_id)
+
+        self.assertEqual(self.store.get_import_run(run_id)["state"], "undone")
+        self.assertEqual(len(self.store.list_source_records(run_id)), 2)
+        self.assertFalse(
+            any(
+                occurrence["inclusion_state"] == "included"
+                for occurrence in self.store.list_occurrences(run_id)
+            )
+        )
+
 
 if __name__ == "__main__":
     import unittest
