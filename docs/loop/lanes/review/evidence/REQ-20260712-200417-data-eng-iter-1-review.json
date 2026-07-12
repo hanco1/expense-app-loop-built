@@ -1,0 +1,13 @@
+{
+  "request_id": "REQ-20260712-200417-data-eng",
+  "iteration": 1,
+  "implementation_commit": "8eb5b31",
+  "declared_commands_exit_code": 0,
+  "completion_gate_command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260712-200417-data-eng",
+  "completion_gate_exit_code": 0,
+  "completion_gate_token": "SHIP_CHECK_OK REQ-20260712-200417-data-eng",
+  "review_command": "python -m unittest tests.acceptance.test_core_foundation_review -v",
+  "review_exit_code": 1,
+  "finding": "An undone run can accept a new included occurrence, and a repeated undo returns early without excluding it.",
+  "ran_at": "2026-07-12T20:16:03Z"
+}
