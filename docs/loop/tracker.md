@@ -31,4 +31,5 @@ Phase dashboard for the loop. Keep checkpoints small and verifiable. Use the sta
 ## Notes
 
 - OCR remains an extension boundary only for this MVP; installing a system OCR engine requires explicit human approval.
+- REQ-20260712-200417-data-eng accepted the SQLite core foundation at commit `0ea7be5`; ingestion/parsing, deduplication decisions, categorization, aggregation, API, and UI remain unchecked work.
 - Record verification commands, evidence paths, and blockers next to each checkpoint as it closes.
