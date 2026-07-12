@@ -1,0 +1,7 @@
+{
+  "request_id": "REQ-20260712-200417-data-eng",
+  "checkpoint": "core-foundation-fix-iteration-2",
+  "command": "python -m unittest tests.backend.test_ingest_invariants -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-12T20:20:10Z"
+}
