@@ -19,8 +19,8 @@ design_system:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: pending
-- sent_at:
+- delivery_status: sent
+- sent_at: 2026-07-12T20:06:02Z
 goal: Implement the local SQLite-backed core data foundation for safe, reversible imports before adding any PDF/CSV parser or UI.
 user_facing: false
 scope:
