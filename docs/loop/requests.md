@@ -25,3 +25,4 @@ schema described as prose above so recovery tooling reads only real rows.
 
 | request_id | status | owner_lane | iteration | source_docs | last_message | next_action | updated_at |
 | --- | --- | --- | --- | --- | --- | --- | --- |
+| REQ-20260712-200417-data-eng | REQUESTED | data-eng | 1 | docs/loop/goal.md; docs/loop/tracker.md; docs/loop/constraints.md; docs/product/core-foundation.md | docs/loop/messages/REQ-20260712-200417-data-eng/IMPLEMENTATION_REQUEST-iter-1.md | Open the turn, transition to IMPLEMENTING, build the local SQLite core foundation, run every named verification command, record evidence, and close the turn to review. | 2026-07-12T20:04:17Z |

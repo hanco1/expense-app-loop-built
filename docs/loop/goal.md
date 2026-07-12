@@ -17,7 +17,14 @@ Build a local-first Canadian monthly expense analysis web application that impor
 
 ## Invariants
 
-- Pending human confirmation. No implementation request may be created until the standing data invariants are agreed.
+- **INV-1 — No silent data loss.** Preserve every source record, including records that cannot be parsed, categorized, or are suspected duplicates; represent their state explicitly instead of dropping them.
+- **INV-2 — Human edits outrank automation.** A human category, duplicate decision, or other correction must survive re-import and automated reprocessing and must never be silently overwritten.
+- **INV-3 — Machine ingest is add-only.** Automated import must not physically delete or silently overwrite raw or normalized records; deduplication and undo use explicit links and states.
+- **INV-4 — Import runs are independently recoverable.** Every import has a `run_id`, exposes the records it introduced, and can be undone as a unit. Manual correction history is stored independently so undo and later re-import do not erase it.
+- **INV-5 — No double counting.** The same real-world transaction is included at most once in any monthly result, while every suspected duplicate record remains inspectable.
+- **INV-6 — Every number is traceable.** Each transaction and aggregate must trace to its source, import run, applied category/duplicate decision, and inclusion or exclusion reason.
+- **INV-7 — Money is exact.** Store amounts as integer minor units or exact decimals with their original currency; prohibit binary floating-point amounts and implicit exchange-rate conversion.
+- **INV-8 — Financial data stays local.** Raw statements and transaction data are not uploaded, written to application logs, or committed to Git.
 
 ## Out Of Scope
 

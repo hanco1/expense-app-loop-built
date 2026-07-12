@@ -1,19 +1,19 @@
 # Product Current State
 
-current_request_id:
-status: intake
-iteration: 0
-last_updated: 2026-07-12T18:41:04Z
-heartbeat: 2026-07-12T18:41:04Z
+current_request_id: REQ-20260712-200417-data-eng
+status: waiting_on_data-eng
+iteration: 1
+last_updated: 2026-07-12T20:04:17Z
+heartbeat: 2026-07-12T20:04:17Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
-- Objective and Done-When are confirmed and recorded; standing data invariants are awaiting human confirmation.
+- Objective, Done-When, and eight standing invariants are confirmed. The first core-foundation request is ready for data-eng.
 
 ## Next Action
 
-- Confirm the proposed standing data invariants; do not create a request before they are agreed.
+- Await data-eng implementation and its recorded verification evidence, then route the same request to independent review.
 
 ## Blockers
 
