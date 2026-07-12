@@ -25,4 +25,4 @@ schema described as prose above so recovery tooling reads only real rows.
 
 | request_id | status | owner_lane | iteration | source_docs | last_message | next_action | updated_at |
 | --- | --- | --- | --- | --- | --- | --- | --- |
-| REQ-20260712-200417-data-eng | REVIEWING | review | 2 | docs/loop/goal.md; docs/loop/tracker.md; docs/loop/constraints.md; docs/product/core-foundation.md | docs/loop/messages/REQ-20260712-200417-data-eng/REVIEW_REQUEST-iter-2.md | Independently verify commit 0ea7be5, rerun all eight commands and the completion gate, then return REVIEW_DONE or a bounded blocker FIX_REQUEST. | 2026-07-12T20:21:41Z |
+| REQ-20260712-200417-data-eng | REVIEWING | product | 2 | docs/loop/goal.md; docs/loop/tracker.md; docs/loop/constraints.md; docs/product/core-foundation.md | docs/loop/messages/REQ-20260712-200417-data-eng/REVIEW_DONE-iter-2.md | Review passed at commit 0ea7be5 with all eight commands and completion gate green; product performs the final acceptance decision and chooses the next bounded request. | 2026-07-12T20:22:56Z |
