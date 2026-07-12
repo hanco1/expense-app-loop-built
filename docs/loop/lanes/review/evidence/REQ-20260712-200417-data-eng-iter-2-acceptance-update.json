@@ -1,0 +1,10 @@
+{
+  "request_id": "REQ-20260712-200417-data-eng",
+  "iteration": 2,
+  "acceptance_command": "python -m unittest tests.acceptance.test_core_foundation_review -v",
+  "acceptance_exit_code": 0,
+  "backend_regression_command": "python -m unittest tests.backend.test_import_runs -v",
+  "backend_regression_exit_code": 0,
+  "result": "The review-owned acceptance test now requires undone runs to reject late source records and occurrences, and repeated undo leaves no included occurrence.",
+  "ran_at": "2026-07-12T20:19:46Z"
+}
