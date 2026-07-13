@@ -6,22 +6,23 @@ the next actor can continue from repo files plus the latest message alone.
 ## Current State
 
 - The SQLite core foundation is accepted. The human has confirmed the browser operating flow and authorized two wholly synthetic TD-style fixtures for committed end-to-end tests.
-- Data-eng fixed the iteration 2 partial-import blocker at commit `6bca89e`; all seven original commands, the review acceptance command, and the completion gate are green.
-- Independent re-review is active on the verified review thread. Acceptance remains product-owned and has not been granted.
+- Data-eng fixed the iteration 1 partial-active-state blocker at commit `6bca89e`; all eight declared iteration-2 commands and the completion gate are green.
+- Independent review found a remaining INV-1 blocker: Decimal exceptions (`NaN`, extreme exponent) drop the candidate source row instead of retaining `invalid_amount`. The anti-thrash cap is reached, so the request is BLOCKED pending a human decision.
 
 ## Next Action
 
-- [ ] Review commit `6bca89e` against the blocker, original criteria, scope boundaries, and misuse paths; return `REVIEW_DONE` or a blocker-severity `FIX_REQUEST`.
+- [ ] Product asks the human whether to change `max_fix_cycles: 3` to `max_fix_cycles: 4`; if approved, resume the same request as iteration 3 with the recorded Decimal-exception fix.
 
 ## Active Request
 
 - request_id: REQ-20260713-073512-data-eng
-- owner_lane: review
+- owner_lane: product
 - iteration: 2
 
 ## Blockers
 
-- None. Independent review is in progress.
+- Technical blocker: Decimal arithmetic exceptions bypass row-level failure retention.
+- Process blocker: `fix_cycles=3` equals `max_fix_cycles=3`; no automatic next fix round is permitted.
 
 ## Pending Inbox Deliveries
 
