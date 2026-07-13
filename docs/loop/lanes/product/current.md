@@ -1,20 +1,20 @@
 # Product Current State
 
 current_request_id: REQ-20260713-073512-data-eng
-status: FIX_REQUESTED
+status: REVIEWING
 iteration: 3
-last_updated: 2026-07-13T08:50:46Z
-heartbeat: 2026-07-13T08:50:46Z
+last_updated: 2026-07-13T08:57:47Z
+heartbeat: 2026-07-13T08:57:47Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
-- The human approved raising `max_fix_cycles` from 3 to 4 and resuming the same request as iteration 3 for the review-confirmed Decimal source-row-loss blocker.
+- Data-eng implemented the Decimal source-row-retention fix at `e94a09a`; product independently reran all eight commands, including backend 28/28 and review acceptance 3/3.
 
 ## Next Action
 
-- Data-eng implements retained row-level `invalid_amount` handling for every Decimal exception and returns NaN/overflow-exponent regression evidence for independent review.
+- Await independent iteration-3 review of exact-money edge cases, scope, looks-done-but-wrong behavior, and ease of misuse; do not accept before PASS.
 
 ## Blockers
 
-- None. Restore `max_fix_cycles` to 3 only after this request is ACCEPTED.
+- Control-plane advisory: doctor counts five raw thrash-status entries at cap 4 after the explicitly authorized resume. No further fix round is authorized. On review PASS, accept and restore `max_fix_cycles` to 3 in the same product checkpoint.

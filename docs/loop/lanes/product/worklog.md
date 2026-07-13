@@ -15,6 +15,7 @@
 - 2026-07-13T08:09:19Z: Recorded review commit `001620c` as BLOCKED: Decimal exceptional values drop candidate rows, and the anti-thrash cap requires a human decision before iteration 3.
 - 2026-07-13T08:50:46Z: Human approved the temporary fix cap increase from 3 to 4. Resumed the same request as FIX_REQUESTED iteration 3 with the exact Decimal exception retention fix and a mandatory post-ACCEPTED restore to 3.
 - 2026-07-13T08:51:58Z: Delivered committed iteration-3 FIX_REQUEST snapshot `bb9dcf1` to the verified data-eng thread; implementation ownership is active.
+- 2026-07-13T08:57:47Z: Reconciled implementation `e94a09a` and delivery `258ab63`, verified eight exit-0 evidence records and fixture hashes, independently reran backend 28/28 plus review acceptance 3/3, and kept the request REVIEWING. Recorded the doctor's raw-count warning without expanding the human-approved cap.
 
 | Time | Request | Action | Evidence |
 | --- | --- | --- | --- |
@@ -26,3 +27,4 @@
 | 2026-07-13T08:09:19Z | REQ-20260713-073512-data-eng | Paused at anti-thrash cap after independent blocker | review 001620c; Decimal boundary red test exit 1; human max-fix-cycle decision required |
 | 2026-07-13T08:50:46Z | REQ-20260713-073512-data-eng | Resumed final fix round with human approval | max_fix_cycles 4 temporarily; FIX_REQUEST iteration 3; restore to 3 after ACCEPTED |
 | 2026-07-13T08:51:58Z | REQ-20260713-073512-data-eng | Delivered iteration-3 FIX_REQUEST to data-eng | product snapshot bb9dcf1; thread 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx |
+| 2026-07-13T08:57:47Z | REQ-20260713-073512-data-eng | Reconciled iteration-3 implementation and routed final review | implementation e94a09a; delivery 258ab63; SHIP_CHECK_OK; backend 28/28; acceptance 3/3; max remains 4 |

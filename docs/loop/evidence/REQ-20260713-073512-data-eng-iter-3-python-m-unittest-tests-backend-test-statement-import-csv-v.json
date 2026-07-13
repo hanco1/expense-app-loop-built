@@ -1,0 +1,7 @@
+{
+  "request_id": "REQ-20260713-073512-data-eng",
+  "checkpoint": "decimal-boundary-fix",
+  "command": "python -m unittest tests.backend.test_statement_import_csv -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-13T08:54:25Z"
+}

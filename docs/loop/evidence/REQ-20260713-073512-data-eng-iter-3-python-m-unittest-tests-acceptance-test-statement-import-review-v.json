@@ -1,0 +1,7 @@
+{
+  "request_id": "REQ-20260713-073512-data-eng",
+  "checkpoint": "decimal-boundary-fix-review-acceptance",
+  "command": "python -m unittest tests.acceptance.test_statement_import_review -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-13T08:54:25Z"
+}

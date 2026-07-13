@@ -6,22 +6,22 @@ the next actor can continue from repo files plus the latest message alone.
 ## Current State
 
 - The SQLite core foundation is accepted. The human has confirmed the browser operating flow and authorized two wholly synthetic TD-style fixtures for committed end-to-end tests.
-- Data-eng fixed the partial-active-state blocker at commit `6bca89e`; all eight declared iteration-2 commands and the completion gate were green.
-- The human approved a temporary `max_fix_cycles: 4` override. The same request is resumed as iteration 3 to fix the remaining INV-1 Decimal-exception source-row loss; the cap must return to 3 immediately after ACCEPTED.
+- Data-eng fixed the remaining Decimal exceptional-value row loss at commit `e94a09a`; all eight iteration-3 commands and the completion gate are green.
+- Independent review is active on the verified review thread. The temporary `max_fix_cycles: 4` override remains until product accepts this request, then product must immediately restore 3.
 
 ## Next Action
 
-- [ ] Data-eng maps every Decimal construction/arithmetic/comparison/conversion exception to retained row-level `invalid_amount`, adds NaN and overflow-exponent regressions, and returns iteration-3 evidence for review.
+- [ ] Review commit `e94a09a` against the Decimal blocker, original criteria, scope boundaries, and misuse paths; return `REVIEW_DONE` or a blocker-severity `FIX_REQUEST`.
 
 ## Active Request
 
 - request_id: REQ-20260713-073512-data-eng
-- owner_lane: data-eng
+- owner_lane: review
 - iteration: 3
 
 ## Blockers
 
-- None. The human authorized the final fix round.
+- No implementation blocker. The doctor counts five raw entries into thrash statuses against `max_fix_cycles: 4`; this is a control-plane advisory caused by the human-authorized resume, not permission for another fix round. A review PASS can proceed to product acceptance, which must atomically restore the cap to 3.
 
 ## Pending Inbox Deliveries
 
