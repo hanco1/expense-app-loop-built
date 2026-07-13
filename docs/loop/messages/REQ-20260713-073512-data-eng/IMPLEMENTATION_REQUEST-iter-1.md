@@ -50,8 +50,8 @@ acceptance_criteria:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: pending
-- sent_at:
+- delivery_status: sent
+- sent_at: 2026-07-13T07:38:17Z
 expected_reply:
 - implementation commit and changed files
 - parser, identity, duplicate, and run-query API decisions
