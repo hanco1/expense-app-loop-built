@@ -47,7 +47,7 @@ policy:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: pending
-- sent_at:
+- delivery_status: sent
+- sent_at: 2026-07-13T08:51:58Z
 expected_reply:
 - IMPLEMENTATION_DONE iteration 3 with implementation commit, changed files, exact Decimal exception mapping, all command exit codes, flat evidence paths, and no unapproved dependencies.
