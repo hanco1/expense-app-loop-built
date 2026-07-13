@@ -1,0 +1,62 @@
+{
+  "request_id": "REQ-20260713-073512-data-eng",
+  "iteration": 1,
+  "reviewed_commit": "9fccab6",
+  "verdict": "FIX_REQUESTED",
+  "ran_at": "2026-07-13T07:56:00Z",
+  "commands": [
+    {
+      "command": "python -m unittest tests.backend.test_statement_fixtures -v",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_csv -v",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_pdf -v",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_idempotency -v",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_runs -v",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_local_boundary -v",
+      "exit_code": 0
+    },
+    {
+      "command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "tests_run": 24
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_statement_import_review -v",
+      "exit_code": 1,
+      "tests_run": 2,
+      "passed": 1,
+      "failed": 1,
+      "failure": "a rejected supported-shape CSV left 1 run, 2 source records, 2 identities, 1 normalized transaction, and 1 included occurrence"
+    },
+    {
+      "command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260713-073512-data-eng",
+      "exit_code": 0,
+      "output": "SHIP_CHECK_OK REQ-20260713-073512-data-eng"
+    },
+    {
+      "command": "python multi_agent_loop_doctor.py --loop-dir docs/loop",
+      "exit_code": 0,
+      "output": "OK; only pre-verdict stale-review-heartbeat and stalled-handoff warnings"
+    }
+  ],
+  "fixture_hashes": {
+    "td-mock-2026-06.csv": "9F93F107DDD02AEE2FB0A0AE19EB962180C680D1FB06D4D90959C96ED8CD7BAA",
+    "td-mock-2026-05.pdf": "F4B6B524D7C6140EE3F3E24CE87C4A36F0B40619395B5DC17B03F1B99DBC11F8"
+  },
+  "scope_creep": "none",
+  "ease_of_misuse": "a later oversized CSV amount raises after earlier rows have committed, leaving effective data in an active run whose ID was not returned"
+}
