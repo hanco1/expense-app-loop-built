@@ -121,8 +121,8 @@ class StatementImportReviewTests(StatementStoreTestCase):
         self.assertIsNone(failure["normalized_transaction"])
         self.assertEqual(failure["inclusion_reason"], "parse_failed:invalid_amount")
 
-    def test_decimal_exceptions_are_retained_as_invalid_amount_rows(self) -> None:
-        for raw_amount in ("NaN", "1e999999"):
+    def test_decimal_edge_values_are_retained_as_invalid_amount_rows(self) -> None:
+        for raw_amount in ("NaN", "1e999999", "1e-999999999"):
             with self.subTest(raw_amount=raw_amount):
                 content = (
                     "Date,Description,Debit,Credit,Balance\r\n"
@@ -135,6 +135,7 @@ class StatementImportReviewTests(StatementStoreTestCase):
                 )
 
                 summary = self.store.get_import_run_summary(run_id)
+                detail = self.store.get_import_run_detail(run_id)[0]
                 self.assertEqual(summary["state"], "active")
                 self.assertEqual(
                     (
@@ -142,15 +143,17 @@ class StatementImportReviewTests(StatementStoreTestCase):
                         summary["parsed_count"],
                         summary["failed_count"],
                         summary["occurrence_count"],
+                        None
+                        if detail["normalized_transaction"] is None
+                        else detail["normalized_transaction"]["amount_minor"],
                     ),
-                    (1, 0, 1, 0),
+                    (1, 0, 1, 0, None),
                 )
-                failure = self.store.get_import_run_detail(run_id)[0]
-                self.assertEqual(failure["parse_status"], "failed")
-                self.assertEqual(failure["error_code"], "invalid_amount")
-                self.assertIsNone(failure["normalized_transaction"])
+                self.assertEqual(detail["parse_status"], "failed")
+                self.assertEqual(detail["error_code"], "invalid_amount")
+                self.assertIsNone(detail["normalized_transaction"])
                 self.assertEqual(
-                    failure["inclusion_reason"],
+                    detail["inclusion_reason"],
                     "parse_failed:invalid_amount",
                 )
 

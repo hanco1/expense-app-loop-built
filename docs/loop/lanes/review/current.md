@@ -2,20 +2,20 @@
 
 current_request_id: REQ-20260713-073512-data-eng
 status: BLOCKED
-iteration: 2
-last_updated: 2026-07-13T08:07:20Z
-heartbeat: 2026-07-13T08:07:20Z
+iteration: 3
+last_updated: 2026-07-13T08:59:41Z
+heartbeat: 2026-07-13T08:59:41Z
 model_observed: gpt-5.6-sol xhigh (highest)
 
 ## Current Checkpoint
 
-- Iteration 2 independently reviewed at commit 6bca89e; prior partial-state blocker is closed, but Decimal exceptions still drop candidate rows instead of retaining `invalid_amount`.
+- Iteration 3 independently reviewed at commit e94a09a. Named Decimal exceptions are retained, but a nonzero underflowing amount silently becomes an active zero-cent transaction.
 
 ## Next Action
 
-- Product asks the human whether to raise max_fix_cycles from 3 to 4; only then may the same request resume as iteration 3.
+- Product asks the human whether to authorize one additional narrowly scoped exact-money correction; review cannot dispatch it under the final-round authority.
 
 ## Blockers
 
-- Technical: `NaN` and `1e999999` bypass row-level invalid-amount handling and leave zero retained source records.
-- Process: anti-thrash cap reached (`fix_cycles=3`, `max_fix_cycles=3`).
+- Technical: `1e-999999999` silently scales to zero, then creates a parsed normalized transaction and effective occurrence with `amount_minor=0`.
+- Process: the human authorized iteration 3 as final and did not authorize another fix round; doctor raw count is 5/max 4.

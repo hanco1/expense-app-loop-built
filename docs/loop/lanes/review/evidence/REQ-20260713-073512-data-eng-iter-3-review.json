@@ -1,0 +1,78 @@
+{
+  "request_id": "REQ-20260713-073512-data-eng",
+  "iteration": 3,
+  "reviewed_commit": "e94a09a",
+  "verdict": "BLOCKED",
+  "severity": "blocker",
+  "ran_at": "2026-07-13T08:59:41Z",
+  "commands": [
+    {
+      "command": "python -m unittest tests.backend.test_statement_fixtures -v",
+      "exit_code": 0,
+      "tests_run": 1
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_csv -v",
+      "exit_code": 0,
+      "tests_run": 5
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_pdf -v",
+      "exit_code": 0,
+      "tests_run": 1
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_idempotency -v",
+      "exit_code": 0,
+      "tests_run": 1
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_runs -v",
+      "exit_code": 0,
+      "tests_run": 1
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_local_boundary -v",
+      "exit_code": 0,
+      "tests_run": 3
+    },
+    {
+      "command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "tests_run": 28
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_statement_import_review -v",
+      "exit_code": 0,
+      "tests_run": 3,
+      "phase": "before independent underflow coverage"
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_statement_import_review -v",
+      "exit_code": 1,
+      "tests_run": 3,
+      "failures": 1,
+      "failure": "1e-999999999 imports as parsed with one occurrence and amount_minor=0 instead of retained invalid_amount"
+    },
+    {
+      "command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260713-073512-data-eng",
+      "exit_code": 0,
+      "output": "SHIP_CHECK_OK REQ-20260713-073512-data-eng"
+    },
+    {
+      "command": "python multi_agent_loop_doctor.py --loop-dir docs/loop",
+      "exit_code": 0,
+      "output": "OK; request fix_cycles=5 and max_fix_cycles=4; authorized-resume advisory recorded by product"
+    }
+  ],
+  "criteria_results": {
+    "nan_retained_invalid_amount": "pass",
+    "overflow_exponent_retained_invalid_amount": "pass",
+    "declared_decimal_exception_mapping": "pass",
+    "iteration_2_regressions_dependencies_and_gate": "pass",
+    "exact_minor_unit_conversion_without_silent_rounding": "fail"
+  },
+  "scope_creep": "none",
+  "looks_done_but_wrong": "declared tests miss a non-exceptional Decimal underflow that silently rounds a nonzero amount to zero",
+  "ease_of_misuse": "1e-999999999 in a valid CSV amount cell creates an active zero-cent normalized transaction and effective occurrence"
+}
