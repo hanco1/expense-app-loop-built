@@ -93,6 +93,12 @@ class StatementCsvImportTests(StatementStoreTestCase):
         self.assertIsNone(failure["normalized_transaction"])
         self.assertEqual(failure["inclusion_reason"], "parse_failed:invalid_amount")
 
+    def test_nan_amount_is_retained_as_invalid_amount(self) -> None:
+        self._assert_decimal_failure_is_retained("NaN")
+
+    def test_decimal_context_overflow_is_retained_as_invalid_amount(self) -> None:
+        self._assert_decimal_failure_is_retained("1e999999")
+
     def test_unexpected_persistence_failure_leaves_no_active_support(self) -> None:
         content = (
             b"Date,Description,Debit,Credit,Balance\r\n"
@@ -132,6 +138,37 @@ class StatementCsvImportTests(StatementStoreTestCase):
         self.assertEqual(detail[1]["parse_status"], "parsed")
         self.assertIsNone(detail[1]["occurrence_id"])
         self.assertEqual(detail[1]["inclusion_reason"], "persistence_incomplete")
+
+    def _assert_decimal_failure_is_retained(self, raw_amount: str) -> None:
+        content = (
+            "Date,Description,Debit,Credit,Balance\r\n"
+            f"06/01/2026,DECIMAL EDGE,{raw_amount},,0.00\r\n"
+        ).encode("utf-8")
+
+        run_id = self.importer.import_bytes(
+            content,
+            filename=f"decimal-edge-{raw_amount}.csv",
+            source_type="csv",
+        )
+
+        summary = self.store.get_import_run_summary(run_id)
+        self.assertEqual(summary["state"], "active")
+        self.assertEqual(
+            (
+                summary["source_record_count"],
+                summary["parsed_count"],
+                summary["failed_count"],
+                summary["occurrence_count"],
+            ),
+            (1, 0, 1, 0),
+        )
+        failure = self.store.get_import_run_detail(run_id)[0]
+        self.assertIn(raw_amount, failure["retained_input"])
+        self.assertEqual(failure["parse_status"], "failed")
+        self.assertEqual(failure["error_code"], "invalid_amount")
+        self.assertIsNone(failure["normalized_transaction"])
+        self.assertEqual(failure["inclusion_reason"], "parse_failed:invalid_amount")
+        self.assertEqual(self.store.list_effective_transactions(), [])
 
 
 if __name__ == "__main__":

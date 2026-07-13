@@ -42,6 +42,12 @@ normalization. An out-of-range amount remains a failed source record with
 `invalid_amount`; public money persistence methods also reject integers outside
 that range before SQLite binding.
 
+The complete Decimal conversion block maps construction, multiplication,
+comparison, integral-value, and integer-conversion `ArithmeticError`/`ValueError`
+failures to the same row-level `invalid_amount`. Non-finite Decimal values are
+rejected before ordering comparisons, so `NaN`, infinity, and active-context
+overflow cannot abort the import or remove the retained source row.
+
 Run summary returns source metadata and parsed/failed/occurrence counts. Run
 detail returns every retained source record, parse result, normalized transaction,
 identity, source fingerprint, suspected-duplicate state, and inclusion reason.

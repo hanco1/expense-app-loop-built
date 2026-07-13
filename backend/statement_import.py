@@ -4,7 +4,7 @@ import csv
 import hashlib
 import re
 from datetime import datetime
-from decimal import Decimal, InvalidOperation
+from decimal import Decimal
 from io import BytesIO
 
 from pypdf import PdfReader
@@ -270,16 +270,20 @@ def _normalize_transaction(
 def _parse_cents(raw_amount: str) -> int:
     try:
         amount = Decimal(raw_amount)
-    except InvalidOperation as error:
+        cents = amount * 100
+        if (
+            not amount.is_finite()
+            or not cents.is_finite()
+            or amount < 0
+            or cents != cents.to_integral_value()
+            or cents > SQLITE_INTEGER_MAX
+        ):
+            raise RecordParseFailure("invalid_amount")
+        return int(cents)
+    except RecordParseFailure:
+        raise
+    except (ArithmeticError, ValueError) as error:
         raise RecordParseFailure("invalid_amount") from error
-    cents = amount * 100
-    if (
-        amount < 0
-        or cents != cents.to_integral_value()
-        or cents > SQLITE_INTEGER_MAX
-    ):
-        raise RecordParseFailure("invalid_amount")
-    return int(cents)
 
 
 def _stable_identity_fingerprint(
