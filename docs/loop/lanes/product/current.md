@@ -1,20 +1,21 @@
 # Product Current State
 
 current_request_id: REQ-20260713-073512-data-eng
-status: REVIEWING
+status: BLOCKED
 iteration: 3
-last_updated: 2026-07-13T08:57:47Z
-heartbeat: 2026-07-13T08:57:47Z
+last_updated: 2026-07-13T09:02:49Z
+heartbeat: 2026-07-13T09:02:49Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
-- Data-eng implemented the Decimal source-row-retention fix at `e94a09a`; product independently reran all eight commands, including backend 28/28 and review acceptance 3/3.
+- Review commit `bb3b488` proves that `1e-999999999` silently underflows to an active zero-cent transaction at implementation `e94a09a`; acceptance is blocked by INV-7 and INV-6.
 
 ## Next Action
 
-- Await independent iteration-3 review of exact-money edge cases, scope, looks-done-but-wrong behavior, and ease of misuse; do not accept before PASS.
+- Ask the human whether to authorize one additional narrowly scoped iteration 4 for context-independent exact cents conversion and the retained-`invalid_amount` underflow regression.
 
 ## Blockers
 
-- Control-plane advisory: doctor counts five raw thrash-status entries at cap 4 after the explicitly authorized resume. No further fix round is authorized. On review PASS, accept and restore `max_fix_cycles` to 3 in the same product checkpoint.
+- Technical: a nonzero Decimal can be stored as zero minor units while remaining effective.
+- Process: no iteration 4 is authorized. A warning-free additional round needs a temporary cap of 7 because doctor currently counts five raw thrash-status entries and the two mandatory start transitions add two; restore 3 atomically after ACCEPTED.

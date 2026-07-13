@@ -6,22 +6,24 @@ the next actor can continue from repo files plus the latest message alone.
 ## Current State
 
 - The SQLite core foundation is accepted. The human has confirmed the browser operating flow and authorized two wholly synthetic TD-style fixtures for committed end-to-end tests.
-- Data-eng fixed the remaining Decimal exceptional-value row loss at commit `e94a09a`; all eight iteration-3 commands and the completion gate are green.
-- Independent review is active on the verified review thread. The temporary `max_fix_cycles: 4` override remains until product accepts this request, then product must immediately restore 3.
+- Data-eng fixed the named Decimal exceptional-value row loss at commit `e94a09a`; all eight declared iteration-3 commands and the completion gate are green.
+- Independent review found that `1e-999999999` silently becomes an active zero-cent transaction. The request is BLOCKED because iteration 3 was the human-approved final round.
 
 ## Next Action
 
-- [ ] Review commit `e94a09a` against the Decimal blocker, original criteria, scope boundaries, and misuse paths; return `REVIEW_DONE` or a blocker-severity `FIX_REQUEST`.
+- [!] Product asks the human whether to authorize one additional narrowly scoped exact-money correction; do not accept `e94a09a` while the blocker remains.
 
 ## Active Request
 
 - request_id: REQ-20260713-073512-data-eng
-- owner_lane: review
+- owner_lane: product
 - iteration: 3
 
 ## Blockers
 
-- No implementation blocker. The doctor counts five raw entries into thrash statuses against `max_fix_cycles: 4`; this is a control-plane advisory caused by the human-authorized resume, not permission for another fix round. A review PASS can proceed to product acceptance, which must atomically restore the cap to 3.
+- Technical blocker: Decimal underflow can silently rewrite a nonzero source amount to `amount_minor=0` and create effective support, violating INV-7 and INV-6.
+- Process blocker: iteration 3 was explicitly authorized as final. The doctor 5/max 4 count remains an authorized-resume advisory, but there is no authority for another round.
+- If the human authorizes iteration 4, the minimum warning-free temporary cap is 7: the current raw count is 5, and the mandatory `BLOCKED -> FIX_REQUESTED -> IMPLEMENTING` transitions add two entries. Restore the cap to 3 atomically after ACCEPTED.
 
 ## Pending Inbox Deliveries
 
