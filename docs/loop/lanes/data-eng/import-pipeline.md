@@ -29,6 +29,19 @@ adding an effective identity. Undo removes only the selected run's support and
 retains runs, source records, normalized facts, occurrences, suspected links,
 and correction history.
 
+Statement imports now begin in the non-effective `importing` state and become
+`active` only after every persistence step succeeds. An unexpected parser or
+persistence exception atomically excludes any introduced occurrences, marks the
+run `failed`, and raises `StatementImportFailure` with the inspectable `run_id`.
+If failure cleanup itself cannot finish, the original `importing` state still
+cannot support an effective transaction. Parsed source records without a
+completed occurrence report `persistence_incomplete` instead of a parse error.
+
+CSV amounts are validated against SQLite's signed 64-bit integer range before
+normalization. An out-of-range amount remains a failed source record with
+`invalid_amount`; public money persistence methods also reject integers outside
+that range before SQLite binding.
+
 Run summary returns source metadata and parsed/failed/occurrence counts. Run
 detail returns every retained source record, parse result, normalized transaction,
 identity, source fingerprint, suspected-duplicate state, and inclusion reason.

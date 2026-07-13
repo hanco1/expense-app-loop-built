@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import unittest
 from datetime import date
+from unittest.mock import patch
 
 from tests.backend.statement_support import StatementStoreTestCase
 
@@ -61,6 +62,76 @@ class StatementCsvImportTests(StatementStoreTestCase):
         self.assertEqual(by_merchant["E-TRANSFER RECEIVED J. WU"]["amount_minor"], 60000)
         self.assertFalse(by_merchant["E-TRANSFER RECEIVED J. WU"]["is_spending"])
         self.assertEqual(sum(transaction["amount_minor"] < 0 for transaction in transactions), 20)
+
+    def test_out_of_range_amount_is_retained_as_an_explicit_failure(self) -> None:
+        content = (
+            b"Date,Description,Debit,Credit,Balance\r\n"
+            b"06/01/2026,FIRST GOOD ROW,1.00,,99.00\r\n"
+            b"06/02/2026,OVERSIZED ROW,999999999999999999999999999999.00,,0.00\r\n"
+        )
+
+        run_id = self.importer.import_bytes(
+            content,
+            filename="supported-shape.csv",
+            source_type="csv",
+        )
+
+        summary = self.store.get_import_run_summary(run_id)
+        self.assertEqual(summary["state"], "active")
+        self.assertEqual(
+            (
+                summary["source_record_count"],
+                summary["parsed_count"],
+                summary["failed_count"],
+                summary["occurrence_count"],
+            ),
+            (2, 1, 1, 1),
+        )
+        failure = self.store.get_import_run_detail(run_id)[1]
+        self.assertEqual(failure["parse_status"], "failed")
+        self.assertEqual(failure["error_code"], "invalid_amount")
+        self.assertIsNone(failure["normalized_transaction"])
+        self.assertEqual(failure["inclusion_reason"], "parse_failed:invalid_amount")
+
+    def test_unexpected_persistence_failure_leaves_no_active_support(self) -> None:
+        content = (
+            b"Date,Description,Debit,Credit,Balance\r\n"
+            b"06/01/2026,FIRST ROW,1.00,,99.00\r\n"
+            b"06/02/2026,SECOND ROW,2.00,,97.00\r\n"
+        )
+        original_add_occurrence = self.store.add_occurrence
+        occurrence_calls = 0
+
+        def fail_second_occurrence(*args: object, **kwargs: object) -> str:
+            nonlocal occurrence_calls
+            occurrence_calls += 1
+            if occurrence_calls == 2:
+                raise RuntimeError("synthetic persistence failure")
+            return original_add_occurrence(*args, **kwargs)
+
+        with patch.object(
+            self.store,
+            "add_occurrence",
+            side_effect=fail_second_occurrence,
+        ):
+            with self.assertRaises(RuntimeError) as raised:
+                self.importer.import_bytes(
+                    content,
+                    filename="later-persistence-failure.csv",
+                    source_type="csv",
+                )
+
+        run_id = getattr(raised.exception, "run_id", None)
+        self.assertIsInstance(run_id, str)
+        summary = self.store.get_import_run_summary(run_id)
+        self.assertEqual(summary["state"], "failed")
+        self.assertEqual(self.store.list_effective_transactions(), [])
+        detail = self.store.get_import_run_detail(run_id)
+        self.assertEqual(detail[0]["inclusion_state"], "excluded")
+        self.assertEqual(detail[0]["inclusion_reason"], "import_failed")
+        self.assertEqual(detail[1]["parse_status"], "parsed")
+        self.assertIsNone(detail[1]["occurrence_id"])
+        self.assertEqual(detail[1]["inclusion_reason"], "persistence_incomplete")
 
 
 if __name__ == "__main__":

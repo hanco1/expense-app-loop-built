@@ -9,7 +9,7 @@ from io import BytesIO
 
 from pypdf import PdfReader
 
-from backend.persistence import CoreStore
+from backend.persistence import CoreStore, SQLITE_INTEGER_MAX
 from contracts.statement_import import (
     ParsedSourceRecord,
     ParsedTransaction,
@@ -25,6 +25,14 @@ class RecordParseFailure(ValueError):
     def __init__(self, error_code: str) -> None:
         super().__init__(error_code)
         self.error_code = error_code
+
+
+class StatementImportFailure(RuntimeError):
+    """Reports an inspectable failed run without exposing retained source content."""
+
+    def __init__(self, run_id: str) -> None:
+        super().__init__(f"statement import failed; inspect run_id {run_id}")
+        self.run_id = run_id
 
 
 class TdCsvStatementParser:
@@ -165,40 +173,51 @@ class StatementImportService:
             source_name=filename,
             source_type=source_type,
             exact_reimport_of_run_id=exact_reimport_of_run_id,
+            initial_state="importing",
         )
-        records = self.parsers[source_type].parse(content)
-        for record in records:
-            source_record_id = self.store.add_source_record(
-                run_id,
-                source_locator=record.source_locator,
-                retained_input=record.retained_input,
-                parse_status=record.parse_status,
-                error_code=record.error_code,
-            )
-            if record.transaction is None:
-                continue
-            identity_id = self.store.get_or_create_identity(
-                _stable_identity_fingerprint(
-                    source_fingerprint,
-                    record.source_locator,
+        try:
+            records = self.parsers[source_type].parse(content)
+            for record in records:
+                source_record_id = self.store.add_source_record(
+                    run_id,
+                    source_locator=record.source_locator,
+                    retained_input=record.retained_input,
+                    parse_status=record.parse_status,
+                    error_code=record.error_code,
                 )
-            )
-            created = self.store.add_normalized_transaction(
-                identity_id,
-                transaction_date=record.transaction.transaction_date,
-                merchant=record.transaction.merchant,
-                amount_minor=record.transaction.amount_minor,
-                currency=record.transaction.currency,
-            )
-            if created:
-                self.store.link_suspected_duplicates(identity_id)
-            self.store.add_occurrence(
-                run_id,
-                source_record_id=source_record_id,
-                identity_id=identity_id,
-                amount_minor=record.transaction.amount_minor,
-                currency=record.transaction.currency,
-            )
+                if record.transaction is None:
+                    continue
+                identity_id = self.store.get_or_create_identity(
+                    _stable_identity_fingerprint(
+                        source_fingerprint,
+                        record.source_locator,
+                    )
+                )
+                created = self.store.add_normalized_transaction(
+                    identity_id,
+                    transaction_date=record.transaction.transaction_date,
+                    merchant=record.transaction.merchant,
+                    amount_minor=record.transaction.amount_minor,
+                    currency=record.transaction.currency,
+                )
+                if created:
+                    self.store.link_suspected_duplicates(identity_id)
+                self.store.add_occurrence(
+                    run_id,
+                    source_record_id=source_record_id,
+                    identity_id=identity_id,
+                    amount_minor=record.transaction.amount_minor,
+                    currency=record.transaction.currency,
+                )
+            self.store.complete_import_run(run_id)
+        except Exception as error:
+            try:
+                self.store.fail_import_run(run_id)
+            except Exception:
+                # The run began in a non-effective state, so even failed cleanup
+                # cannot expose partial support. The caller still receives its ID.
+                pass
+            raise StatementImportFailure(run_id) from error
         return run_id
 
     def parser_descriptors(self) -> dict[str, dict[str, str]]:
@@ -254,7 +273,11 @@ def _parse_cents(raw_amount: str) -> int:
     except InvalidOperation as error:
         raise RecordParseFailure("invalid_amount") from error
     cents = amount * 100
-    if amount < 0 or cents != cents.to_integral_value():
+    if (
+        amount < 0
+        or cents != cents.to_integral_value()
+        or cents > SQLITE_INTEGER_MAX
+    ):
         raise RecordParseFailure("invalid_amount")
     return int(cents)
 

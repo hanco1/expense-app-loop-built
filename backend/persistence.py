@@ -10,6 +10,10 @@ from typing import Any
 from uuid import uuid4
 
 
+SQLITE_INTEGER_MIN = -(2**63)
+SQLITE_INTEGER_MAX = 2**63 - 1
+
+
 SCHEMA = """
 PRAGMA foreign_keys = ON;
 
@@ -22,7 +26,7 @@ CREATE TABLE IF NOT EXISTS import_runs (
         CHECK (source_type IN ('unknown', 'csv', 'pdf')),
     exact_reimport_of_run_id TEXT,
     state TEXT NOT NULL DEFAULT 'active'
-        CHECK (state IN ('active', 'undone')),
+        CHECK (state IN ('importing', 'active', 'failed', 'undone')),
     FOREIGN KEY (exact_reimport_of_run_id) REFERENCES import_runs(run_id)
 );
 
@@ -145,18 +149,19 @@ BEGIN
     SELECT RAISE(ABORT, 'import run identity is immutable');
 END;
 
-CREATE TRIGGER IF NOT EXISTS import_runs_no_reactivate
+CREATE TRIGGER IF NOT EXISTS import_runs_terminal_state
 BEFORE UPDATE OF state ON import_runs
-WHEN OLD.state = 'undone' AND NEW.state != 'undone'
+WHEN OLD.state IN ('failed', 'undone') AND NEW.state != OLD.state
 BEGIN
-    SELECT RAISE(ABORT, 'undone import runs are terminal');
+    SELECT RAISE(ABORT, 'failed and undone import runs are terminal');
 END;
 
 CREATE TRIGGER IF NOT EXISTS source_records_require_active_run
 BEFORE INSERT ON source_records
-WHEN (SELECT state FROM import_runs WHERE run_id = NEW.run_id) != 'active'
+WHEN (SELECT state FROM import_runs WHERE run_id = NEW.run_id)
+    NOT IN ('importing', 'active')
 BEGIN
-    SELECT RAISE(ABORT, 'source records require an active import run');
+    SELECT RAISE(ABORT, 'source records require a writable import run');
 END;
 
 CREATE TRIGGER IF NOT EXISTS source_records_no_update
@@ -198,9 +203,10 @@ END;
 
 CREATE TRIGGER IF NOT EXISTS occurrences_require_active_run
 BEFORE INSERT ON imported_occurrences
-WHEN (SELECT state FROM import_runs WHERE run_id = NEW.run_id) != 'active'
+WHEN (SELECT state FROM import_runs WHERE run_id = NEW.run_id)
+    NOT IN ('importing', 'active')
 BEGIN
-    SELECT RAISE(ABORT, 'occurrences require an active import run');
+    SELECT RAISE(ABORT, 'occurrences require a writable import run');
 END;
 
 CREATE TRIGGER IF NOT EXISTS occurrences_no_delete
@@ -282,12 +288,15 @@ class CoreStore:
         source_name: str = "",
         source_type: str = "unknown",
         exact_reimport_of_run_id: str | None = None,
+        initial_state: str = "active",
     ) -> str:
         self._require_nonempty_text(source_fingerprint, "source_fingerprint")
         if not isinstance(source_name, str):
             raise TypeError("source_name must be text")
         if source_type not in {"unknown", "csv", "pdf"}:
             raise ValueError("source_type must be 'unknown', 'csv', or 'pdf'")
+        if initial_state not in {"active", "importing"}:
+            raise ValueError("initial_state must be 'active' or 'importing'")
         if exact_reimport_of_run_id is not None:
             self._require_nonempty_text(
                 exact_reimport_of_run_id,
@@ -299,7 +308,7 @@ class CoreStore:
                 "INSERT INTO import_runs "
                 "(run_id, created_at, source_fingerprint, source_name, source_type, "
                 "exact_reimport_of_run_id, state) "
-                "VALUES (?, ?, ?, ?, ?, ?, 'active')",
+                "VALUES (?, ?, ?, ?, ?, ?, ?)",
                 (
                     run_id,
                     self._now(),
@@ -307,9 +316,54 @@ class CoreStore:
                     source_name,
                     source_type,
                     exact_reimport_of_run_id,
+                    initial_state,
                 ),
             )
         return run_id
+
+    def complete_import_run(self, run_id: str) -> None:
+        self._require_nonempty_text(run_id, "run_id")
+        with self._connection() as connection, connection:
+            connection.execute("BEGIN IMMEDIATE")
+            cursor = connection.execute(
+                "UPDATE import_runs SET state = 'active' "
+                "WHERE run_id = ? AND state = 'importing'",
+                (run_id,),
+            )
+            if cursor.rowcount == 1:
+                return
+            run = connection.execute(
+                "SELECT state FROM import_runs WHERE run_id = ?",
+                (run_id,),
+            ).fetchone()
+            if run is None:
+                raise KeyError(f"import run not found: {run_id}")
+            raise sqlite3.IntegrityError(
+                f"only an importing run can be completed; state is {run['state']}"
+            )
+
+    def fail_import_run(self, run_id: str) -> None:
+        self._require_nonempty_text(run_id, "run_id")
+        with self._connection() as connection, connection:
+            connection.execute("BEGIN IMMEDIATE")
+            run = connection.execute(
+                "SELECT state FROM import_runs WHERE run_id = ?",
+                (run_id,),
+            ).fetchone()
+            if run is None:
+                raise KeyError(f"import run not found: {run_id}")
+            if run["state"] == "undone":
+                raise sqlite3.IntegrityError("an undone import run cannot fail")
+            connection.execute(
+                "UPDATE imported_occurrences "
+                "SET inclusion_state = 'excluded', exclusion_reason = 'import_failed' "
+                "WHERE run_id = ?",
+                (run_id,),
+            )
+            connection.execute(
+                "UPDATE import_runs SET state = 'failed' WHERE run_id = ?",
+                (run_id,),
+            )
 
     def get_import_run(self, run_id: str) -> dict[str, Any]:
         return self._fetch_one(
@@ -332,6 +386,7 @@ class CoreStore:
             row = connection.execute(
                 "SELECT run_id FROM import_runs "
                 "WHERE source_fingerprint = ? AND source_type = ? "
+                "AND state IN ('active', 'undone') "
                 "ORDER BY created_at, run_id LIMIT 1",
                 (source_fingerprint, source_type),
             ).fetchone()
@@ -426,8 +481,7 @@ class CoreStore:
         self._require_nonempty_text(merchant, "merchant")
         if merchant.strip().isnumeric():
             raise ValueError("merchant must not be numeric-only")
-        if type(amount_minor) is not int:
-            raise TypeError("amount_minor must be an integer, never a binary float")
+        self._require_sqlite_integer(amount_minor, "amount_minor")
         if (
             not isinstance(currency, str)
             or len(currency) != 3
@@ -533,8 +587,7 @@ class CoreStore:
         self._require_nonempty_text(run_id, "run_id")
         self._require_nonempty_text(source_record_id, "source_record_id")
         self._require_nonempty_text(identity_id, "identity_id")
-        if type(amount_minor) is not int:
-            raise TypeError("amount_minor must be an integer, never a binary float")
+        self._require_sqlite_integer(amount_minor, "amount_minor")
         if (
             not isinstance(currency, str)
             or len(currency) != 3
@@ -657,9 +710,9 @@ class CoreStore:
             "SELECT r.run_id, r.created_at, r.source_name, r.source_type, "
             "r.source_fingerprint, r.state, r.exact_reimport_of_run_id, "
             "COUNT(DISTINCT s.source_record_id) AS source_record_count, "
-            "SUM(CASE WHEN s.parse_status = 'parsed' THEN 1 ELSE 0 END) "
+            "COALESCE(SUM(CASE WHEN s.parse_status = 'parsed' THEN 1 ELSE 0 END), 0) "
             "AS parsed_count, "
-            "SUM(CASE WHEN s.parse_status = 'failed' THEN 1 ELSE 0 END) "
+            "COALESCE(SUM(CASE WHEN s.parse_status = 'failed' THEN 1 ELSE 0 END), 0) "
             "AS failed_count, "
             "COUNT(DISTINCT o.occurrence_id) AS occurrence_count "
             "FROM import_runs AS r "
@@ -713,8 +766,10 @@ class CoreStore:
                         "currency": row["currency"],
                         "is_spending": bool(row["is_spending"]),
                     }
-                if row["occurrence_id"] is None:
+                if row["parse_status"] == "failed":
                     inclusion_reason = f"parse_failed:{row['error_code']}"
+                elif row["occurrence_id"] is None:
+                    inclusion_reason = "persistence_incomplete"
                 elif row["inclusion_state"] == "included":
                     inclusion_reason = "active_support"
                 else:
@@ -967,3 +1022,10 @@ class CoreStore:
     def _require_nonempty_text(value: object, field: str) -> None:
         if not isinstance(value, str) or not value.strip():
             raise ValueError(f"{field} must be non-empty text")
+
+    @staticmethod
+    def _require_sqlite_integer(value: object, field: str) -> None:
+        if type(value) is not int:
+            raise TypeError(f"{field} must be an integer, never a binary float")
+        if not SQLITE_INTEGER_MIN <= value <= SQLITE_INTEGER_MAX:
+            raise ValueError(f"{field} must fit a signed SQLite INTEGER")
