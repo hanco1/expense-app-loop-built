@@ -1,19 +1,19 @@
 # Product Current State
 
 current_request_id: REQ-20260713-073512-data-eng
-status: FIX_REQUESTED
+status: REVIEWING
 iteration: 2
-last_updated: 2026-07-13T07:59:03Z
-heartbeat: 2026-07-13T07:59:03Z
+last_updated: 2026-07-13T08:05:53Z
+heartbeat: 2026-07-13T08:05:53Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
-- Review commit `67da349` proved a blocker despite the green declared suite: a later persistence failure can leave a partial active import whose `run_id` was never returned.
+- Data-eng fixed the partial-import blocker at `6bca89e`; product independently reran all eight commands, including 26/26 backend tests and 2/2 review acceptance tests.
 
 ## Next Action
 
-- Data-eng fixes import failure atomicity/visibility under iteration 2, runs the review-owned regression plus all declared commands, and returns the same request to review.
+- Await independent iteration-2 review of boundary inputs, scope, looks-done-but-wrong behavior, and ease of misuse; do not accept before a PASS verdict.
 
 ## Blockers
 

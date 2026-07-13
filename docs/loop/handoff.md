@@ -6,22 +6,22 @@ the next actor can continue from repo files plus the latest message alone.
 ## Current State
 
 - The SQLite core foundation is accepted. The human has confirmed the browser operating flow and authorized two wholly synthetic TD-style fixtures for committed end-to-end tests.
-- Data-eng implemented `REQ-20260713-073512-data-eng` at commit `9fccab6`; all seven declared commands and the completion gate are green.
-- Independent review found a blocker: a rejected supported-shape CSV can leave earlier rows effective in a partial active run whose `run_id` was not returned. Iteration 2 is routed to data-eng.
+- Data-eng fixed the iteration 2 partial-import blocker at commit `6bca89e`; all seven original commands, the review acceptance command, and the completion gate are green.
+- Independent re-review is active on the verified review thread. Acceptance remains product-owned and has not been granted.
 
 ## Next Action
 
-- [ ] Data-eng makes failed import handling explicit/atomic, adds red-capable regression coverage, and returns iteration-2 implementation evidence for review.
+- [ ] Review commit `6bca89e` against the blocker, original criteria, scope boundaries, and misuse paths; return `REVIEW_DONE` or a blocker-severity `FIX_REQUEST`.
 
 ## Active Request
 
 - request_id: REQ-20260713-073512-data-eng
-- owner_lane: data-eng
+- owner_lane: review
 - iteration: 2
 
 ## Blockers
 
-- Review blocker: a later storage failure can leave an active partial run and effective data even though `import_bytes` raised.
+- None. Independent review is in progress.
 
 ## Pending Inbox Deliveries
 
