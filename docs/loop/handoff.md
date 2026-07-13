@@ -5,17 +5,18 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Current State
 
-- Summarize what is done and verified right now.
+- The SQLite core foundation is accepted. The human has confirmed the browser operating flow and authorized two wholly synthetic TD-style fixtures for committed end-to-end tests.
+- Product prepared `REQ-20260713-073512-data-eng` for TD-style CSV/text-PDF ingestion, exact re-import idempotency, suspected-duplicate visibility, run inspection, and undo.
 
 ## Next Action
 
-- [ ] Write the single next checkpoint as one clear, bounded request.
+- [ ] Data-eng implements and verifies `REQ-20260713-073512-data-eng`, then sends `IMPLEMENTATION_DONE` and a `REVIEW_REQUEST` to the registered review lane.
 
 ## Active Request
 
-- request_id:
-- owner_lane:
-- iteration:
+- request_id: REQ-20260713-073512-data-eng
+- owner_lane: data-eng
+- iteration: 1
 
 ## Blockers
 
@@ -34,7 +35,7 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Done When
 
-- [ ] Restate the completion condition this handoff is driving toward.
+- [ ] Both approved fixtures import with field-level correctness, bad rows remain visible, exact re-imports do not double-count, legitimate lookalikes remain separate, and each run is inspectable and independently undoable without losing manual corrections.
 
 ## Memory Protocol
 

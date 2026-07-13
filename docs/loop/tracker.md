@@ -11,8 +11,8 @@ Phase dashboard for the loop. Keep checkpoints small and verifiable. Use the sta
 
 ## Checkpoints
 
-- [~] Confirm objective, Done-When, standing data invariants, operating flow, and approved redacted input shape.
-- [ ] Implement local ingestion, raw/normalized storage, source traceability, deduplication, and reversible `run_id` import units.
+- [x] Confirm objective, Done-When, standing data invariants, operating flow, and approved synthetic input shape.
+- [~] Implement local ingestion, raw/normalized storage, source traceability, deduplication, and reversible `run_id` import units.
 - [ ] Implement categorization, persistent human corrections, monthly aggregation, and API contracts.
 - [ ] Implement browser import/review flows and the monthly dashboard with reconciled pie-chart data.
 - [ ] Pass independent acceptance/privacy review and human QA on the live local application.
@@ -32,4 +32,5 @@ Phase dashboard for the loop. Keep checkpoints small and verifiable. Use the sta
 
 - OCR remains an extension boundary only for this MVP; installing a system OCR engine requires explicit human approval.
 - REQ-20260712-200417-data-eng accepted the SQLite core foundation at commit `0ea7be5`; ingestion/parsing, deduplication decisions, categorization, aggregation, API, and UI remain unchecked work.
+- The human approved the operating flow and two wholly synthetic TD-style fixtures on 2026-07-13. These fixtures may be committed and are the end-to-end input for the ingestion slice; the real TD statement remains final-local-QA only.
 - Record verification commands, evidence paths, and blockers next to each checkpoint as it closes.

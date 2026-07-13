@@ -37,6 +37,18 @@ Build a local-first Canadian monthly expense analysis web application that impor
 - Frontend tests for browser file selection/drag-and-drop, import review, duplicate review, manual corrections, month filtering, totals, and pie-chart data.
 - Independent end-to-end acceptance and privacy checks, followed by the required human-QA pass against a live local instance.
 
+## Confirmed Operating Flow
+
+1. Open the local web application and drag in, or select, one or more statement files.
+2. Review an import summary showing successful transactions, failed source records, and suspected duplicates.
+3. Inspect the records introduced by any `run_id`, and undo an entire import when needed.
+4. Land on the most recent month with data by default, see the monthly total and category pie chart first, then drill into category and transaction details.
+
+## Approved Test Inputs
+
+- The synthetic TD-style CSV and text-PDF statements described in `docs/product/import-pipeline.md` are explicitly approved for verbatim test-fixture use and repository commits.
+- The human's real TD statement is not an approved fixture. It remains private and may be used only for final local human verification under INV-8.
+
 ## Status Legend
 
 - `[ ]` not started

@@ -15,6 +15,12 @@ Boundaries every lane must respect. Read before implementing or reviewing.
 - Project/package dependencies may be installed automatically.
 - Ask the human before installing any system-level dependency, including an OCR engine.
 
+## Test Data Authorization
+
+- `td-mock-2026-06.csv` and `td-mock-2026-05.pdf` contain wholly synthetic data. They may be read, quoted, copied verbatim into `tests/backend/fixtures/`, and committed to Git.
+- The human's real TD statement remains private: use it only for final local human verification. Never copy its contents into prompts, fixtures, logs, loop messages, evidence records, or Git.
+- Evidence for statement-import checks should record counts, booleans, hashes, and exit codes; synthetic fixture content may appear in test assertions where useful.
+
 ## Process Constraints
 
 - Only switch sessions at a checkpoint boundary.
