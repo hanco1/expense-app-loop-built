@@ -1,20 +1,21 @@
 # Review Current State
 
 current_request_id: REQ-20260713-073512-data-eng
-status: FIX_REQUESTED
+status: BLOCKED
 iteration: 2
-last_updated: 2026-07-13T07:56:00Z
-heartbeat: 2026-07-13T07:56:00Z
+last_updated: 2026-07-13T08:07:20Z
+heartbeat: 2026-07-13T08:07:20Z
 model_observed: gpt-5.6-sol xhigh (highest)
 
 ## Current Checkpoint
 
-- Iteration 1 independently reviewed at commit 9fccab6; blocker found in failed-import atomicity and explicit failure visibility.
+- Iteration 2 independently reviewed at commit 6bca89e; prior partial-state blocker is closed, but Decimal exceptions still drop candidate rows instead of retaining `invalid_amount`.
 
 ## Next Action
 
-- Data-eng fixes partial active state after a later import failure and returns iteration-2 evidence for re-review.
+- Product asks the human whether to raise max_fix_cycles from 3 to 4; only then may the same request resume as iteration 3.
 
 ## Blockers
 
-- A rejected supported-shape CSV can leave earlier rows effective under an active run whose ID was not returned.
+- Technical: `NaN` and `1e999999` bypass row-level invalid-amount handling and leave zero retained source records.
+- Process: anti-thrash cap reached (`fix_cycles=3`, `max_fix_cycles=3`).
