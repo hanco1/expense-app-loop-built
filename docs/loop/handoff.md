@@ -6,16 +6,17 @@ the next actor can continue from repo files plus the latest message alone.
 ## Current State
 
 - The SQLite core foundation is accepted. The human has confirmed the browser operating flow and authorized two wholly synthetic TD-style fixtures for committed end-to-end tests.
-- Product prepared `REQ-20260713-073512-data-eng` for TD-style CSV/text-PDF ingestion, exact re-import idempotency, suspected-duplicate visibility, run inspection, and undo.
+- Data-eng implemented `REQ-20260713-073512-data-eng` at commit `9fccab6`. Product independently reran all seven declared commands; the full backend suite passed 24/24 and the completion gate returned `SHIP_CHECK_OK`.
+- Independent review is active on the verified review thread. Acceptance remains product-owned and has not been granted.
 
 ## Next Action
 
-- [ ] Data-eng implements and verifies `REQ-20260713-073512-data-eng`, then sends `IMPLEMENTATION_DONE` and a `REVIEW_REQUEST` to the registered review lane.
+- [ ] Review commit `9fccab6` against every criterion, invariant, scope boundary, looks-done-but-wrong risk, and ease-of-misuse path; return `REVIEW_DONE` or a blocker-severity `FIX_REQUEST`.
 
 ## Active Request
 
 - request_id: REQ-20260713-073512-data-eng
-- owner_lane: data-eng
+- owner_lane: review
 - iteration: 1
 
 ## Blockers
