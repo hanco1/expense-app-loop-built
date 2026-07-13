@@ -25,7 +25,7 @@ next_action:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: pending
-- sent_at:
+- delivery_status: sent
+- sent_at: 2026-07-13T07:59:03Z
 expected_reply:
 - No immediate reply required; remain available for the iteration-2 REVIEW_REQUEST.
