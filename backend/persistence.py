@@ -3,7 +3,7 @@ from __future__ import annotations
 import sqlite3
 from collections.abc import Iterator
 from contextlib import contextmanager
-from datetime import UTC, datetime
+from datetime import UTC, date, datetime
 from os import PathLike
 from pathlib import Path
 from typing import Any
@@ -17,8 +17,13 @@ CREATE TABLE IF NOT EXISTS import_runs (
     run_id TEXT PRIMARY KEY,
     created_at TEXT NOT NULL,
     source_fingerprint TEXT NOT NULL,
+    source_name TEXT NOT NULL DEFAULT '',
+    source_type TEXT NOT NULL DEFAULT 'unknown'
+        CHECK (source_type IN ('unknown', 'csv', 'pdf')),
+    exact_reimport_of_run_id TEXT,
     state TEXT NOT NULL DEFAULT 'active'
-        CHECK (state IN ('active', 'undone'))
+        CHECK (state IN ('active', 'undone')),
+    FOREIGN KEY (exact_reimport_of_run_id) REFERENCES import_runs(run_id)
 );
 
 CREATE TABLE IF NOT EXISTS source_records (
@@ -79,12 +84,48 @@ CREATE TABLE IF NOT EXISTS manual_corrections (
     FOREIGN KEY (identity_id) REFERENCES transaction_identities(identity_id)
 );
 
+CREATE TABLE IF NOT EXISTS normalized_transactions (
+    identity_id TEXT PRIMARY KEY,
+    transaction_date TEXT NOT NULL
+        CHECK (transaction_date GLOB '[0-9][0-9][0-9][0-9]-[0-9][0-9]-[0-9][0-9]'),
+    merchant TEXT NOT NULL CHECK (length(trim(merchant)) > 0),
+    amount_minor INTEGER NOT NULL
+        CHECK (typeof(amount_minor) = 'integer'),
+    currency TEXT NOT NULL
+        CHECK (length(currency) = 3 AND currency GLOB '[A-Z][A-Z][A-Z]'),
+    is_spending INTEGER NOT NULL CHECK (is_spending IN (0, 1)),
+    created_at TEXT NOT NULL,
+    CHECK (is_spending = CASE WHEN amount_minor < 0 THEN 1 ELSE 0 END),
+    FOREIGN KEY (identity_id) REFERENCES transaction_identities(identity_id)
+);
+
+CREATE TABLE IF NOT EXISTS duplicate_links (
+    duplicate_link_id TEXT PRIMARY KEY,
+    left_identity_id TEXT NOT NULL,
+    right_identity_id TEXT NOT NULL,
+    link_type TEXT NOT NULL DEFAULT 'suspected_duplicate'
+        CHECK (link_type = 'suspected_duplicate'),
+    state TEXT NOT NULL DEFAULT 'suspected_pending'
+        CHECK (state = 'suspected_pending'),
+    created_at TEXT NOT NULL,
+    CHECK (left_identity_id < right_identity_id),
+    UNIQUE (left_identity_id, right_identity_id, link_type),
+    FOREIGN KEY (left_identity_id) REFERENCES transaction_identities(identity_id),
+    FOREIGN KEY (right_identity_id) REFERENCES transaction_identities(identity_id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_source_records_run
     ON source_records(run_id, created_at, source_record_id);
 CREATE INDEX IF NOT EXISTS idx_occurrences_run
     ON imported_occurrences(run_id, created_at, occurrence_id);
 CREATE INDEX IF NOT EXISTS idx_corrections_identity
     ON manual_corrections(identity_id, created_at, correction_id);
+CREATE INDEX IF NOT EXISTS idx_normalized_transaction_fields
+    ON normalized_transactions(
+        transaction_date, merchant, amount_minor, currency, identity_id
+    );
+CREATE INDEX IF NOT EXISTS idx_duplicate_links_right
+    ON duplicate_links(right_identity_id, left_identity_id);
 
 CREATE TRIGGER IF NOT EXISTS import_runs_no_delete
 BEFORE DELETE ON import_runs
@@ -97,6 +138,9 @@ BEFORE UPDATE ON import_runs
 WHEN NEW.run_id IS NOT OLD.run_id
     OR NEW.created_at IS NOT OLD.created_at
     OR NEW.source_fingerprint IS NOT OLD.source_fingerprint
+    OR NEW.source_name IS NOT OLD.source_name
+    OR NEW.source_type IS NOT OLD.source_type
+    OR NEW.exact_reimport_of_run_id IS NOT OLD.exact_reimport_of_run_id
 BEGIN
     SELECT RAISE(ABORT, 'import run identity is immutable');
 END;
@@ -176,6 +220,30 @@ BEFORE DELETE ON manual_corrections
 BEGIN
     SELECT RAISE(ABORT, 'manual corrections are retained');
 END;
+
+CREATE TRIGGER IF NOT EXISTS normalized_transactions_no_update
+BEFORE UPDATE ON normalized_transactions
+BEGIN
+    SELECT RAISE(ABORT, 'normalized transactions are immutable');
+END;
+
+CREATE TRIGGER IF NOT EXISTS normalized_transactions_no_delete
+BEFORE DELETE ON normalized_transactions
+BEGIN
+    SELECT RAISE(ABORT, 'normalized transactions are retained');
+END;
+
+CREATE TRIGGER IF NOT EXISTS duplicate_links_no_update
+BEFORE UPDATE ON duplicate_links
+BEGIN
+    SELECT RAISE(ABORT, 'duplicate links are append-only');
+END;
+
+CREATE TRIGGER IF NOT EXISTS duplicate_links_no_delete
+BEFORE DELETE ON duplicate_links
+BEGIN
+    SELECT RAISE(ABORT, 'duplicate links are retained');
+END;
 """
 
 
@@ -207,25 +275,67 @@ class CoreStore:
         with self._connection() as connection:
             connection.executescript(SCHEMA)
 
-    def create_import_run(self, source_fingerprint: str) -> str:
+    def create_import_run(
+        self,
+        source_fingerprint: str,
+        *,
+        source_name: str = "",
+        source_type: str = "unknown",
+        exact_reimport_of_run_id: str | None = None,
+    ) -> str:
         self._require_nonempty_text(source_fingerprint, "source_fingerprint")
+        if not isinstance(source_name, str):
+            raise TypeError("source_name must be text")
+        if source_type not in {"unknown", "csv", "pdf"}:
+            raise ValueError("source_type must be 'unknown', 'csv', or 'pdf'")
+        if exact_reimport_of_run_id is not None:
+            self._require_nonempty_text(
+                exact_reimport_of_run_id,
+                "exact_reimport_of_run_id",
+            )
         run_id = self._new_id("run")
         with self._connection() as connection, connection:
             connection.execute(
                 "INSERT INTO import_runs "
-                "(run_id, created_at, source_fingerprint, state) "
-                "VALUES (?, ?, ?, 'active')",
-                (run_id, self._now(), source_fingerprint),
+                "(run_id, created_at, source_fingerprint, source_name, source_type, "
+                "exact_reimport_of_run_id, state) "
+                "VALUES (?, ?, ?, ?, ?, ?, 'active')",
+                (
+                    run_id,
+                    self._now(),
+                    source_fingerprint,
+                    source_name,
+                    source_type,
+                    exact_reimport_of_run_id,
+                ),
             )
         return run_id
 
     def get_import_run(self, run_id: str) -> dict[str, Any]:
         return self._fetch_one(
-            "SELECT run_id, created_at, source_fingerprint, state "
+            "SELECT run_id, created_at, source_fingerprint, source_name, "
+            "source_type, exact_reimport_of_run_id, state "
             "FROM import_runs WHERE run_id = ?",
             (run_id,),
             entity="import run",
         )
+
+    def find_first_import_run(
+        self,
+        source_fingerprint: str,
+        source_type: str,
+    ) -> str | None:
+        self._require_nonempty_text(source_fingerprint, "source_fingerprint")
+        if source_type not in {"csv", "pdf"}:
+            raise ValueError("source_type must be 'csv' or 'pdf'")
+        with self._connection() as connection:
+            row = connection.execute(
+                "SELECT run_id FROM import_runs "
+                "WHERE source_fingerprint = ? AND source_type = ? "
+                "ORDER BY created_at, run_id LIMIT 1",
+                (source_fingerprint, source_type),
+            ).fetchone()
+        return None if row is None else str(row["run_id"])
 
     def add_source_record(
         self,
@@ -298,6 +408,118 @@ class CoreStore:
                 (identity_id, fingerprint, self._now()),
             )
             return identity_id
+
+    def add_normalized_transaction(
+        self,
+        identity_id: str,
+        *,
+        transaction_date: str,
+        merchant: str,
+        amount_minor: int,
+        currency: str,
+    ) -> bool:
+        self._require_nonempty_text(identity_id, "identity_id")
+        try:
+            date.fromisoformat(transaction_date)
+        except (TypeError, ValueError) as error:
+            raise ValueError("transaction_date must be a valid ISO calendar day") from error
+        self._require_nonempty_text(merchant, "merchant")
+        if merchant.strip().isnumeric():
+            raise ValueError("merchant must not be numeric-only")
+        if type(amount_minor) is not int:
+            raise TypeError("amount_minor must be an integer, never a binary float")
+        if (
+            not isinstance(currency, str)
+            or len(currency) != 3
+            or not currency.isascii()
+            or not currency.isalpha()
+            or not currency.isupper()
+        ):
+            raise ValueError("currency must be a three-letter uppercase ISO code")
+
+        expected = {
+            "transaction_date": transaction_date,
+            "merchant": merchant.strip(),
+            "amount_minor": amount_minor,
+            "currency": currency,
+            "is_spending": amount_minor < 0,
+        }
+        with self._connection() as connection, connection:
+            cursor = connection.execute(
+                "INSERT INTO normalized_transactions "
+                "(identity_id, transaction_date, merchant, amount_minor, currency, "
+                "is_spending, created_at) VALUES (?, ?, ?, ?, ?, ?, ?) "
+                "ON CONFLICT(identity_id) DO NOTHING",
+                (
+                    identity_id,
+                    transaction_date,
+                    merchant.strip(),
+                    amount_minor,
+                    currency,
+                    int(amount_minor < 0),
+                    self._now(),
+                ),
+            )
+            row = connection.execute(
+                "SELECT transaction_date, merchant, amount_minor, currency, is_spending "
+                "FROM normalized_transactions WHERE identity_id = ?",
+                (identity_id,),
+            ).fetchone()
+        if row is None:
+            raise RuntimeError("normalized transaction insert did not persist")
+        actual = dict(row)
+        actual["is_spending"] = bool(actual["is_spending"])
+        if actual != expected:
+            raise sqlite3.IntegrityError(
+                "stable identity already has different normalized transaction facts"
+            )
+        return cursor.rowcount == 1
+
+    def link_suspected_duplicates(self, identity_id: str) -> list[str]:
+        self._require_nonempty_text(identity_id, "identity_id")
+        created_link_ids: list[str] = []
+        with self._connection() as connection, connection:
+            normalized = connection.execute(
+                "SELECT transaction_date, merchant, amount_minor, currency "
+                "FROM normalized_transactions WHERE identity_id = ?",
+                (identity_id,),
+            ).fetchone()
+            if normalized is None:
+                raise KeyError(f"normalized transaction not found: {identity_id}")
+            matches = connection.execute(
+                "SELECT identity_id FROM normalized_transactions "
+                "WHERE identity_id != ? AND transaction_date = ? AND merchant = ? "
+                "AND amount_minor = ? AND currency = ? ORDER BY identity_id",
+                (
+                    identity_id,
+                    normalized["transaction_date"],
+                    normalized["merchant"],
+                    normalized["amount_minor"],
+                    normalized["currency"],
+                ),
+            ).fetchall()
+            for match in matches:
+                left_identity_id, right_identity_id = sorted(
+                    (identity_id, str(match["identity_id"]))
+                )
+                duplicate_link_id = self._new_id("dup")
+                cursor = connection.execute(
+                    "INSERT INTO duplicate_links "
+                    "(duplicate_link_id, left_identity_id, right_identity_id, "
+                    "link_type, state, created_at) "
+                    "VALUES (?, ?, ?, 'suspected_duplicate', 'suspected_pending', ?) "
+                    "ON CONFLICT(left_identity_id, right_identity_id, link_type) "
+                    "DO NOTHING",
+                    (
+                        duplicate_link_id,
+                        left_identity_id,
+                        right_identity_id,
+                        self._now(),
+                    ),
+                )
+                if cursor.rowcount == 1:
+                    created_link_ids.append(duplicate_link_id)
+        return created_link_ids
 
     def add_occurrence(
         self,
@@ -430,6 +652,223 @@ class CoreStore:
             entity="occurrence",
         )
 
+    def get_import_run_summary(self, run_id: str) -> dict[str, Any]:
+        return self._fetch_one(
+            "SELECT r.run_id, r.created_at, r.source_name, r.source_type, "
+            "r.source_fingerprint, r.state, r.exact_reimport_of_run_id, "
+            "COUNT(DISTINCT s.source_record_id) AS source_record_count, "
+            "SUM(CASE WHEN s.parse_status = 'parsed' THEN 1 ELSE 0 END) "
+            "AS parsed_count, "
+            "SUM(CASE WHEN s.parse_status = 'failed' THEN 1 ELSE 0 END) "
+            "AS failed_count, "
+            "COUNT(DISTINCT o.occurrence_id) AS occurrence_count "
+            "FROM import_runs AS r "
+            "LEFT JOIN source_records AS s ON s.run_id = r.run_id "
+            "LEFT JOIN imported_occurrences AS o "
+            "ON o.source_record_id = s.source_record_id "
+            "WHERE r.run_id = ? GROUP BY r.run_id",
+            (run_id,),
+            entity="import run",
+        )
+
+    def get_import_run_detail(self, run_id: str) -> list[dict[str, Any]]:
+        with self._connection() as connection:
+            run = connection.execute(
+                "SELECT run_id FROM import_runs WHERE run_id = ?",
+                (run_id,),
+            ).fetchone()
+            if run is None:
+                raise KeyError(f"import run not found: {run_id}")
+            rows = connection.execute(
+                "SELECT s.source_record_id, s.run_id, r.source_name, "
+                "r.source_type, r.source_fingerprint, "
+                "r.exact_reimport_of_run_id, s.source_locator, "
+                "s.retained_input, s.parse_status, s.error_code, "
+                "o.occurrence_id, o.identity_id, o.inclusion_state, "
+                "o.exclusion_reason, n.transaction_date, n.merchant, "
+                "n.amount_minor, n.currency, n.is_spending "
+                "FROM source_records AS s "
+                "JOIN import_runs AS r ON r.run_id = s.run_id "
+                "LEFT JOIN imported_occurrences AS o "
+                "ON o.source_record_id = s.source_record_id "
+                "LEFT JOIN normalized_transactions AS n "
+                "ON n.identity_id = o.identity_id "
+                "WHERE s.run_id = ? ORDER BY s.created_at, s.source_record_id",
+                (run_id,),
+            ).fetchall()
+            details: list[dict[str, Any]] = []
+            for row in rows:
+                identity_id = row["identity_id"]
+                duplicate_identity_ids = (
+                    []
+                    if identity_id is None
+                    else self._duplicate_identity_ids(connection, str(identity_id))
+                )
+                normalized_transaction = None
+                if row["transaction_date"] is not None:
+                    normalized_transaction = {
+                        "transaction_date": row["transaction_date"],
+                        "merchant": row["merchant"],
+                        "amount_minor": row["amount_minor"],
+                        "currency": row["currency"],
+                        "is_spending": bool(row["is_spending"]),
+                    }
+                if row["occurrence_id"] is None:
+                    inclusion_reason = f"parse_failed:{row['error_code']}"
+                elif row["inclusion_state"] == "included":
+                    inclusion_reason = "active_support"
+                else:
+                    inclusion_reason = row["exclusion_reason"]
+                details.append(
+                    {
+                        "source_record_id": row["source_record_id"],
+                        "run_id": row["run_id"],
+                        "source_name": row["source_name"],
+                        "source_type": row["source_type"],
+                        "source_fingerprint": row["source_fingerprint"],
+                        "exact_reimport_of_run_id": row["exact_reimport_of_run_id"],
+                        "source_locator": row["source_locator"],
+                        "retained_input": row["retained_input"],
+                        "parse_status": row["parse_status"],
+                        "error_code": row["error_code"],
+                        "occurrence_id": row["occurrence_id"],
+                        "identity_id": identity_id,
+                        "normalized_transaction": normalized_transaction,
+                        "duplicate_state": (
+                            "suspected_pending" if duplicate_identity_ids else "none"
+                        ),
+                        "suspected_duplicate_identity_ids": duplicate_identity_ids,
+                        "inclusion_state": row["inclusion_state"],
+                        "inclusion_reason": inclusion_reason,
+                    }
+                )
+        return details
+
+    def list_effective_transactions(self) -> list[dict[str, Any]]:
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT n.identity_id, n.transaction_date, n.merchant, "
+                "n.amount_minor, n.currency, n.is_spending, "
+                "COUNT(DISTINCT o.run_id) AS active_support_count "
+                "FROM normalized_transactions AS n "
+                "JOIN imported_occurrences AS o ON o.identity_id = n.identity_id "
+                "JOIN import_runs AS r ON r.run_id = o.run_id "
+                "WHERE o.inclusion_state = 'included' AND r.state = 'active' "
+                "GROUP BY n.identity_id "
+                "ORDER BY n.transaction_date, n.identity_id"
+            ).fetchall()
+            transactions: list[dict[str, Any]] = []
+            for row in rows:
+                active_supports = self._active_supports(
+                    connection,
+                    str(row["identity_id"]),
+                )
+                duplicate_identity_ids = self._duplicate_identity_ids(
+                    connection,
+                    str(row["identity_id"]),
+                )
+                transactions.append(
+                    {
+                        "identity_id": row["identity_id"],
+                        "transaction_date": row["transaction_date"],
+                        "merchant": row["merchant"],
+                        "amount_minor": row["amount_minor"],
+                        "currency": row["currency"],
+                        "is_spending": bool(row["is_spending"]),
+                        "active_support_count": row["active_support_count"],
+                        "active_supports": active_supports,
+                        "duplicate_state": (
+                            "suspected_pending" if duplicate_identity_ids else "none"
+                        ),
+                        "suspected_duplicate_identity_ids": duplicate_identity_ids,
+                        "inclusion_state": "included",
+                        "inclusion_reason": "active_occurrence_support",
+                    }
+                )
+        return transactions
+
+    def list_suspected_duplicate_pairs(self) -> list[dict[str, Any]]:
+        with self._connection() as connection:
+            rows = connection.execute(
+                "SELECT d.duplicate_link_id, d.left_identity_id, "
+                "d.right_identity_id, d.state, "
+                "EXISTS(SELECT 1 FROM imported_occurrences AS lo "
+                "JOIN import_runs AS lr ON lr.run_id = lo.run_id "
+                "WHERE lo.identity_id = d.left_identity_id "
+                "AND lo.inclusion_state = 'included' AND lr.state = 'active') "
+                "AS left_included, "
+                "EXISTS(SELECT 1 FROM imported_occurrences AS ro "
+                "JOIN import_runs AS rr ON rr.run_id = ro.run_id "
+                "WHERE ro.identity_id = d.right_identity_id "
+                "AND ro.inclusion_state = 'included' AND rr.state = 'active') "
+                "AS right_included "
+                "FROM duplicate_links AS d "
+                "ORDER BY d.created_at, d.duplicate_link_id"
+            ).fetchall()
+        return [
+            {
+                "duplicate_link_id": row["duplicate_link_id"],
+                "left_identity_id": row["left_identity_id"],
+                "right_identity_id": row["right_identity_id"],
+                "state": row["state"],
+                "both_included": bool(row["left_included"] and row["right_included"]),
+            }
+            for row in rows
+        ]
+
+    def get_statement_occurrence_provenance(
+        self,
+        occurrence_id: str,
+    ) -> dict[str, Any]:
+        with self._connection() as connection:
+            row = connection.execute(
+                "SELECT o.occurrence_id, o.run_id, r.source_name, r.source_type, "
+                "r.source_fingerprint, o.source_record_id, s.source_locator, "
+                "o.identity_id AS transaction_identity_id, "
+                "i.fingerprint AS transaction_fingerprint, "
+                "n.transaction_date, n.merchant, n.amount_minor, n.currency, "
+                "n.is_spending, o.inclusion_state, o.exclusion_reason "
+                "FROM imported_occurrences AS o "
+                "JOIN import_runs AS r ON r.run_id = o.run_id "
+                "JOIN source_records AS s ON s.source_record_id = o.source_record_id "
+                "JOIN transaction_identities AS i ON i.identity_id = o.identity_id "
+                "JOIN normalized_transactions AS n ON n.identity_id = o.identity_id "
+                "WHERE o.occurrence_id = ?",
+                (occurrence_id,),
+            ).fetchone()
+            if row is None:
+                raise KeyError("statement occurrence not found")
+            duplicate_identity_ids = self._duplicate_identity_ids(
+                connection,
+                str(row["transaction_identity_id"]),
+            )
+        return {
+            "occurrence_id": row["occurrence_id"],
+            "run_id": row["run_id"],
+            "source_name": row["source_name"],
+            "source_type": row["source_type"],
+            "source_fingerprint": row["source_fingerprint"],
+            "source_record_id": row["source_record_id"],
+            "source_locator": row["source_locator"],
+            "transaction_identity_id": row["transaction_identity_id"],
+            "transaction_fingerprint": row["transaction_fingerprint"],
+            "transaction_date": row["transaction_date"],
+            "merchant": row["merchant"],
+            "amount_minor": row["amount_minor"],
+            "currency": row["currency"],
+            "is_spending": bool(row["is_spending"]),
+            "duplicate_state": (
+                "suspected_pending" if duplicate_identity_ids else "none"
+            ),
+            "suspected_duplicate_identity_ids": duplicate_identity_ids,
+            "inclusion_state": row["inclusion_state"],
+            "inclusion_reason": (
+                "active_support"
+                if row["inclusion_state"] == "included"
+                else row["exclusion_reason"]
+            ),
+        }
+
     def entity_counts(self) -> dict[str, int]:
         tables = (
             "import_runs",
@@ -437,6 +876,8 @@ class CoreStore:
             "transaction_identities",
             "imported_occurrences",
             "manual_corrections",
+            "normalized_transactions",
+            "duplicate_links",
         )
         with self._connection() as connection:
             return {
@@ -467,6 +908,52 @@ class CoreStore:
         with self._connection() as connection:
             rows = connection.execute(statement, parameters).fetchall()
         return [dict(row) for row in rows]
+
+    @staticmethod
+    def _duplicate_identity_ids(
+        connection: sqlite3.Connection,
+        identity_id: str,
+    ) -> list[str]:
+        rows = connection.execute(
+            "SELECT CASE WHEN left_identity_id = ? THEN right_identity_id "
+            "ELSE left_identity_id END AS other_identity_id "
+            "FROM duplicate_links "
+            "WHERE left_identity_id = ? OR right_identity_id = ? "
+            "ORDER BY other_identity_id",
+            (identity_id, identity_id, identity_id),
+        ).fetchall()
+        return [str(row["other_identity_id"]) for row in rows]
+
+    @staticmethod
+    def _active_supports(
+        connection: sqlite3.Connection,
+        identity_id: str,
+    ) -> list[dict[str, Any]]:
+        rows = connection.execute(
+            "SELECT o.occurrence_id, o.run_id, r.source_name, r.source_type, "
+            "r.source_fingerprint, o.source_record_id, s.source_locator, "
+            "o.inclusion_state "
+            "FROM imported_occurrences AS o "
+            "JOIN import_runs AS r ON r.run_id = o.run_id "
+            "JOIN source_records AS s ON s.source_record_id = o.source_record_id "
+            "WHERE o.identity_id = ? AND o.inclusion_state = 'included' "
+            "AND r.state = 'active' ORDER BY r.created_at, o.occurrence_id",
+            (identity_id,),
+        ).fetchall()
+        return [
+            {
+                "occurrence_id": row["occurrence_id"],
+                "run_id": row["run_id"],
+                "source_name": row["source_name"],
+                "source_type": row["source_type"],
+                "source_fingerprint": row["source_fingerprint"],
+                "source_record_id": row["source_record_id"],
+                "source_locator": row["source_locator"],
+                "inclusion_state": row["inclusion_state"],
+                "inclusion_reason": "active_support",
+            }
+            for row in rows
+        ]
 
     @staticmethod
     def _new_id(prefix: str) -> str:
