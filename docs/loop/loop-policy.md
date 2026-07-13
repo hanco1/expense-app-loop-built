@@ -9,7 +9,7 @@
 ## Request Policy
 
 <!-- max_fix_cycles bounds token burn per request; humans may edit it here or via the loop dashboard's POST /api/policy control. Keep the "max_fix_cycles: <int>" line format. -->
-max_fix_cycles: 3
+max_fix_cycles: 4
 auto_dispatch: true
 auto_chain_next_session: false
 
@@ -21,6 +21,7 @@ dependency_install: auto-pip-only
 - Cap consecutive FIX_REQUESTED <-> IMPLEMENTING cycles for one request at `max_fix_cycles`.
 - When the cap is reached, stop the fix loop and escalate the request to product as BLOCKED.
 - Do not reopen an ACCEPTED request without a new request_id.
+- Human-approved temporary override: keep `max_fix_cycles: 4` only while `REQ-20260713-073512-data-eng` iteration 3 is active; restore it to `3` immediately after this request reaches `ACCEPTED`.
 
 ## Completion Token
 

@@ -6,23 +6,22 @@ the next actor can continue from repo files plus the latest message alone.
 ## Current State
 
 - The SQLite core foundation is accepted. The human has confirmed the browser operating flow and authorized two wholly synthetic TD-style fixtures for committed end-to-end tests.
-- Data-eng fixed the iteration 1 partial-active-state blocker at commit `6bca89e`; all eight declared iteration-2 commands and the completion gate are green.
-- Independent review found a remaining INV-1 blocker: Decimal exceptions (`NaN`, extreme exponent) drop the candidate source row instead of retaining `invalid_amount`. The anti-thrash cap is reached, so the request is BLOCKED pending a human decision.
+- Data-eng fixed the partial-active-state blocker at commit `6bca89e`; all eight declared iteration-2 commands and the completion gate were green.
+- The human approved a temporary `max_fix_cycles: 4` override. The same request is resumed as iteration 3 to fix the remaining INV-1 Decimal-exception source-row loss; the cap must return to 3 immediately after ACCEPTED.
 
 ## Next Action
 
-- [ ] Product asks the human whether to change `max_fix_cycles: 3` to `max_fix_cycles: 4`; if approved, resume the same request as iteration 3 with the recorded Decimal-exception fix.
+- [ ] Data-eng maps every Decimal construction/arithmetic/comparison/conversion exception to retained row-level `invalid_amount`, adds NaN and overflow-exponent regressions, and returns iteration-3 evidence for review.
 
 ## Active Request
 
 - request_id: REQ-20260713-073512-data-eng
-- owner_lane: product
-- iteration: 2
+- owner_lane: data-eng
+- iteration: 3
 
 ## Blockers
 
-- Technical blocker: Decimal arithmetic exceptions bypass row-level failure retention.
-- Process blocker: `fix_cycles=3` equals `max_fix_cycles=3`; no automatic next fix round is permitted.
+- None. The human authorized the final fix round.
 
 ## Pending Inbox Deliveries
 
