@@ -1,0 +1,14 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "checkpoint": "analysis-core",
+  "command": "python -m unittest tests.backend.test_analysis_inclusion -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T06:54:02Z",
+  "test_count": 3,
+  "exact_reimport_changed_totals": false,
+  "single_support_undo_changed_totals": false,
+  "final_support_undo_removed_month": true,
+  "credits_entered_spending": false,
+  "failed_rows_entered_aggregates": false,
+  "mixed_currency_rejected": true
+}

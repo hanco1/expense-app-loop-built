@@ -11,20 +11,22 @@ the next actor can continue from repo files plus the latest message alone.
 - Data-eng implemented the frozen class-wide whitelist at `06ac048`; product and independent review reproduced backend 31/31 and the full unchanged 282-path acceptance matrix with all nine recorded gates green. Review returned PASS with no scope, privacy, traceability, or misuse finding.
 - Product accepted the ingestion slice and restored the standing `max_fix_cycles: 3` in the same checkpoint.
 - Product specified the next core slice in `docs/product/analysis-core.md`: deterministic categories, append-only category/duplicate decisions, exact monthly fixture oracles, and typed local contracts.
+- Data-eng implemented the analysis core at `8aa5b6f`; all nine recorded commands are exit 0, backend discovery is 45/45, and product independently reproduced the exact May/June, correction, and duplicate checks.
+- The request remains `REVIEWING`. Independent review is testing a possible contradictory duplicate-decision graph that could exclude every identity; product also added a syntax-only VERIFY manifest supplement without changing any criterion or command.
 
 ## Next Action
 
-- [~] Data-eng implements `REQ-20260714-064051-data-eng` and returns nine-command evidence plus an independent review request.
+- [~] Review implementation `8aa5b6f` against C1-C7, the standing invariants, and the duplicate-graph misuse path; return PASS or one bounded blocker.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: data-eng
+- owner_lane: review
 - iteration: 1
 
 ## Blockers
 
-- No blocker. The standing anti-thrash cap is restored to 3.
+- No confirmed blocker yet. Review is actively validating the duplicate-graph misuse path; the standing anti-thrash cap is 3.
 
 ## Pending Inbox Deliveries
 

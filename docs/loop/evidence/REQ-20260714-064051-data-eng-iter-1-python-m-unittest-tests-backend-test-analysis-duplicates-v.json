@@ -1,0 +1,15 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "checkpoint": "analysis-core",
+  "command": "python -m unittest tests.backend.test_analysis_duplicates -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T06:54:02Z",
+  "test_count": 1,
+  "initial_decision": "pending",
+  "initial_included_identities": 2,
+  "decision_history": ["same_transaction", "distinct"],
+  "same_transaction_included_identities": 1,
+  "distinct_included_identities": 2,
+  "facts_deleted": false,
+  "survived_undo_reimport": true
+}

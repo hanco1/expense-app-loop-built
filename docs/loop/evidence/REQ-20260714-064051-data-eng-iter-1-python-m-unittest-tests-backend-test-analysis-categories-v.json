@@ -1,0 +1,14 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "checkpoint": "analysis-core",
+  "command": "python -m unittest tests.backend.test_analysis_categories -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T06:54:02Z",
+  "test_count": 3,
+  "fixture_transaction_count": 34,
+  "category_rule_version": "mvp-1",
+  "all_fixture_categories_exact": true,
+  "refund_category": "Refunds & Credits",
+  "income_category": "Income",
+  "positive_amounts_are_spending": false
+}

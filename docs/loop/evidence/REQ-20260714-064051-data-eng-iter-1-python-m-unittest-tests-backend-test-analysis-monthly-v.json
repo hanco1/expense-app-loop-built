@@ -1,0 +1,36 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "checkpoint": "analysis-core",
+  "command": "python -m unittest tests.backend.test_analysis_monthly -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T06:54:02Z",
+  "test_count": 1,
+  "may_transaction_count": 12,
+  "may_spending_total_minor": 50340,
+  "may_credit_total_minor": 60000,
+  "may_category_map": {
+    "Bills & Utilities": 16774,
+    "Groceries": 16378,
+    "Transportation": 6437,
+    "Shopping": 5423,
+    "Health & Fitness": 1984,
+    "Entertainment": 1799,
+    "Fees": 1095,
+    "Dining": 450
+  },
+  "june_transaction_count": 22,
+  "june_spending_total_minor": 277617,
+  "june_credit_total_minor": 72999,
+  "june_category_map": {
+    "Housing": 185000,
+    "Shopping": 30521,
+    "Groceries": 25727,
+    "Bills & Utilities": 16774,
+    "Transportation": 8047,
+    "Health & Fitness": 6554,
+    "Dining": 2100,
+    "Entertainment": 1799,
+    "Fees": 1095
+  },
+  "category_sums_reconcile": true
+}

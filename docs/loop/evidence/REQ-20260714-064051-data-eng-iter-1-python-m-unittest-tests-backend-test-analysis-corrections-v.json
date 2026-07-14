@@ -1,0 +1,14 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "checkpoint": "analysis-core",
+  "command": "python -m unittest tests.backend.test_analysis_corrections -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T06:54:02Z",
+  "test_count": 1,
+  "correction_history_count": 2,
+  "latest_wins": true,
+  "invalid_category_appended_rows": 0,
+  "survived_exact_reimport": true,
+  "survived_all_support_undo": true,
+  "survived_later_reimport": true
+}

@@ -1,0 +1,15 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "checkpoint": "analysis-core",
+  "command": "python -m unittest tests.backend.test_analysis_contracts -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T06:54:02Z",
+  "test_count": 2,
+  "typed_dataclass_contracts": true,
+  "deterministic_order": true,
+  "source_support_provenance": true,
+  "category_correction_history": true,
+  "duplicate_decision_history": true,
+  "contributing_identity_ids": true,
+  "strict_month_keys": true
+}

@@ -1,0 +1,9 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "checkpoint": "analysis-core",
+  "command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T06:54:02Z",
+  "test_count": 45,
+  "prior_backend_regressions": 0
+}
