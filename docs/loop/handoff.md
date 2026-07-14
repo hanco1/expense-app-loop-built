@@ -22,17 +22,17 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Next Action
 
-- [~] Product commits the frozen matrix handoff and sends one authoritative iteration-3 FIX_REQUEST to data-eng without changing either frozen artifact; raw usage remains 4/5 until data-eng claims implementation.
+- [~] Data-eng claims the single authoritative iteration-3 FIX_REQUEST, creating the only remaining counted `FIX_REQUESTED -> IMPLEMENTING` transition at raw 5/5, then implements the unchanged 55-path component contract.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: product
+- owner_lane: data-eng
 - iteration: 3
 
 ## Blockers
 
-- The frozen contract has 13 red compatible paths at `6b9378f`; product alone must dispatch the authoritative repair. The temporary cap is 5 and must return to 3 after ACCEPTED.
+- The frozen contract has 13 red compatible paths at `6b9378f`; data-eng must close all five unsafe operation families without modifying the matrix. The temporary cap is 5 and must return to 3 after ACCEPTED.
 
 ## Pending Inbox Deliveries
 
