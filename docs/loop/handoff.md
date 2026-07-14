@@ -21,20 +21,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Review froze the complete contract at `6fdc57d`: 55 executable compatible paths plus 20 explicitly impossible/invalid classes. The one post-freeze baseline run produced 13 red paths, 42 green compatible guardrails, and a green manifest guard without dispatching implementation.
 - Data-eng implemented the class-wide invariant at `53e57f6`: one latest-same component projection now validates structural keepers, rejects alternate-path distinct contradictions, and selects the active keeper or deterministic fallback without rewriting human history.
 - The unchanged frozen acceptance passes 56/56, backend discovery passes 50/50, both frozen hashes are unchanged, all ten iteration-3 evidence records are exit 0, and the completion gate is green. Independent review is now active.
+- Independent review found a write-boundary blocker: publicly exported `CoreStore.add_duplicate_decision()` bypasses the projection and commits a zero-keeper history row. The separate boundary probe is red, and raw fix-cycle usage is 5/5.
 
 ## Next Action
 
-- [~] Review implementation `53e57f6` against the unchanged 55-path matrix and original C1-C7 gates; product restores `max_fix_cycles: 3` only in the same checkpoint as ACCEPTED.
+- [!] Product commits the review BLOCKED handoff and obtains explicit human authority before any additional write-boundary round; do not dispatch at raw 5/5.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: review
+- owner_lane: product
 - iteration: 3
 
 ## Blockers
 
-- None in implementation; the temporary cap remains 5 until product restores it to 3 with ACCEPTED.
+- The frozen contract is green at `53e57f6`, but the exported persistence writer bypasses the component invariant. Raw fix-cycle use is 5/5; another round requires human authority. The temporary cap must still return to 3 after ACCEPTED.
 
 ## Pending Inbox Deliveries
 
