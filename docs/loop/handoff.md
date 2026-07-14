@@ -11,17 +11,17 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Next Action
 
-- [~] Review first defines and commits the complete valid/invalid numeric boundary matrix and red-capable acceptance coverage. Product then delivers that entire matrix to data-eng as the single iteration-4 FIX_REQUEST.
+- [~] Data-eng reads the frozen 282-path matrix and the authoritative iteration-4 FIX_REQUEST, then starts the single whitelist-based implementation without changing the matrix.
 
 ## Active Request
 
 - request_id: REQ-20260713-073512-data-eng
-- owner_lane: review
+- owner_lane: data-eng
 - iteration: 4
 
 ## Blockers
 
-- No human-authority blocker remains. Implementation is intentionally gated until review delivers the complete boundary matrix.
+- No human-authority blocker remains. The frozen matrix and authoritative FIX_REQUEST are ready for data-eng.
 - `max_fix_cycles: 7` is temporary for iteration 4. Restore it to 3 atomically after ACCEPTED.
 
 ## Pending Inbox Deliveries
