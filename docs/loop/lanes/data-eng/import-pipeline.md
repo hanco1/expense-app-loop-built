@@ -42,11 +42,13 @@ normalization. An out-of-range amount remains a failed source record with
 `invalid_amount`; public money persistence methods also reject integers outside
 that range before SQLite binding.
 
-The complete Decimal conversion block maps construction, multiplication,
-comparison, integral-value, and integer-conversion `ArithmeticError`/`ValueError`
-failures to the same row-level `invalid_amount`. Non-finite Decimal values are
-rejected before ordering comparisons, so `NaN`, infinity, and active-context
-overflow cannot abort the import or remove the retained source row.
+Amount conversion uses one whole-token ASCII decimal whitelist and exact string/
+integer structure rather than `Decimal`. It derives the coefficient, fractional
+digit count, and a bounded exponent; nonzero values must reduce exactly to cents
+and fit `0..9223372036854775807`, while zero remains zero for any exponent size.
+Debit negation happens only after unsigned validation. Every other nonblank token
+is retained as one `invalid_amount` record without a transaction or occurrence;
+blank-cell `missing_amount` and two-present-cell `ambiguous_amount` remain distinct.
 
 Run summary returns source metadata and parsed/failed/occurrence counts. Run
 detail returns every retained source record, parse result, normalized transaction,

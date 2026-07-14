@@ -4,7 +4,6 @@ import csv
 import hashlib
 import re
 from datetime import datetime
-from decimal import Decimal
 from io import BytesIO
 
 from pypdf import PdfReader
@@ -19,6 +18,14 @@ from contracts.statement_import import (
 
 CSV_HEADER = ["Date", "Description", "Debit", "Credit", "Balance"]
 PDF_DATE_PATTERN = re.compile(r"^\d{2}/\d{2}/\d{4}\s{2}")
+AMOUNT_PATTERN = re.compile(
+    r"\+?(?:"
+    r"(?P<integer>[0-9]+)(?:\.(?P<fraction>[0-9]*))?"
+    r"|\.(?P<leading_fraction>[0-9]+)"
+    r")"
+    r"(?:[eE](?P<exponent_sign>[+-]?)(?P<exponent_digits>[0-9]+))?"
+)
+SQLITE_INTEGER_MAX_TEXT = str(SQLITE_INTEGER_MAX)
 
 
 class RecordParseFailure(ValueError):
@@ -103,8 +110,8 @@ class TdTextPdfStatementParser:
                     transaction = _normalize_transaction(
                         raw_date=retained_input[0:10],
                         raw_merchant=retained_input[12:47],
-                        raw_debit=retained_input[47:61],
-                        raw_credit=retained_input[61:73],
+                        raw_debit=retained_input[47:61].strip(),
+                        raw_credit=retained_input[61:73].strip(),
                     )
                 except RecordParseFailure as error:
                     records.append(
@@ -251,14 +258,14 @@ def _normalize_transaction(
     if merchant.isnumeric():
         raise RecordParseFailure("numeric_merchant")
 
-    debit = raw_debit.strip()
-    credit = raw_credit.strip()
-    if not debit and not credit:
+    debit_present = bool(raw_debit.strip())
+    credit_present = bool(raw_credit.strip())
+    if not debit_present and not credit_present:
         raise RecordParseFailure("missing_amount")
-    if debit and credit:
+    if debit_present and credit_present:
         raise RecordParseFailure("ambiguous_amount")
-    amount_minor = _parse_cents(credit if credit else debit)
-    if debit:
+    amount_minor = _parse_cents(raw_credit if credit_present else raw_debit)
+    if debit_present:
         amount_minor = -amount_minor
     return ParsedTransaction(
         transaction_date=transaction_date,
@@ -268,22 +275,77 @@ def _normalize_transaction(
 
 
 def _parse_cents(raw_amount: str) -> int:
-    try:
-        amount = Decimal(raw_amount)
-        cents = amount * 100
-        if (
-            not amount.is_finite()
-            or not cents.is_finite()
-            or amount < 0
-            or cents != cents.to_integral_value()
-            or cents > SQLITE_INTEGER_MAX
-        ):
-            raise RecordParseFailure("invalid_amount")
-        return int(cents)
-    except RecordParseFailure:
-        raise
-    except (ArithmeticError, ValueError) as error:
-        raise RecordParseFailure("invalid_amount") from error
+    match = AMOUNT_PATTERN.fullmatch(raw_amount)
+    if match is None:
+        raise RecordParseFailure("invalid_amount")
+
+    integer = match.group("integer")
+    if integer is None:
+        fraction = match.group("leading_fraction")
+        coefficient_digits = fraction
+    else:
+        fraction = match.group("fraction") or ""
+        coefficient_digits = integer + fraction
+
+    significant_digits = coefficient_digits.lstrip("0")
+    if not significant_digits:
+        return 0
+
+    fractional_places = len(fraction)
+    trailing_zeros = len(significant_digits) - len(significant_digits.rstrip("0"))
+    minimum_exponent = fractional_places - 2 - trailing_zeros
+    maximum_exponent = (
+        fractional_places - 2 + len(SQLITE_INTEGER_MAX_TEXT) - len(significant_digits)
+    )
+    exponent = _bounded_exponent(
+        match.group("exponent_sign"),
+        match.group("exponent_digits"),
+        minimum=minimum_exponent,
+        maximum=maximum_exponent,
+    )
+
+    scale = exponent - fractional_places + 2
+    if scale < 0:
+        minor_digits = significant_digits[:scale]
+    else:
+        minor_digits = significant_digits + ("0" * scale)
+
+    if (
+        len(minor_digits) > len(SQLITE_INTEGER_MAX_TEXT)
+        or len(minor_digits) == len(SQLITE_INTEGER_MAX_TEXT)
+        and minor_digits > SQLITE_INTEGER_MAX_TEXT
+    ):
+        raise RecordParseFailure("invalid_amount")
+    return int(minor_digits)
+
+
+def _bounded_exponent(
+    sign: str | None,
+    digits: str | None,
+    *,
+    minimum: int,
+    maximum: int,
+) -> int:
+    if digits is None:
+        exponent = 0
+    else:
+        normalized = digits.lstrip("0")
+        if not normalized:
+            exponent = 0
+        else:
+            magnitude_limit = max(abs(minimum), abs(maximum))
+            limit_text = str(magnitude_limit)
+            if (
+                len(normalized) > len(limit_text)
+                or len(normalized) == len(limit_text)
+                and normalized > limit_text
+            ):
+                raise RecordParseFailure("invalid_amount")
+            magnitude = int(normalized)
+            exponent = -magnitude if sign == "-" else magnitude
+    if exponent < minimum or exponent > maximum:
+        raise RecordParseFailure("invalid_amount")
+    return exponent
 
 
 def _stable_identity_fingerprint(

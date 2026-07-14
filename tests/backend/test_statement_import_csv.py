@@ -1,10 +1,113 @@
 from __future__ import annotations
 
+import csv
+import io
 import unittest
 from datetime import date
 from unittest.mock import patch
 
 from tests.backend.statement_support import StatementStoreTestCase
+
+
+SQLITE_INTEGER_MAX = 9_223_372_036_854_775_807
+
+
+class StatementAmountWhitelistTests(StatementStoreTestCase):
+    VALID_AMOUNTS = (
+        ("zero-with-huge-positive-exponent", "0e+" + ("9" * 80), 0),
+        ("zero-with-huge-negative-exponent", "0e-" + ("9" * 80), 0),
+        ("inclusive-sqlite-maximum", "92233720368547758.07", SQLITE_INTEGER_MAX),
+        ("long-leading-zeros", ("0" * 1000) + "1.23", 123),
+        ("long-trailing-zeros", "1.23" + ("0" * 1000), 123),
+        ("long-exact-scientific-cent", "1" + ("0" * 1000) + "e-1002", 1),
+    )
+    INVALID_AMOUNTS = (
+        ("negative-zero", "-0"),
+        ("negative-zero-scientific", "-0E+999999"),
+        ("fractional-cent", "0.001"),
+        ("long-fractional-tail", "1.23" + ("0" * 1000) + "1"),
+        ("nonzero-underflow", "1e-999999999"),
+        ("over-sqlite-maximum", "92233720368547758.08"),
+        ("underscore", "1_000.00"),
+        ("leading-space", " 1.00"),
+        ("trailing-tab", "1.00\t"),
+        ("unicode-digits", "\u0661.\u0662\u0663"),
+        ("malformed-exponent", "1e+"),
+    )
+
+    def test_positive_whitelist_accepts_exact_cents_on_both_amount_paths(self) -> None:
+        for case_id, token, expected_cents in self.VALID_AMOUNTS:
+            for path in ("debit", "credit"):
+                with self.subTest(case_id=case_id, path=path):
+                    debit = token if path == "debit" else ""
+                    credit = token if path == "credit" else ""
+                    run_id = self._import_amount(case_id, path, debit, credit)
+                    summary = self.store.get_import_run_summary(run_id)
+                    self.assertEqual(
+                        (summary["parsed_count"], summary["failed_count"]),
+                        (1, 0),
+                    )
+                    transaction = self.store.get_import_run_detail(run_id)[0][
+                        "normalized_transaction"
+                    ]
+                    expected = -expected_cents if path == "debit" else expected_cents
+                    self.assertEqual(transaction["amount_minor"], expected)
+
+    def test_non_whitelist_tokens_are_retained_failures_on_both_amount_paths(self) -> None:
+        for case_id, token in self.INVALID_AMOUNTS:
+            for path in ("debit", "credit"):
+                with self.subTest(case_id=case_id, path=path):
+                    debit = token if path == "debit" else ""
+                    credit = token if path == "credit" else ""
+                    run_id = self._import_amount(case_id, path, debit, credit)
+                    summary = self.store.get_import_run_summary(run_id)
+                    self.assertEqual(
+                        (
+                            summary["parsed_count"],
+                            summary["failed_count"],
+                            summary["occurrence_count"],
+                        ),
+                        (0, 1, 0),
+                    )
+                    failure = self.store.get_import_run_detail(run_id)[0]
+                    self.assertEqual(failure["parse_status"], "failed")
+                    self.assertEqual(failure["error_code"], "invalid_amount")
+                    self.assertIsNone(failure["normalized_transaction"])
+                    self.assertEqual(
+                        failure["inclusion_reason"],
+                        "parse_failed:invalid_amount",
+                    )
+
+    def test_blank_counterparts_preserve_missing_and_ambiguous_semantics(self) -> None:
+        cases = (
+            ("both-empty", "", "", "missing_amount"),
+            ("both-blank", " \t", "\u00a0", "missing_amount"),
+            ("blank-debit", " \t", "1.23", None),
+            ("blank-credit", "1.23", "\u00a0", None),
+            ("both-present", "1.23", "4.56", "ambiguous_amount"),
+        )
+        for case_id, debit, credit, expected_error in cases:
+            with self.subTest(case_id=case_id):
+                run_id = self._import_amount(case_id, "absence", debit, credit)
+                record = self.store.get_import_run_detail(run_id)[0]
+                self.assertEqual(record["error_code"], expected_error)
+
+    def _import_amount(
+        self,
+        case_id: str,
+        path: str,
+        debit: str,
+        credit: str,
+    ) -> str:
+        output = io.StringIO(newline="")
+        writer = csv.writer(output, lineterminator="\r\n")
+        writer.writerow(["Date", "Description", "Debit", "Credit", "Balance"])
+        writer.writerow(["06/01/2026", f"BACKEND {case_id} {path}", debit, credit, "0.00"])
+        return self.importer.import_bytes(
+            output.getvalue().encode("utf-8"),
+            filename=f"amount-{case_id}-{path}.csv",
+            source_type="csv",
+        )
 
 
 class StatementCsvImportTests(StatementStoreTestCase):
