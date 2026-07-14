@@ -20,3 +20,4 @@ Messages sent or queued by this lane.
 | 2026-07-14T07:03:04Z | REQ-20260714-064051-data-eng | data-eng | docs/loop/messages/REQ-20260714-064051-data-eng/FIX_REQUEST-iter-2.md | sent 2026-07-14T07:06:14Z |
 | 2026-07-14T07:07:13Z | REQ-20260714-064051-data-eng | product | docs/loop/messages/REQ-20260714-064051-data-eng/LOOP_STATUS-review-fix-root-iter-1.md | sent 2026-07-14T07:07:34Z |
 | 2026-07-14T07:17:23Z | REQ-20260714-064051-data-eng | product | docs/loop/messages/REQ-20260714-064051-data-eng/BLOCKED-review-support-transition-iter-2.md | sent 2026-07-14T07:18:53Z |
+| 2026-07-14T07:19:57Z | REQ-20260714-064051-data-eng | product | docs/loop/messages/REQ-20260714-064051-data-eng/LOOP_STATUS-review-blocked-root-iter-2.md | sent 2026-07-14T07:20:18Z |
