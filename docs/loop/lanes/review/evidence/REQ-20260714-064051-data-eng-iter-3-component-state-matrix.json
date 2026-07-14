@@ -1,0 +1,43 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 3,
+  "phase": "pre_implementation_component_state_matrix",
+  "baseline_commit": "6b9378f",
+  "freeze_commit": "6fdc57d",
+  "ran_at": "2026-07-14T18:06:50Z",
+  "command": "python -m unittest tests.acceptance.test_analysis_core_review -v",
+  "exit_code": 1,
+  "tests_run": 56,
+  "failures": 13,
+  "errors": 0,
+  "matrix": {
+    "total_entries": 75,
+    "compatible_executable_paths": 55,
+    "impossible_or_invalid_classes": 20,
+    "red_paths": 13,
+    "green_paths": 42,
+    "manifest_guard": "green"
+  },
+  "red_path_ids": [
+    "P08", "P11", "P13", "C03", "C04", "C05", "C07", "C15", "T03", "T04", "T08", "M03", "X02"
+  ],
+  "green_path_ids": [
+    "P01", "P02", "P03", "P04", "P05", "P06", "P07", "P09", "P10", "P12", "P14", "P15", "P16", "P17", "P18",
+    "C01", "C02", "C06", "C08", "C09", "C10", "C11", "C12", "C13", "C14",
+    "T01", "T02", "T05", "T06", "T07",
+    "M01", "M02", "M04", "M05", "M06", "M07",
+    "X01", "X03", "X04", "X05", "X06", "X07"
+  ],
+  "unsafe_operation_families": {
+    "keeper_final_support_loss_or_fallback": ["P08", "P11", "C04", "C05", "C07", "T03", "T08", "X02"],
+    "non_keeper_only_restore": ["P13"],
+    "support_append_while_fallback_active": ["C15"],
+    "multi_keeper_same_or_merge_proposal": ["C03", "M03"],
+    "non_bridge_distinct_contradiction": ["T04"]
+  },
+  "artifact_hashes": {
+    "tests/acceptance/test_analysis_core_review.py": "01A02F973E884D3BA917FDF73260E6E5524F9D21B8D5DE77CDD57755989C6E6B",
+    "docs/review/REQ-20260714-064051-data-eng-iter-3-component-state-matrix.md": "ADB423E55F10058A556F551EECCC92CFCC998DFFC87D6FD003CF856B68FF61FB"
+  },
+  "implementation_dispatched": false
+}
