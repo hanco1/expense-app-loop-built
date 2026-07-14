@@ -43,7 +43,7 @@ policy:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: pending
-- sent_at:
+- delivery_status: sent
+- sent_at: 2026-07-14T06:13:10Z
 expected_reply:
 - LOOP_STATUS with the complete matrix document, review-owned red-capable test commit, red/green case inventory, exact command evidence, and a data-eng-ready acceptance contract.
