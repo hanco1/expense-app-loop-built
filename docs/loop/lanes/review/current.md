@@ -1,21 +1,20 @@
 # Review Current State
 
 current_request_id: REQ-20260713-073512-data-eng
-status: BLOCKED
-iteration: 3
-last_updated: 2026-07-13T08:59:41Z
-heartbeat: 2026-07-13T08:59:41Z
+status: FIX_REQUESTED
+iteration: 4
+last_updated: 2026-07-14T06:19:14Z
+heartbeat: 2026-07-14T06:19:14Z
 model_observed: gpt-5.6-sol xhigh (highest)
 
 ## Current Checkpoint
 
-- Iteration 3 independently reviewed at commit e94a09a. Named Decimal exceptions are retained, but a nonzero underflowing amount silently becomes an active zero-cent transaction.
+- The iteration-4 amount whitelist is frozen in one 282-path matrix before implementation. Against e94a09a, 42 Debit/Credit paths are red across 21 case IDs and 240 paths are green guardrails.
 
 ## Next Action
 
-- Product asks the human whether to authorize one additional narrowly scoped exact-money correction; review cannot dispatch it under the final-round authority.
+- Deliver the committed matrix, evidence, and data-eng-ready acceptance contract to product and data-eng. Product alone issues the final implementation request.
 
 ## Blockers
 
-- Technical: `1e-999999999` silently scales to zero, then creates a parsed normalized transaction and effective occurrence with `amount_minor=0`.
-- Process: the human authorized iteration 3 as final and did not authorize another fix round; doctor raw count is 5/max 4.
+- Expected pre-implementation red state: e94a09a fails 42 frozen-matrix paths. No review-process blocker remains.

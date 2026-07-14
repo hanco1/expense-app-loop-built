@@ -1,0 +1,56 @@
+{
+  "request_id": "REQ-20260713-073512-data-eng",
+  "iteration": 4,
+  "phase": "pre_implementation_boundary_matrix",
+  "reviewed_commit": "e94a09a",
+  "matrix_frozen": true,
+  "ran_at": "2026-07-14T06:19:14Z",
+  "command": "python -m unittest tests.acceptance.test_statement_import_review -v",
+  "exit_code": 1,
+  "tests_run": 3,
+  "failures": 42,
+  "elapsed_seconds": 8.380,
+  "output_summary": "FAILED (failures=42)",
+  "matrix_paths": 282,
+  "red_paths": 42,
+  "green_paths": 240,
+  "red_case_ids": [
+    "V29",
+    "V30",
+    "I15",
+    "I16",
+    "I17",
+    "I18",
+    "I19",
+    "I27",
+    "I32",
+    "I43",
+    "I51",
+    "I61",
+    "I62",
+    "I63",
+    "I64",
+    "I69",
+    "I73",
+    "I74",
+    "I75",
+    "I76",
+    "I80"
+  ],
+  "red_inventory": {
+    "valid_over_rejected": "V29-V30",
+    "invalid_wrongly_accepted": "I15-I19, I27, I32, I43, I51, I61-I64, I69, I73-I76, I80"
+  },
+  "green_inventory": {
+    "valid": "V01-V28, V31-V36",
+    "invalid": "I01-I14, I20-I26, I28-I31, I33-I42, I44-I50, I52-I60, I65-I68, I70-I72, I77-I79, I81-I100",
+    "absence_and_two_column": "A01-A10"
+  },
+  "invariants": [
+    "INV-1",
+    "INV-6",
+    "INV-7"
+  ],
+  "matrix_document": "docs/review/REQ-20260713-073512-data-eng-iter-4-boundary-matrix.md",
+  "acceptance_test": "tests/acceptance/test_statement_import_review.py"
+}
