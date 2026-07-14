@@ -1,0 +1,88 @@
+{
+  "request_id": "REQ-20260713-073512-data-eng",
+  "iteration": 4,
+  "reviewed_commit": "06ac048",
+  "frozen_review_commit": "eb8d745",
+  "verdict": "PASS",
+  "ran_at": "2026-07-14T06:34:26Z",
+  "commands": [
+    {
+      "command": "python -m unittest tests.backend.test_statement_fixtures -v",
+      "exit_code": 0,
+      "tests_run": 1
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_csv -v",
+      "exit_code": 0,
+      "tests_run": 8
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_pdf -v",
+      "exit_code": 0,
+      "tests_run": 1
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_idempotency -v",
+      "exit_code": 0,
+      "tests_run": 1
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_runs -v",
+      "exit_code": 0,
+      "tests_run": 1
+    },
+    {
+      "command": "python -m unittest tests.backend.test_statement_import_local_boundary -v",
+      "exit_code": 0,
+      "tests_run": 3
+    },
+    {
+      "command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "tests_run": 31
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_statement_import_review -v",
+      "exit_code": 0,
+      "tests_run": 3,
+      "matrix_paths": 282
+    },
+    {
+      "command": "python completion_gate.py --loop-dir docs/loop",
+      "exit_code": 0,
+      "output": "SHIP_CHECK_OK REQ-20260712-200417-data-eng; SHIP_CHECK_OK REQ-20260713-073512-data-eng"
+    },
+    {
+      "command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260713-073512-data-eng",
+      "exit_code": 0,
+      "output": "SHIP_CHECK_OK REQ-20260713-073512-data-eng"
+    },
+    {
+      "command": "python multi_agent_loop_doctor.py --loop-dir docs/loop",
+      "exit_code": 0,
+      "output": "OK: True; fix_cycles=7; max_fix_cycles=7; stale decisions=0"
+    }
+  ],
+  "frozen_artifacts": {
+    "tests/acceptance/test_statement_import_review.py": "e54f4767d8698c3e54b3e1209911418599472055",
+    "docs/review/REQ-20260713-073512-data-eng-iter-4-boundary-matrix.md": "fc4302b70b95bb7cac1bd20440425f48f1a3bf28"
+  },
+  "matrix": {
+    "valid_cases": 36,
+    "invalid_cases": 100,
+    "absence_and_ambiguity_cases": 10,
+    "total_paths": 282,
+    "result": "pass"
+  },
+  "criteria_results": {
+    "unchanged_frozen_matrix": "pass",
+    "exact_valid_conversion_and_inclusive_maximum": "pass",
+    "uniform_invalid_retention_without_failure_family_branches": "pass",
+    "original_import_invariants_and_regressions": "pass",
+    "privacy_dependency_and_frozen_artifact_boundaries": "pass"
+  },
+  "scope_creep": "none",
+  "looks_done_but_wrong": "none found; unchanged red-capable matrix failed 42 paths on e94a09a and passes all 282 on 06ac048",
+  "ease_of_misuse": "none found within the supported input contract; whole-token ASCII grammar plus exact bounded cents prevents wrong-but-accepted coercion",
+  "human_qa": "not applicable; non-user-facing core slice"
+}
