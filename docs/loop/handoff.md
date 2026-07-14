@@ -18,20 +18,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Independent iteration-2 review added the missing selective-support transition: after a valid same-transaction decision, undoing only the designated keeper's run leaves the non-kept identity active in storage but excluded from analysis. The expanded acceptance is red at `tests/acceptance/test_analysis_core_review.py:119`.
 - The live raw fix-cycle count is 3 at `max_fix_cycles: 3`; review returned the request to product as BLOCKED instead of dispatching iteration 3. The recommended human decision is a temporary cap of 5 for one bounded final round, restored to 3 after acceptance.
 - The human approved iteration 3 with temporary `max_fix_cycles: 5`, required one component-level invariant across every state-changing path, and required review to freeze the complete `component state x operation` matrix before data-eng starts.
+- Review froze the complete contract at `6fdc57d`: 55 executable compatible paths plus 20 explicitly impossible/invalid classes. The one post-freeze baseline run produced 13 red paths, 42 green compatible guardrails, and a green manifest guard without dispatching implementation.
 
 ## Next Action
 
-- [~] Review freezes the complete same-transaction component-state/operation matrix and consolidated red acceptance; product then sends one authoritative iteration-3 FIX_REQUEST to data-eng.
+- [~] Product commits the frozen matrix handoff and sends one authoritative iteration-3 FIX_REQUEST to data-eng without changing either frozen artifact; raw usage remains 4/5 until data-eng claims implementation.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: review
+- owner_lane: product
 - iteration: 3
 
 ## Blockers
 
-- No external blocker. Data-eng is intentionally held until review freezes the complete matrix; the temporary cap is 5 and must return to 3 after ACCEPTED.
+- The frozen contract has 13 red compatible paths at `6b9378f`; product alone must dispatch the authoritative repair. The temporary cap is 5 and must return to 3 after ACCEPTED.
 
 ## Pending Inbox Deliveries
 
