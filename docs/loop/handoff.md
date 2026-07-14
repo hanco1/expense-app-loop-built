@@ -16,17 +16,17 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Next Action
 
-- [~] Review implementation `8aa5b6f` against C1-C7, the standing invariants, and the duplicate-graph misuse path; return PASS or one bounded blocker.
+- [~] Data-eng fixes the iteration-2 connected duplicate-decision graph blocker and returns the review-owned acceptance test plus all original gates green.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: review
-- iteration: 1
+- owner_lane: data-eng
+- iteration: 2
 
 ## Blockers
 
-- No confirmed blocker yet. Review is actively validating the duplicate-graph misuse path; the standing anti-thrash cap is 3.
+- C3 blocker: cyclic pairwise kept choices can exclude every active identity from analysis. The standing anti-thrash cap is 3 and permits iteration 2.
 
 ## Pending Inbox Deliveries
 
