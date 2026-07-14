@@ -1,0 +1,7 @@
+{
+  "request_id": "REQ-20260713-073512-data-eng",
+  "checkpoint": "positive-whitelist-amount-parser",
+  "command": "python -m unittest tests.backend.test_statement_import_idempotency -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T06:28:14Z"
+}
