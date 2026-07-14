@@ -1,0 +1,44 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 2,
+  "reviewed_commit": "6b9378f",
+  "verdict": "BLOCKED",
+  "severity": "blocker",
+  "ran_at": "2026-07-14T07:17:23Z",
+  "delivered_gate_reproduction": [
+    {"command": "python -m unittest tests.acceptance.test_analysis_core_review -v", "exit_code": 0, "tests_run": 1},
+    {"command": "python -m unittest tests.backend.test_analysis_categories -v", "exit_code": 0, "tests_run": 3},
+    {"command": "python -m unittest tests.backend.test_analysis_corrections -v", "exit_code": 0, "tests_run": 1},
+    {"command": "python -m unittest tests.backend.test_analysis_duplicates -v", "exit_code": 0, "tests_run": 2},
+    {"command": "python -m unittest tests.backend.test_analysis_monthly -v", "exit_code": 0, "tests_run": 1},
+    {"command": "python -m unittest tests.backend.test_analysis_inclusion -v", "exit_code": 0, "tests_run": 3},
+    {"command": "python -m unittest tests.backend.test_analysis_contracts -v", "exit_code": 0, "tests_run": 2},
+    {"command": "python -m unittest tests.backend.test_analysis_local_boundary -v", "exit_code": 0, "tests_run": 3},
+    {"command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v", "exit_code": 0, "tests_run": 46},
+    {"command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260714-064051-data-eng", "exit_code": 0, "output": "SHIP_CHECK_OK REQ-20260714-064051-data-eng"}
+  ],
+  "expanded_review_gate": {
+    "command": "python -m unittest tests.acceptance.test_analysis_core_review -v",
+    "exit_code": 1,
+    "tests_run": 2,
+    "failures": 1,
+    "failure": "after undoing only the kept identity's support run, the non-kept identity remains active in CoreStore but AnalysisService.list_months() returns an empty tuple"
+  },
+  "criteria_results": {
+    "C1": "pass",
+    "C2": "pass",
+    "C3": "fail: selective keeper-support undo leaves zero included active representatives",
+    "C4": "pass",
+    "C5": "pass for declared cases; C3 interaction remains unsafe",
+    "C6": "pass outside the C3 blocker",
+    "C7": "pass"
+  },
+  "scope_creep": "none",
+  "looks_done_but_wrong": "the green all-support undo/re-import regression does not exercise independently supported keeper and non-keeper identities",
+  "ease_of_misuse": "confirmed through normal import, same_transaction decision, and selective run undo APIs",
+  "anti_thrash": {
+    "raw_fix_cycles": 3,
+    "max_fix_cycles": 3,
+    "minimum_temporary_cap_for_one_full_round": 5
+  }
+}
