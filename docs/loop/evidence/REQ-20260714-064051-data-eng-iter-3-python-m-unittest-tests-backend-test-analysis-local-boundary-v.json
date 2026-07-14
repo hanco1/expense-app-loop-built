@@ -1,0 +1,17 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 3,
+  "checkpoint": "analysis-core-local-boundary-regression",
+  "command": "python -m unittest tests.backend.test_analysis_local_boundary -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T18:19:54Z",
+  "test_count": 3,
+  "failures": 0,
+  "errors": 0,
+  "network_used": false,
+  "subprocess_used": false,
+  "raw_content_logged": false,
+  "new_dependency_added": false,
+  "csv_sha256": "9F93F107DDD02AEE2FB0A0AE19EB962180C680D1FB06D4D90959C96ED8CD7BAA",
+  "pdf_sha256": "F4B6B524D7C6140EE3F3E24CE87C4A36F0B40619395B5DC17B03F1B99DBC11F8"
+}

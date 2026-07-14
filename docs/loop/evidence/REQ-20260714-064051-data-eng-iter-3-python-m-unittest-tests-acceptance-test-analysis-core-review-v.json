@@ -1,0 +1,17 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 3,
+  "checkpoint": "analysis-core-component-state-matrix",
+  "command": "python -m unittest tests.acceptance.test_analysis_core_review -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T18:19:54Z",
+  "test_count": 56,
+  "compatible_executable_paths": 55,
+  "manifest_guards": 1,
+  "failures": 0,
+  "errors": 0,
+  "baseline_red_path_ids": ["P08", "P11", "P13", "C03", "C04", "C05", "C07", "C15", "T03", "T04", "T08", "M03", "X02"],
+  "final_red_path_ids": [],
+  "acceptance_sha256": "01A02F973E884D3BA917FDF73260E6E5524F9D21B8D5DE77CDD57755989C6E6B",
+  "matrix_sha256": "ADB423E55F10058A556F551EECCC92CFCC998DFFC87D6FD003CF856B68FF61FB"
+}

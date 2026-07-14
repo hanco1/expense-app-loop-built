@@ -1,0 +1,14 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 3,
+  "checkpoint": "analysis-core-contracts-regression",
+  "command": "python -m unittest tests.backend.test_analysis_contracts -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T18:19:54Z",
+  "test_count": 2,
+  "failures": 0,
+  "errors": 0,
+  "typed_contracts": true,
+  "deterministic_order": true,
+  "traceability_present": true
+}

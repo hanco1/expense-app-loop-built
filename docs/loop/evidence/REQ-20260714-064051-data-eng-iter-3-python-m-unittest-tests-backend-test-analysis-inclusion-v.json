@@ -1,0 +1,17 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 3,
+  "checkpoint": "analysis-core-inclusion-projection",
+  "command": "python -m unittest tests.backend.test_analysis_inclusion -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T18:19:54Z",
+  "test_count": 5,
+  "failures": 0,
+  "errors": 0,
+  "keeper_final_support_fallback": true,
+  "nonkeeper_only_restore_fallback": true,
+  "support_append_preserved_fallback": true,
+  "keeper_restore_resumed_preference": true,
+  "disconnected_component_isolated": true,
+  "support_changes_appended_decisions": 0
+}

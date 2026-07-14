@@ -19,20 +19,22 @@ the next actor can continue from repo files plus the latest message alone.
 - The live raw fix-cycle count is 3 at `max_fix_cycles: 3`; review returned the request to product as BLOCKED instead of dispatching iteration 3. The recommended human decision is a temporary cap of 5 for one bounded final round, restored to 3 after acceptance.
 - The human approved iteration 3 with temporary `max_fix_cycles: 5`, required one component-level invariant across every state-changing path, and required review to freeze the complete `component state x operation` matrix before data-eng starts.
 - Review froze the complete contract at `6fdc57d`: 55 executable compatible paths plus 20 explicitly impossible/invalid classes. The one post-freeze baseline run produced 13 red paths, 42 green compatible guardrails, and a green manifest guard without dispatching implementation.
+- Data-eng implemented the class-wide invariant at `53e57f6`: one latest-same component projection now validates structural keepers, rejects alternate-path distinct contradictions, and selects the active keeper or deterministic fallback without rewriting human history.
+- The unchanged frozen acceptance passes 56/56, backend discovery passes 50/50, both frozen hashes are unchanged, all ten iteration-3 evidence records are exit 0, and the completion gate is green. Independent review is now active.
 
 ## Next Action
 
-- [~] Data-eng claims the single authoritative iteration-3 FIX_REQUEST, creating the only remaining counted `FIX_REQUESTED -> IMPLEMENTING` transition at raw 5/5, then implements the unchanged 55-path component contract.
+- [~] Review implementation `53e57f6` against the unchanged 55-path matrix and original C1-C7 gates; product restores `max_fix_cycles: 3` only in the same checkpoint as ACCEPTED.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: data-eng
+- owner_lane: review
 - iteration: 3
 
 ## Blockers
 
-- The frozen contract has 13 red compatible paths at `6b9378f`; data-eng must close all five unsafe operation families without modifying the matrix. The temporary cap is 5 and must return to 3 after ACCEPTED.
+- None in implementation; the temporary cap remains 5 until product restores it to 3 with ACCEPTED.
 
 ## Pending Inbox Deliveries
 

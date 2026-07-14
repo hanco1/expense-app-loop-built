@@ -1,0 +1,17 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 3,
+  "checkpoint": "analysis-core-central-component-projection",
+  "command": "python -m unittest tests.backend.test_analysis_duplicates -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T18:19:54Z",
+  "test_count": 4,
+  "failures": 0,
+  "errors": 0,
+  "zero_keeper_proposal_rejected": true,
+  "multi_keeper_chain_proposal_rejected": true,
+  "multi_keeper_component_merge_rejected": true,
+  "nonbridge_distinct_rejected": true,
+  "rejected_history_rows": 0,
+  "accepted_history_append_only": true
+}
