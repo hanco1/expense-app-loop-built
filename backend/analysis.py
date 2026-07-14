@@ -163,6 +163,57 @@ class AnalysisService:
         decision: str,
         kept_identity_id: str | None = None,
     ) -> DuplicateCandidate:
+        if decision not in {"same_transaction", "distinct"}:
+            raise ValueError("decision must be 'same_transaction' or 'distinct'")
+        link = self.store.get_duplicate_link(duplicate_link_id)
+        if decision == "same_transaction":
+            if (
+                not isinstance(kept_identity_id, str)
+                or not kept_identity_id.strip()
+            ):
+                raise ValueError("kept_identity_id must be a non-empty string")
+            left_identity_id = str(link["left_identity_id"])
+            right_identity_id = str(link["right_identity_id"])
+            if kept_identity_id not in {left_identity_id, right_identity_id}:
+                raise ValueError(
+                    "kept_identity_id must belong to the duplicate link"
+                )
+            proposed_states = tuple(
+                _DuplicateLinkState(
+                    duplicate_link_id=state.duplicate_link_id,
+                    left_identity_id=state.left_identity_id,
+                    right_identity_id=state.right_identity_id,
+                    effective_decision=(
+                        "same_transaction"
+                        if state.duplicate_link_id == duplicate_link_id
+                        else state.effective_decision
+                    ),
+                    effective_decision_id=(
+                        None
+                        if state.duplicate_link_id == duplicate_link_id
+                        else state.effective_decision_id
+                    ),
+                    kept_identity_id=(
+                        kept_identity_id
+                        if state.duplicate_link_id == duplicate_link_id
+                        else state.kept_identity_id
+                    ),
+                    history=state.history,
+                )
+                for state in self._duplicate_states()
+            )
+            active_identity_ids = {
+                str(transaction["identity_id"])
+                for transaction in self.store.list_effective_transactions()
+            }
+            self._validate_duplicate_component_representative(
+                proposed_states,
+                left_identity_id,
+                right_identity_id,
+                active_identity_ids,
+            )
+        elif kept_identity_id is not None:
+            raise ValueError("a distinct decision cannot name a kept identity")
         self.store.add_duplicate_decision(
             duplicate_link_id,
             decision=decision,
@@ -378,6 +429,49 @@ class AnalysisService:
             else:
                 excluded.add(state.left_identity_id)
         return excluded
+
+    @staticmethod
+    def _validate_duplicate_component_representative(
+        states: tuple[_DuplicateLinkState, ...],
+        left_identity_id: str,
+        right_identity_id: str,
+        active_identity_ids: set[str],
+    ) -> None:
+        adjacency: dict[str, set[str]] = {}
+        excluded_identity_ids: set[str] = set()
+        for state in states:
+            if state.effective_decision != "same_transaction":
+                continue
+            adjacency.setdefault(state.left_identity_id, set()).add(
+                state.right_identity_id
+            )
+            adjacency.setdefault(state.right_identity_id, set()).add(
+                state.left_identity_id
+            )
+            if state.kept_identity_id == state.left_identity_id:
+                excluded_identity_ids.add(state.right_identity_id)
+            elif state.kept_identity_id == state.right_identity_id:
+                excluded_identity_ids.add(state.left_identity_id)
+            else:
+                raise RuntimeError("same-transaction decision has no valid keeper")
+
+        component: set[str] = set()
+        pending = [left_identity_id, right_identity_id]
+        while pending:
+            identity_id = pending.pop()
+            if identity_id in component:
+                continue
+            component.add(identity_id)
+            pending.extend(adjacency.get(identity_id, ()))
+
+        active_component = component & active_identity_ids
+        if component <= excluded_identity_ids or (
+            active_component and active_component <= excluded_identity_ids
+        ):
+            raise ValueError(
+                "same_transaction decision would exclude every representative "
+                "in its connected component"
+            )
 
     @staticmethod
     def _identity_decision(

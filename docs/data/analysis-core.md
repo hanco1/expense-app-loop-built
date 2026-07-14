@@ -9,6 +9,12 @@
 - Duplicate decisions use a dedicated append-only `duplicate_decisions` table.
   `same_transaction` requires a kept identity belonging to the linked pair;
   `distinct` has no kept identity. Updates and deletes are rejected by triggers.
+- Before a `same_transaction` decision is appended, `AnalysisService` evaluates
+  the proposed latest-wins decision graph for the affected connected component.
+  A kept-choice cycle, or any proposal that would exclude every currently active
+  representative, is rejected with `ValueError`; the rejected proposal appends
+  no history row. Existing isolated-pair and later `distinct` reversal semantics
+  remain unchanged.
 - Automatic categories are not written over normalized transaction facts. They
   are deterministically recomputed under rule version `mvp-1`, after which the
   latest human correction, when present, becomes effective.

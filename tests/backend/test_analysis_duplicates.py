@@ -121,6 +121,98 @@ class AnalysisDuplicateDecisionTests(AnalysisStoreTestCase):
         self.assertTrue(reimported.left_included)
         self.assertTrue(reimported.right_included)
 
+    def test_cycle_closing_decision_is_rejected_before_history_append(self) -> None:
+        content = (
+            b"Date,Description,Debit,Credit,Balance\r\n"
+            b"06/01/2026,TRIPLE COFFEE,4.50,,0.00\r\n"
+            b"06/01/2026,TRIPLE COFFEE,4.50,,0.00\r\n"
+            b"06/01/2026,TRIPLE COFFEE,4.50,,0.00\r\n"
+        )
+        run_id = self.importer.import_bytes(
+            content,
+            filename="synthetic-triple-duplicate.csv",
+            source_type="csv",
+        )
+        candidates = self.analysis.list_duplicate_candidates()
+        self.assertEqual(len(candidates), 3)
+        identities = sorted(
+            {
+                identity_id
+                for candidate in candidates
+                for identity_id in (
+                    candidate.left_identity_id,
+                    candidate.right_identity_id,
+                )
+            }
+        )
+        first, second, third = identities
+        candidates_by_pair = {
+            (candidate.left_identity_id, candidate.right_identity_id): candidate
+            for candidate in candidates
+        }
+
+        self.analysis.set_duplicate_decision(
+            candidates_by_pair[(first, second)].duplicate_link_id,
+            "same_transaction",
+            first,
+        )
+        self.analysis.set_duplicate_decision(
+            candidates_by_pair[(second, third)].duplicate_link_id,
+            "same_transaction",
+            second,
+        )
+        cycle_link = candidates_by_pair[(first, third)]
+        with self.assertRaisesRegex(ValueError, "connected component"):
+            self.analysis.set_duplicate_decision(
+                cycle_link.duplicate_link_id,
+                "same_transaction",
+                third,
+            )
+
+        self.assertEqual(
+            self.store.list_duplicate_decisions(cycle_link.duplicate_link_id),
+            [],
+        )
+        summary = self.analysis.get_month_summary("2026-06")
+        self.assertEqual(summary.transaction_count, 1)
+        self.assertEqual(summary.spending_total_minor, 450)
+        self.assertEqual(
+            sum(transaction.included for transaction in summary.transactions),
+            1,
+        )
+        self.assertEqual(len(self.store.list_effective_transactions()), 3)
+
+        self.store.undo_import_run(run_id)
+        self.assertEqual(self.analysis.list_months(), ())
+        self.importer.import_bytes(
+            content,
+            filename="renamed-triple-duplicate.csv",
+            source_type="csv",
+        )
+        restored = self.analysis.get_month_summary("2026-06")
+        self.assertEqual(restored.transaction_count, 1)
+        self.assertEqual(restored.spending_total_minor, 450)
+        self.assertEqual(
+            len(
+                self.store.list_duplicate_decisions(
+                    candidates_by_pair[(first, second)].duplicate_link_id
+                )
+            ),
+            1,
+        )
+        self.assertEqual(
+            len(
+                self.store.list_duplicate_decisions(
+                    candidates_by_pair[(second, third)].duplicate_link_id
+                )
+            ),
+            1,
+        )
+        self.assertEqual(
+            self.store.list_duplicate_decisions(cycle_link.duplicate_link_id),
+            [],
+        )
+
 
 if __name__ == "__main__":
     import unittest
