@@ -61,7 +61,7 @@ policy:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: pending
-- sent_at:
+- delivery_status: sent
+- sent_at: 2026-07-14T06:23:35Z
 expected_reply:
 - IMPLEMENTATION_DONE iteration 4 with the whitelist design, implementation commit, changed files, unchanged frozen matrix, exact command exits, flat evidence records, and no unapproved dependencies.
