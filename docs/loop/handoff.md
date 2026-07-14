@@ -15,20 +15,23 @@ the next actor can continue from repo files plus the latest message alone.
 - Independent review found a C3 blocker in iteration 1: three pairwise kept choices could form a cycle and exclude every active identity.
 - Data-eng fixed the blocker at `6b9378f` by validating the proposed latest-wins connected component before appending a `same_transaction` decision. The cycle-closing proposal now raises `ValueError` with no history row, accepted decisions survive undo/re-import, and one representative remains included.
 - The unchanged review acceptance, all original focused gates, backend discovery 46/46, and the completion gate are green with ten flat iteration-2 evidence records.
+- Independent iteration-2 review added the missing selective-support transition: after a valid same-transaction decision, undoing only the designated keeper's run leaves the non-kept identity active in storage but excluded from analysis. The expanded acceptance is red at `tests/acceptance/test_analysis_core_review.py:119`.
+- The live raw fix-cycle count is 3 at `max_fix_cycles: 3`; review returned the request to product as BLOCKED instead of dispatching iteration 3. The recommended human decision is a temporary cap of 5 for one bounded final round, restored to 3 after acceptance.
 
 ## Next Action
 
-- [~] Review independently evaluates implementation commit `6b9378f` against the unchanged cycle acceptance and C1-C7 gates, then returns REVIEW_DONE or a blocker FIX_REQUEST.
+- [!] Human decides whether to authorize a temporary `max_fix_cycles: 5` for one bounded iteration-3 repair of selective keeper-support undo.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: review
+- owner_lane: product
 - iteration: 2
 
 ## Blockers
 
-- None; iteration 2 is in independent review.
+- C3 blocker: a normal selective run undo can leave an active duplicate component with zero included representatives; see `docs/review/REQ-20260714-064051-data-eng-iter-2.md`.
+- Anti-thrash gate: another full implementation round requires explicit human authorization because raw fix-cycle count is 3 at the standing cap of 3.
 
 ## Pending Inbox Deliveries
 
