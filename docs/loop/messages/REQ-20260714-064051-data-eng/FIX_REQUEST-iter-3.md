@@ -79,7 +79,7 @@ policy:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: pending
-- sent_at:
+- delivery_status: sent
+- sent_at: 2026-07-14T18:12:05Z
 expected_reply:
 - IMPLEMENTATION_DONE iteration 3 with the centralized component-state design, implementation commit, changed files, unchanged frozen hashes, all ten command exits, flat evidence paths, and no scope or dependency expansion.
