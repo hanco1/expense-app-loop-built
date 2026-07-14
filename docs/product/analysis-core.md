@@ -68,6 +68,19 @@ effective human correction.
   analysis includes that identity and excludes only the other one with explicit
   reason `human_duplicate_same_transaction`; neither raw nor normalized fact is
   deleted or mutated.
+- Effective `same_transaction` links form connected components. At every
+  committed state, a component with one or more active identities has exactly
+  one included active representative: the human-designated keeper while it is
+  active, otherwise one deterministic active fallback. A component with no
+  active identities has no included representative.
+- Fallback is derived from current component/support state and never appends,
+  rewrites, or deletes human decision history. When the designated keeper gains
+  active support again, it resumes as the included representative.
+- One centralized component projection/validation rule applies whenever state
+  can change: source/support append, suspected-link creation or acceptance,
+  human same/distinct/keeper redecision, per-run undo including final-support
+  loss, and exact or renamed re-import. Operation-specific patches that can
+  diverge are not part of the contract.
 - `distinct` includes both identities. A later decision may reverse an earlier
   one because history is append-only and latest-wins.
 - Decisions survive undo, exact re-import, and automatic reprocessing.

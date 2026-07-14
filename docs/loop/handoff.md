@@ -17,21 +17,21 @@ the next actor can continue from repo files plus the latest message alone.
 - The unchanged review acceptance, all original focused gates, backend discovery 46/46, and the completion gate are green with ten flat iteration-2 evidence records.
 - Independent iteration-2 review added the missing selective-support transition: after a valid same-transaction decision, undoing only the designated keeper's run leaves the non-kept identity active in storage but excluded from analysis. The expanded acceptance is red at `tests/acceptance/test_analysis_core_review.py:119`.
 - The live raw fix-cycle count is 3 at `max_fix_cycles: 3`; review returned the request to product as BLOCKED instead of dispatching iteration 3. The recommended human decision is a temporary cap of 5 for one bounded final round, restored to 3 after acceptance.
+- The human approved iteration 3 with temporary `max_fix_cycles: 5`, required one component-level invariant across every state-changing path, and required review to freeze the complete `component state x operation` matrix before data-eng starts.
 
 ## Next Action
 
-- [!] Human decides whether to authorize a temporary `max_fix_cycles: 5` for one bounded iteration-3 repair of selective keeper-support undo.
+- [~] Review freezes the complete same-transaction component-state/operation matrix and consolidated red acceptance; product then sends one authoritative iteration-3 FIX_REQUEST to data-eng.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: product
-- iteration: 2
+- owner_lane: review
+- iteration: 3
 
 ## Blockers
 
-- C3 blocker: a normal selective run undo can leave an active duplicate component with zero included representatives; see `docs/review/REQ-20260714-064051-data-eng-iter-2.md`.
-- Anti-thrash gate: another full implementation round requires explicit human authorization because raw fix-cycle count is 3 at the standing cap of 3.
+- No external blocker. Data-eng is intentionally held until review freezes the complete matrix; the temporary cap is 5 and must return to 3 after ACCEPTED.
 
 ## Pending Inbox Deliveries
 

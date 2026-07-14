@@ -9,7 +9,7 @@
 ## Request Policy
 
 <!-- max_fix_cycles bounds token burn per request; humans may edit it here or via the loop dashboard's POST /api/policy control. Keep the "max_fix_cycles: <int>" line format. -->
-max_fix_cycles: 3
+max_fix_cycles: 5
 auto_dispatch: true
 auto_chain_next_session: false
 
@@ -23,6 +23,8 @@ dependency_install: auto-pip-only
 - Do not reopen an ACCEPTED request without a new request_id.
 - Completed temporary override: `REQ-20260713-073512-data-eng` iteration 4 used `max_fix_cycles: 7`, reached `ACCEPTED`, and restored the standing cap to `3` in the same product checkpoint.
 - Iteration 4 closed the amount-validity class with one positive whitelist and the frozen 282-path review matrix; do not reopen the accepted request without a new request_id.
+- Active human-approved override: `REQ-20260714-064051-data-eng` iteration 3 may use `max_fix_cycles: 5` only to close the component-representative invariant across the frozen component-state/operation matrix.
+- Restore the standing `max_fix_cycles: 3` in the same product checkpoint that moves `REQ-20260714-064051-data-eng` to `ACCEPTED`.
 
 ## Completion Token
 
