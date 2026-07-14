@@ -118,6 +118,22 @@ CREATE TABLE IF NOT EXISTS duplicate_links (
     FOREIGN KEY (right_identity_id) REFERENCES transaction_identities(identity_id)
 );
 
+CREATE TABLE IF NOT EXISTS duplicate_decisions (
+    decision_id TEXT PRIMARY KEY,
+    duplicate_link_id TEXT NOT NULL,
+    decision TEXT NOT NULL
+        CHECK (decision IN ('same_transaction', 'distinct')),
+    kept_identity_id TEXT,
+    created_at TEXT NOT NULL,
+    CHECK (
+        (decision = 'same_transaction' AND kept_identity_id IS NOT NULL)
+        OR
+        (decision = 'distinct' AND kept_identity_id IS NULL)
+    ),
+    FOREIGN KEY (duplicate_link_id) REFERENCES duplicate_links(duplicate_link_id),
+    FOREIGN KEY (kept_identity_id) REFERENCES transaction_identities(identity_id)
+);
+
 CREATE INDEX IF NOT EXISTS idx_source_records_run
     ON source_records(run_id, created_at, source_record_id);
 CREATE INDEX IF NOT EXISTS idx_occurrences_run
@@ -130,6 +146,8 @@ CREATE INDEX IF NOT EXISTS idx_normalized_transaction_fields
     );
 CREATE INDEX IF NOT EXISTS idx_duplicate_links_right
     ON duplicate_links(right_identity_id, left_identity_id);
+CREATE INDEX IF NOT EXISTS idx_duplicate_decisions_link
+    ON duplicate_decisions(duplicate_link_id, created_at, decision_id);
 
 CREATE TRIGGER IF NOT EXISTS import_runs_no_delete
 BEFORE DELETE ON import_runs
@@ -221,6 +239,18 @@ BEGIN
     SELECT RAISE(ABORT, 'manual corrections are append-only');
 END;
 
+CREATE TRIGGER IF NOT EXISTS manual_category_corrections_canonical
+BEFORE INSERT ON manual_corrections
+WHEN NEW.correction_type = 'category'
+    AND NEW.value NOT IN (
+        'Housing', 'Groceries', 'Dining', 'Transportation', 'Shopping',
+        'Bills & Utilities', 'Health & Fitness', 'Entertainment', 'Fees',
+        'Income', 'Refunds & Credits', 'Uncategorized'
+    )
+BEGIN
+    SELECT RAISE(ABORT, 'category correction must use the canonical vocabulary');
+END;
+
 CREATE TRIGGER IF NOT EXISTS manual_corrections_no_delete
 BEFORE DELETE ON manual_corrections
 BEGIN
@@ -249,6 +279,30 @@ CREATE TRIGGER IF NOT EXISTS duplicate_links_no_delete
 BEFORE DELETE ON duplicate_links
 BEGIN
     SELECT RAISE(ABORT, 'duplicate links are retained');
+END;
+
+CREATE TRIGGER IF NOT EXISTS duplicate_decisions_valid_kept_identity
+BEFORE INSERT ON duplicate_decisions
+WHEN NEW.decision = 'same_transaction'
+    AND NOT EXISTS (
+        SELECT 1 FROM duplicate_links
+        WHERE duplicate_link_id = NEW.duplicate_link_id
+        AND NEW.kept_identity_id IN (left_identity_id, right_identity_id)
+    )
+BEGIN
+    SELECT RAISE(ABORT, 'kept identity must belong to the duplicate link');
+END;
+
+CREATE TRIGGER IF NOT EXISTS duplicate_decisions_no_update
+BEFORE UPDATE ON duplicate_decisions
+BEGIN
+    SELECT RAISE(ABORT, 'duplicate decisions are append-only');
+END;
+
+CREATE TRIGGER IF NOT EXISTS duplicate_decisions_no_delete
+BEFORE DELETE ON duplicate_decisions
+BEGIN
+    SELECT RAISE(ABORT, 'duplicate decisions are retained');
 END;
 """
 
@@ -529,6 +583,18 @@ class CoreStore:
             )
         return cursor.rowcount == 1
 
+    def get_normalized_transaction(self, identity_id: str) -> dict[str, Any]:
+        self._require_nonempty_text(identity_id, "identity_id")
+        row = self._fetch_one(
+            "SELECT identity_id, transaction_date, merchant, amount_minor, "
+            "currency, is_spending, created_at FROM normalized_transactions "
+            "WHERE identity_id = ?",
+            (identity_id,),
+            entity="normalized transaction",
+        )
+        row["is_spending"] = bool(row["is_spending"])
+        return row
+
     def link_suspected_duplicates(self, identity_id: str) -> list[str]:
         self._require_nonempty_text(identity_id, "identity_id")
         created_link_ids: list[str] = []
@@ -664,6 +730,16 @@ class CoreStore:
         return self._fetch_all(
             "SELECT correction_id, identity_id, correction_type, value, created_at "
             "FROM manual_corrections WHERE identity_id = ? "
+            "ORDER BY created_at, correction_id",
+            (identity_id,),
+        )
+
+    def list_category_corrections(self, identity_id: str) -> list[dict[str, Any]]:
+        self._require_nonempty_text(identity_id, "identity_id")
+        return self._fetch_all(
+            "SELECT correction_id, identity_id, value, created_at "
+            "FROM manual_corrections WHERE identity_id = ? "
+            "AND correction_type = 'category' "
             "ORDER BY created_at, correction_id",
             (identity_id,),
         )
@@ -871,6 +947,72 @@ class CoreStore:
             for row in rows
         ]
 
+    def get_duplicate_link(self, duplicate_link_id: str) -> dict[str, Any]:
+        self._require_nonempty_text(duplicate_link_id, "duplicate_link_id")
+        return self._fetch_one(
+            "SELECT duplicate_link_id, left_identity_id, right_identity_id, "
+            "link_type, state, created_at FROM duplicate_links "
+            "WHERE duplicate_link_id = ?",
+            (duplicate_link_id,),
+            entity="duplicate link",
+        )
+
+    def add_duplicate_decision(
+        self,
+        duplicate_link_id: str,
+        *,
+        decision: str,
+        kept_identity_id: str | None = None,
+    ) -> str:
+        self._require_nonempty_text(duplicate_link_id, "duplicate_link_id")
+        if decision not in {"same_transaction", "distinct"}:
+            raise ValueError("decision must be 'same_transaction' or 'distinct'")
+        if decision == "same_transaction":
+            self._require_nonempty_text(kept_identity_id, "kept_identity_id")
+        elif kept_identity_id is not None:
+            raise ValueError("a distinct decision cannot name a kept identity")
+
+        decision_id = self._new_id("ddn")
+        with self._connection() as connection, connection:
+            link = connection.execute(
+                "SELECT left_identity_id, right_identity_id FROM duplicate_links "
+                "WHERE duplicate_link_id = ?",
+                (duplicate_link_id,),
+            ).fetchone()
+            if link is None:
+                raise KeyError(f"duplicate link not found: {duplicate_link_id}")
+            if decision == "same_transaction" and kept_identity_id not in {
+                link["left_identity_id"],
+                link["right_identity_id"],
+            }:
+                raise ValueError("kept_identity_id must belong to the duplicate link")
+            connection.execute(
+                "INSERT INTO duplicate_decisions "
+                "(decision_id, duplicate_link_id, decision, kept_identity_id, "
+                "created_at) VALUES (?, ?, ?, ?, ?)",
+                (
+                    decision_id,
+                    duplicate_link_id,
+                    decision,
+                    kept_identity_id,
+                    self._now(),
+                ),
+            )
+        return decision_id
+
+    def list_duplicate_decisions(
+        self,
+        duplicate_link_id: str,
+    ) -> list[dict[str, Any]]:
+        self._require_nonempty_text(duplicate_link_id, "duplicate_link_id")
+        self.get_duplicate_link(duplicate_link_id)
+        return self._fetch_all(
+            "SELECT decision_id, duplicate_link_id, decision, kept_identity_id, "
+            "created_at FROM duplicate_decisions WHERE duplicate_link_id = ? "
+            "ORDER BY created_at, decision_id",
+            (duplicate_link_id,),
+        )
+
     def get_statement_occurrence_provenance(
         self,
         occurrence_id: str,
@@ -933,6 +1075,7 @@ class CoreStore:
             "manual_corrections",
             "normalized_transactions",
             "duplicate_links",
+            "duplicate_decisions",
         )
         with self._connection() as connection:
             return {
