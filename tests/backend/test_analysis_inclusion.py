@@ -4,6 +4,46 @@ from tests.backend.analysis_support import AnalysisStoreTestCase
 
 
 class AnalysisInclusionTests(AnalysisStoreTestCase):
+    def _import_component_identity(
+        self,
+        label: str,
+        *,
+        group: str = "ONE",
+        content: bytes | None = None,
+    ) -> tuple[bytes, str, str]:
+        if content is None:
+            balance = ord(label) - ord("A")
+            content = (
+                "Date,Description,Debit,Credit,Balance\r\n"
+                f"06/01/2026,COMPONENT {group} COFFEE,4.50,,{balance}.00\r\n"
+            ).encode("ascii")
+        run_id = self.importer.import_bytes(
+            content,
+            filename=f"component-{label}.csv",
+            source_type="csv",
+        )
+        identity_id = str(self.store.list_occurrences(run_id)[0]["identity_id"])
+        return content, run_id, identity_id
+
+    def _component_candidate(self, left_identity_id: str, right_identity_id: str):
+        expected = {left_identity_id, right_identity_id}
+        matches = [
+            candidate
+            for candidate in self.analysis.list_duplicate_candidates()
+            if {candidate.left_identity_id, candidate.right_identity_id} == expected
+        ]
+        self.assertEqual(len(matches), 1)
+        return matches[0]
+
+    def _included_identity_ids(self) -> set[str]:
+        if not self.analysis.list_months():
+            return set()
+        return {
+            transaction.identity_id
+            for transaction in self.analysis.get_month_summary("2026-06").transactions
+            if transaction.included
+        }
+
     def test_reimport_and_run_support_change_analysis_only_at_final_undo(self) -> None:
         first_pdf = self.import_pdf()
         first_csv = self.import_csv()
@@ -115,6 +155,102 @@ class AnalysisInclusionTests(AnalysisStoreTestCase):
         )
         with self.assertRaises(ValueError):
             self.analysis.get_month_summary("2026-06")
+
+    def test_component_fallback_support_append_and_keeper_restore_preserve_history(self) -> None:
+        imported = {
+            label: self._import_component_identity(label)
+            for label in "ABC"
+        }
+        ids = {label: imported[label][2] for label in imported}
+        ab = self._component_candidate(ids["A"], ids["B"])
+        bc = self._component_candidate(ids["B"], ids["C"])
+        self.analysis.set_duplicate_decision(
+            ab.duplicate_link_id,
+            "same_transaction",
+            ids["A"],
+        )
+        self.analysis.set_duplicate_decision(
+            bc.duplicate_link_id,
+            "same_transaction",
+            ids["B"],
+        )
+        history_ids = {
+            candidate.duplicate_link_id: tuple(
+                decision.decision_id for decision in candidate.history
+            )
+            for candidate in self.analysis.list_duplicate_candidates()
+        }
+
+        self.store.undo_import_run(imported["A"][1])
+        self.assertEqual(self._included_identity_ids(), {min(ids["B"], ids["C"])})
+
+        _, second_b_run, second_b_identity = self._import_component_identity(
+            "B",
+            content=imported["B"][0],
+        )
+        self.assertEqual(second_b_identity, ids["B"])
+        self.assertEqual(self._included_identity_ids(), {min(ids["B"], ids["C"])})
+        self.assertEqual(
+            {
+                candidate.duplicate_link_id: tuple(
+                    decision.decision_id for decision in candidate.history
+                )
+                for candidate in self.analysis.list_duplicate_candidates()
+            },
+            history_ids,
+        )
+
+        self.store.undo_import_run(imported["B"][1])
+        self.store.undo_import_run(second_b_run)
+        self.store.undo_import_run(imported["C"][1])
+        self.assertEqual(self._included_identity_ids(), set())
+
+        _, _, restored_b_identity = self._import_component_identity(
+            "B",
+            content=imported["B"][0],
+        )
+        self.assertEqual(restored_b_identity, ids["B"])
+        self.assertEqual(self._included_identity_ids(), {ids["B"]})
+
+        _, _, restored_a_identity = self._import_component_identity(
+            "A",
+            content=imported["A"][0],
+        )
+        self.assertEqual(restored_a_identity, ids["A"])
+        self.assertEqual(self._included_identity_ids(), {ids["A"]})
+        self.assertEqual(
+            {
+                candidate.duplicate_link_id: tuple(
+                    decision.decision_id for decision in candidate.history
+                )
+                for candidate in self.analysis.list_duplicate_candidates()
+            },
+            history_ids,
+        )
+
+    def test_disconnected_component_fallback_does_not_change_other_keeper(self) -> None:
+        imported = {
+            "A": self._import_component_identity("A", group="ONE"),
+            "B": self._import_component_identity("B", group="ONE"),
+            "C": self._import_component_identity("C", group="TWO"),
+            "D": self._import_component_identity("D", group="TWO"),
+        }
+        ids = {label: imported[label][2] for label in imported}
+        ab = self._component_candidate(ids["A"], ids["B"])
+        cd = self._component_candidate(ids["C"], ids["D"])
+        self.analysis.set_duplicate_decision(
+            ab.duplicate_link_id,
+            "same_transaction",
+            ids["A"],
+        )
+        self.analysis.set_duplicate_decision(
+            cd.duplicate_link_id,
+            "same_transaction",
+            ids["C"],
+        )
+
+        self.store.undo_import_run(imported["A"][1])
+        self.assertEqual(self._included_identity_ids(), {ids["B"], ids["C"]})
 
 
 if __name__ == "__main__":

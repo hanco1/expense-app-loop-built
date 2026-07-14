@@ -7,6 +7,35 @@ from tests.backend.analysis_support import AnalysisStoreTestCase
 
 
 class AnalysisDuplicateDecisionTests(AnalysisStoreTestCase):
+    def _import_duplicate_identity(
+        self,
+        label: str,
+        *,
+        group: str = "ONE",
+    ) -> tuple[str, str]:
+        balance = ord(label) - ord("A")
+        content = (
+            "Date,Description,Debit,Credit,Balance\r\n"
+            f"06/01/2026,COMPONENT {group} COFFEE,4.50,,{balance}.00\r\n"
+        ).encode("ascii")
+        run_id = self.importer.import_bytes(
+            content,
+            filename=f"component-{label}.csv",
+            source_type="csv",
+        )
+        identity_id = str(self.store.list_occurrences(run_id)[0]["identity_id"])
+        return run_id, identity_id
+
+    def _candidate_for(self, left_identity_id: str, right_identity_id: str):
+        expected = {left_identity_id, right_identity_id}
+        matches = [
+            candidate
+            for candidate in self.analysis.list_duplicate_candidates()
+            if {candidate.left_identity_id, candidate.right_identity_id} == expected
+        ]
+        self.assertEqual(len(matches), 1)
+        return matches[0]
+
     def test_duplicate_decisions_are_append_only_latest_wins_and_reversible(self) -> None:
         run_id = self.import_csv()
         raw_counts = self.store.entity_counts()
@@ -162,7 +191,7 @@ class AnalysisDuplicateDecisionTests(AnalysisStoreTestCase):
             second,
         )
         cycle_link = candidates_by_pair[(first, third)]
-        with self.assertRaisesRegex(ValueError, "connected component"):
+        with self.assertRaisesRegex(ValueError, "structural keeper"):
             self.analysis.set_duplicate_decision(
                 cycle_link.duplicate_link_id,
                 "same_transaction",
@@ -211,6 +240,79 @@ class AnalysisDuplicateDecisionTests(AnalysisStoreTestCase):
         self.assertEqual(
             self.store.list_duplicate_decisions(cycle_link.duplicate_link_id),
             [],
+        )
+
+    def test_component_proposals_reject_multiple_keepers_and_nonbridge_distinct(self) -> None:
+        identities = {
+            label: self._import_duplicate_identity(label)[1]
+            for label in "ABCD"
+        }
+
+        def decide(
+            left: str,
+            right: str,
+            decision: str,
+            keeper: str | None = None,
+        ):
+            candidate = self._candidate_for(identities[left], identities[right])
+            return self.analysis.set_duplicate_decision(
+                candidate.duplicate_link_id,
+                decision,
+                None if keeper is None else identities[keeper],
+            )
+
+        decide("A", "B", "same_transaction", "A")
+        bc = self._candidate_for(identities["B"], identities["C"])
+        with self.assertRaisesRegex(ValueError, "exactly one structural keeper"):
+            decide("B", "C", "same_transaction", "C")
+        self.assertEqual(self.store.list_duplicate_decisions(bc.duplicate_link_id), [])
+
+        decide("B", "C", "same_transaction", "B")
+        decide("A", "C", "same_transaction", "A")
+        ab = self._candidate_for(identities["A"], identities["B"])
+        ab_history = tuple(decision.decision_id for decision in ab.history)
+        with self.assertRaisesRegex(ValueError, "alternate same_transaction path"):
+            decide("A", "B", "distinct")
+        self.assertEqual(
+            tuple(
+                decision["decision_id"]
+                for decision in self.store.list_duplicate_decisions(
+                    ab.duplicate_link_id
+                )
+            ),
+            ab_history,
+        )
+
+    def test_component_merge_rejects_two_structural_keepers_without_history(self) -> None:
+        identities = {
+            label: self._import_duplicate_identity(label)[1]
+            for label in "ABCD"
+        }
+        ab = self._candidate_for(identities["A"], identities["B"])
+        cd = self._candidate_for(identities["C"], identities["D"])
+        bd = self._candidate_for(identities["B"], identities["D"])
+        self.analysis.set_duplicate_decision(
+            ab.duplicate_link_id,
+            "same_transaction",
+            identities["A"],
+        )
+        self.analysis.set_duplicate_decision(
+            cd.duplicate_link_id,
+            "same_transaction",
+            identities["C"],
+        )
+
+        before = self.store.entity_counts()["duplicate_decisions"]
+        with self.assertRaisesRegex(ValueError, "exactly one structural keeper"):
+            self.analysis.set_duplicate_decision(
+                bd.duplicate_link_id,
+                "same_transaction",
+                identities["B"],
+            )
+        self.assertEqual(self.store.list_duplicate_decisions(bd.duplicate_link_id), [])
+        self.assertEqual(
+            self.store.entity_counts()["duplicate_decisions"],
+            before,
         )
 
 
