@@ -1,20 +1,20 @@
 # Review Current State
 
 current_request_id: REQ-20260714-064051-data-eng
-status: BLOCKED
-iteration: 2
-last_updated: 2026-07-14T07:17:23Z
-heartbeat: 2026-07-14T07:17:23Z
+status: FIX_REQUESTED
+iteration: 3
+last_updated: 2026-07-14T18:06:07Z
+heartbeat: 2026-07-14T18:06:07Z
 model_observed: gpt-5.6-sol xhigh (highest)
 
 ## Current Checkpoint
 
-- Independent review of `6b9378f` confirms the cycle-closing guard, but finds the same zero-representative outcome after selectively undoing only the designated keeper's support run.
+- The complete 55-path executable component-state matrix plus 20 explicit impossible classes is frozen before iteration-3 implementation.
 
 ## Next Action
 
-- Product records the human decision on a temporary anti-thrash override; no iteration-3 implementation is dispatched from review.
+- Run `python -m unittest tests.acceptance.test_analysis_core_review -v` once against baseline `6b9378f`, record the red/green inventory and hashes, then return the frozen contract to product without dispatching implementation.
 
 ## Blockers
 
-- C3 blocker documented in `docs/review/REQ-20260714-064051-data-eng-iter-2.md`; live raw fix-cycle count is 3 at the standing cap of 3, so another full round requires explicit human authorization (recommended temporary cap: 5).
+- None for the matrix phase; the human-approved temporary cap is 5 and raw fix-cycle count is 4/5. Product alone may dispatch the later iteration-3 implementation request.
