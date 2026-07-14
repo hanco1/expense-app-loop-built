@@ -7,23 +7,22 @@ the next actor can continue from repo files plus the latest message alone.
 
 - The SQLite core foundation is accepted. The human has confirmed the browser operating flow and authorized two wholly synthetic TD-style fixtures for committed end-to-end tests.
 - Data-eng fixed the named Decimal exceptional-value row loss at commit `e94a09a`; all eight declared iteration-3 commands and the completion gate are green.
-- Independent review found that `1e-999999999` silently becomes an active zero-cent transaction. The request is BLOCKED because iteration 3 was the human-approved final round.
+- Independent review found that `1e-999999999` silently becomes an active zero-cent transaction. The human authorized iteration 4 with a temporary cap of 7 and required one whitelist-based class-wide correction.
 
 ## Next Action
 
-- [!] Product asks the human whether to authorize one additional narrowly scoped exact-money correction; do not accept `e94a09a` while the blocker remains.
+- [~] Review first defines and commits the complete valid/invalid numeric boundary matrix and red-capable acceptance coverage. Product then delivers that entire matrix to data-eng as the single iteration-4 FIX_REQUEST.
 
 ## Active Request
 
 - request_id: REQ-20260713-073512-data-eng
-- owner_lane: product
-- iteration: 3
+- owner_lane: review
+- iteration: 4
 
 ## Blockers
 
-- Technical blocker: Decimal underflow can silently rewrite a nonzero source amount to `amount_minor=0` and create effective support, violating INV-7 and INV-6.
-- Process blocker: iteration 3 was explicitly authorized as final. The doctor 5/max 4 count remains an authorized-resume advisory, but there is no authority for another round.
-- If the human authorizes iteration 4, the minimum warning-free temporary cap is 7: the current raw count is 5, and the mandatory `BLOCKED -> FIX_REQUESTED -> IMPLEMENTING` transitions add two entries. Restore the cap to 3 atomically after ACCEPTED.
+- No human-authority blocker remains. Implementation is intentionally gated until review delivers the complete boundary matrix.
+- `max_fix_cycles: 7` is temporary for iteration 4. Restore it to 3 atomically after ACCEPTED.
 
 ## Pending Inbox Deliveries
 

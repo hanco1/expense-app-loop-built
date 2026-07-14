@@ -17,6 +17,7 @@
 - 2026-07-13T08:51:58Z: Delivered committed iteration-3 FIX_REQUEST snapshot `bb9dcf1` to the verified data-eng thread; implementation ownership is active.
 - 2026-07-13T08:57:47Z: Reconciled implementation `e94a09a` and delivery `258ab63`, verified eight exit-0 evidence records and fixture hashes, independently reran backend 28/28 plus review acceptance 3/3, and kept the request REVIEWING. Recorded the doctor's raw-count warning without expanding the human-approved cap.
 - 2026-07-13T09:02:49Z: Recorded review commits `bb3b488` and `4f0b0e9` as BLOCKED: `1e-999999999` silently becomes an effective zero-cent transaction. Kept `e94a09a` unaccepted and returned authority to the human; a warning-free iteration 4 would require the temporary cap to rise from 4 to 7, then return to 3 after ACCEPTED.
+- 2026-07-14T06:11:02Z: Human authorized iteration 4 and temporary `max_fix_cycles: 7`, with mandatory restoration to 3 after ACCEPTED. Replaced case-by-case exception handling with a class-wide positive amount whitelist contract and assigned review to deliver the complete numeric boundary matrix before data-eng starts.
 
 | Time | Request | Action | Evidence |
 | --- | --- | --- | --- |
@@ -30,3 +31,4 @@
 | 2026-07-13T08:51:58Z | REQ-20260713-073512-data-eng | Delivered iteration-3 FIX_REQUEST to data-eng | product snapshot bb9dcf1; thread 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx |
 | 2026-07-13T08:57:47Z | REQ-20260713-073512-data-eng | Reconciled iteration-3 implementation and routed final review | implementation e94a09a; delivery 258ab63; SHIP_CHECK_OK; backend 28/28; acceptance 3/3; max remains 4 |
 | 2026-07-13T09:02:49Z | REQ-20260713-073512-data-eng | Paused on independent exact-money blocker | review bb3b488; blocker delivery 4f0b0e9; underflow acceptance test exit 1; human iteration-4 decision required |
+| 2026-07-14T06:11:02Z | REQ-20260713-073512-data-eng | Resumed iteration 4 with review-first boundary design | human-approved cap 7; positive whitelist contract; restore cap 3 after ACCEPTED |

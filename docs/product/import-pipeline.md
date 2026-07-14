@@ -11,6 +11,9 @@ Turn browser-supplied statement bytes into local, auditable import runs without 
 - Dates normalize to real ISO calendar dates (`YYYY-MM-DD`).
 - Merchants/payees remain non-empty, non-numeric text.
 - CAD amounts use signed integer cents: withdrawals/debits are negative; deposits, refunds, and income are positive. A positive credit is not spending.
+- Each raw Debit or Credit cell is validated by one positive whitelist. It is valid if and only if the token is a decimal number, the value is finite, non-negative with no negative-zero spelling, exactly representable in CAD cents without any context-dependent rounding/underflow/overflow, and within the inclusive SQLite minor-unit range. Every other token is a retained row-level `invalid_amount` and creates no normalized transaction or occurrence.
+- Validation must derive validity from that whitelist, not from a list of known failure modes or exception types. Decimal context flags, traps, exponent magnitude, and runtime-specific rounding must not change the result.
+- The review-owned iteration-4 matrix locks the accepted decimal-token grammar and both valid and invalid representatives before implementation. It covers ordinary boundaries plus exceptional values, signed zero, subnormal/underflow/overflow forms, fractional cents, long mantissas, grouping/currency text, whitespace, tabs, and scientific notation.
 - CSV data rows and PDF transaction lines are source records. Headers and statement metadata are not transaction candidate records.
 - Every import attempt creates a distinct opaque `run_id`, even when the file bytes were imported before.
 
