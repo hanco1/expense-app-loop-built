@@ -13,7 +13,7 @@ Phase dashboard for the loop. Keep checkpoints small and verifiable. Use the sta
 
 - [x] Confirm objective, Done-When, standing data invariants, operating flow, and approved synthetic input shape.
 - [x] Implement local ingestion, raw/normalized storage, source traceability, deduplication, and reversible `run_id` import units.
-- [ ] Implement categorization, persistent human corrections, monthly aggregation, and API contracts.
+- [~] Implement categorization, persistent human corrections, monthly aggregation, and API contracts.
 - [ ] Implement browser import/review flows and the monthly dashboard with reconciled pie-chart data.
 - [ ] Pass independent acceptance/privacy review and human QA on the live local application.
 

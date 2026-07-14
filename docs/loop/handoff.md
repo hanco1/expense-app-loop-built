@@ -10,14 +10,17 @@ the next actor can continue from repo files plus the latest message alone.
 - Independent review found that `1e-999999999` silently becomes an active zero-cent transaction. The human authorized iteration 4 with a temporary cap of 7 and required one whitelist-based class-wide correction.
 - Data-eng implemented the frozen class-wide whitelist at `06ac048`; product and independent review reproduced backend 31/31 and the full unchanged 282-path acceptance matrix with all nine recorded gates green. Review returned PASS with no scope, privacy, traceability, or misuse finding.
 - Product accepted the ingestion slice and restored the standing `max_fix_cycles: 3` in the same checkpoint.
+- Product specified the next core slice in `docs/product/analysis-core.md`: deterministic categories, append-only category/duplicate decisions, exact monthly fixture oracles, and typed local contracts.
 
 ## Next Action
 
-- [ ] Define and dispatch the next bounded slice for automatic categorization, persistent human corrections, monthly aggregation, and API contracts.
+- [~] Data-eng implements `REQ-20260714-064051-data-eng` and returns nine-command evidence plus an independent review request.
 
 ## Active Request
 
-- None. Most recent accepted request: `REQ-20260713-073512-data-eng`, iteration 4.
+- request_id: REQ-20260714-064051-data-eng
+- owner_lane: data-eng
+- iteration: 1
 
 ## Blockers
 
@@ -37,6 +40,7 @@ the next actor can continue from repo files plus the latest message alone.
 ## Done When
 
 - [x] Both approved fixtures import with field-level correctness, bad rows remain visible, exact re-imports do not double-count, legitimate lookalikes remain separate, and each run is inspectable and independently undoable without losing manual corrections.
+- [ ] May and June fixture summaries match the exact oracle, category buckets reconcile to spending, credits remain outside spending, and human category/duplicate decisions persist through undo and re-import.
 
 ## Memory Protocol
 
