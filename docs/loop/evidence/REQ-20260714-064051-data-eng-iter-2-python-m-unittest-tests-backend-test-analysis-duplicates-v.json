@@ -1,0 +1,14 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "checkpoint": "analysis-core-duplicate-graph-safety",
+  "command": "python -m unittest tests.backend.test_analysis_duplicates -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T07:09:44Z",
+  "test_count": 2,
+  "graph_identity_count": 3,
+  "graph_link_count": 3,
+  "cycle_closing_decision_rejected": true,
+  "rejected_history_rows": 0,
+  "included_representative_count": 1,
+  "survived_undo_reimport": true
+}

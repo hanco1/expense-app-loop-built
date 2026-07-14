@@ -1,0 +1,12 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "checkpoint": "analysis-core-duplicate-graph-safety",
+  "command": "python -m unittest tests.acceptance.test_analysis_core_review -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T07:09:44Z",
+  "test_count": 1,
+  "active_identity_count": 3,
+  "included_representative_count": 1,
+  "spending_total_minor": 450,
+  "review_test_sha256": "7FE5D30C0681FB54CF6366A69F707B30A58BCEE69E1999BE80DAFAC2C86B06FD"
+}

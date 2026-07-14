@@ -12,21 +12,23 @@ the next actor can continue from repo files plus the latest message alone.
 - Product accepted the ingestion slice and restored the standing `max_fix_cycles: 3` in the same checkpoint.
 - Product specified the next core slice in `docs/product/analysis-core.md`: deterministic categories, append-only category/duplicate decisions, exact monthly fixture oracles, and typed local contracts.
 - Data-eng implemented the analysis core at `8aa5b6f`; all nine recorded commands are exit 0, backend discovery is 45/45, and product independently reproduced the exact May/June, correction, and duplicate checks.
-- The request remains `REVIEWING`. Independent review is testing a possible contradictory duplicate-decision graph that could exclude every identity; product also added a syntax-only VERIFY manifest supplement without changing any criterion or command.
+- Independent review found a C3 blocker in iteration 1: three pairwise kept choices could form a cycle and exclude every active identity.
+- Data-eng fixed the blocker at `6b9378f` by validating the proposed latest-wins connected component before appending a `same_transaction` decision. The cycle-closing proposal now raises `ValueError` with no history row, accepted decisions survive undo/re-import, and one representative remains included.
+- The unchanged review acceptance, all original focused gates, backend discovery 46/46, and the completion gate are green with ten flat iteration-2 evidence records.
 
 ## Next Action
 
-- [~] Data-eng fixes the iteration-2 connected duplicate-decision graph blocker and returns the review-owned acceptance test plus all original gates green.
+- [~] Review independently evaluates implementation commit `6b9378f` against the unchanged cycle acceptance and C1-C7 gates, then returns REVIEW_DONE or a blocker FIX_REQUEST.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: data-eng
+- owner_lane: review
 - iteration: 2
 
 ## Blockers
 
-- C3 blocker: cyclic pairwise kept choices can exclude every active identity from analysis. The standing anti-thrash cap is 3 and permits iteration 2.
+- None; iteration 2 is in independent review.
 
 ## Pending Inbox Deliveries
 

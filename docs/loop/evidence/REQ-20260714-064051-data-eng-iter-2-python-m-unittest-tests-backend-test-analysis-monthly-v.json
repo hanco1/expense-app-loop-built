@@ -1,0 +1,11 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "checkpoint": "analysis-core-monthly",
+  "command": "python -m unittest tests.backend.test_analysis_monthly -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-14T07:09:44Z",
+  "test_count": 1,
+  "may": {"spending_minor": 50340, "credit_minor": 60000, "transaction_count": 12},
+  "june": {"spending_minor": 277617, "credit_minor": 72999, "transaction_count": 22},
+  "category_sums_reconcile": true
+}
