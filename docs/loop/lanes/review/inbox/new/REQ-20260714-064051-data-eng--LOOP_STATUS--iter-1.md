@@ -26,7 +26,7 @@ current_state:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: sent
-- sent_at: 2026-07-14T07:01:37Z
+- delivery_status: pending
+- sent_at:
 expected_reply:
 - REVIEW_DONE PASS or blocker-severity FIX_REQUEST with review-owned red-capable evidence.

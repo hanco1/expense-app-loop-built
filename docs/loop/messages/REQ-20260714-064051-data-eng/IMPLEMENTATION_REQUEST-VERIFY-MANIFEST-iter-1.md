@@ -26,7 +26,7 @@ acceptance_criteria:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: pending
-- sent_at:
+- delivery_status: sent
+- sent_at: 2026-07-14T07:01:37Z
 expected_reply:
 - Review uses the unchanged C1-C7 contract and existing nine evidence records; this supplement only repairs manifest syntax.
