@@ -65,8 +65,8 @@ dependencies:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: sent
-- sent_at: 2026-07-14T06:42:36Z
+- delivery_status: pending
+- sent_at:
 expected_reply:
 - IMPLEMENTATION_DONE with implementation commit, changed files, schema/API decisions, exact verification commands and exit codes, flat evidence paths, dependency statement, and blockers.
 - Then REVIEW_REQUEST to the verified review thread using the same request_id and iteration.

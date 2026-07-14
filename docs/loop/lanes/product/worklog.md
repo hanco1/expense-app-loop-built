@@ -42,3 +42,4 @@
 | 2026-07-14T06:31:53Z | REQ-20260713-073512-data-eng | Reconciled whitelist implementation and routed final review | implementation 06ac048; delivery c3ffac5; backend 31/31; frozen 282/282; SHIP_CHECK_OK |
 | 2026-07-14T06:38:43Z | REQ-20260713-073512-data-eng | Accepted the import pipeline and closed the temporary override | review c5f4275/47ade5a/21a3584; SHIP_CHECK_OK; backend 31/31; frozen 282/282; max_fix_cycles restored 7 to 3 |
 | 2026-07-14T06:40:51Z | REQ-20260714-064051-data-eng | Specified and requested the analysis-core slice | exact May/June oracles; deterministic categories; append-only category/duplicate decisions; nine red-capable gates |
+| 2026-07-14T06:42:36Z | REQ-20260714-064051-data-eng | Delivered the analysis-core request to data-eng | durable inbox plus verified thread 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx; product snapshot c21e1a8 |
