@@ -8,21 +8,21 @@ the next actor can continue from repo files plus the latest message alone.
 - The SQLite core foundation is accepted. The human has confirmed the browser operating flow and authorized two wholly synthetic TD-style fixtures for committed end-to-end tests.
 - Data-eng fixed the named Decimal exceptional-value row loss at commit `e94a09a`; all eight declared iteration-3 commands and the completion gate are green.
 - Independent review found that `1e-999999999` silently becomes an active zero-cent transaction. The human authorized iteration 4 with a temporary cap of 7 and required one whitelist-based class-wide correction.
-- Data-eng implemented the frozen class-wide whitelist at `06ac048`; product independently reproduced backend 31/31 and the full 282-path acceptance matrix with all nine recorded gates green.
+- Data-eng implemented the frozen class-wide whitelist at `06ac048`; product and independent review reproduced backend 31/31 and the full unchanged 282-path acceptance matrix with all nine recorded gates green. Review returned PASS with no scope, privacy, traceability, or misuse finding.
 
 ## Next Action
 
-- [~] Review independently verifies `06ac048` against the unchanged frozen matrix, implementation shape, all nine gates, misuse paths, and original import invariants.
+- [~] Product accepts `06ac048`, restores `max_fix_cycles` from 7 to 3 atomically with ACCEPTED, and reruns the completion gate and doctor.
 
 ## Active Request
 
 - request_id: REQ-20260713-073512-data-eng
-- owner_lane: review
+- owner_lane: product
 - iteration: 4
 
 ## Blockers
 
-- No blocker in product verification. Final acceptance awaits independent review PASS.
+- No blocker. Independent review PASS is recorded; final acceptance is product-owned.
 - `max_fix_cycles: 7` is temporary for iteration 4. Restore it to 3 atomically after ACCEPTED.
 
 ## Pending Inbox Deliveries
