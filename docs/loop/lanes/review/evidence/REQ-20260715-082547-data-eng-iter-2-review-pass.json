@@ -1,0 +1,49 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 2,
+  "reviewed_commit": "0362cb0",
+  "verdict": "PASS",
+  "ran_at": "2026-07-15T09:07:07Z",
+  "commands": [
+    {"command": "python -m unittest tests.acceptance.test_local_web_api_review -v", "exit_code": 0, "tests_run": 4, "sha256": "D1E9C7E00429E234980F367ED64913143D33415198665D7EF6EB5C89E7F962E2"},
+    {"command": "python -m unittest tests.backend.test_local_web_api_security -v", "exit_code": 0, "tests_run": 3},
+    {"command": "python -m unittest tests.backend.test_local_web_api_imports -v", "exit_code": 0, "tests_run": 2},
+    {"command": "python -m unittest tests.backend.test_local_web_api_runs -v", "exit_code": 0, "tests_run": 2},
+    {"command": "python -m unittest tests.backend.test_local_web_api_months -v", "exit_code": 0, "tests_run": 1},
+    {"command": "python -m unittest tests.backend.test_local_web_api_decisions -v", "exit_code": 0, "tests_run": 2},
+    {"command": "python -m unittest tests.backend.test_local_web_api_errors -v", "exit_code": 0, "tests_run": 3},
+    {"command": "python -m unittest tests.backend.test_local_web_api_boundary -v", "exit_code": 0, "tests_run": 3},
+    {"command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v", "exit_code": 0, "tests_run": 68},
+    {"command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260715-082547-data-eng", "exit_code": 0, "output": "SHIP_CHECK_OK REQ-20260715-082547-data-eng"},
+    {"command": "python multi_agent_loop_doctor.py --loop-dir docs/loop --json", "exit_code": 0, "ok": true},
+    {"command": "python -c public alias identity check", "exit_code": 0, "output": "PUBLIC_ALIASES_OK"}
+  ],
+  "criteria_results": {
+    "C1": "pass",
+    "C2": "pass",
+    "C3": "pass",
+    "C4": "pass",
+    "C5": "pass",
+    "C6": "pass",
+    "C7": "pass"
+  },
+  "invariants": {
+    "INV-1": "pass",
+    "INV-2": "pass",
+    "INV-3": "pass",
+    "INV-4": "pass",
+    "INV-5": "pass",
+    "INV-6": "pass",
+    "INV-7": "pass",
+    "INV-8": "pass"
+  },
+  "fixture_hashes": {
+    "csv": "9F93F107DDD02AEE2FB0A0AE19EB962180C680D1FB06D4D90959C96ED8CD7BAA",
+    "pdf": "F4B6B524D7C6140EE3F3E24CE87C4A36F0B40619395B5DC17B03F1B99DBC11F8"
+  },
+  "scope_creep": "none",
+  "looks_done_but_wrong": "none found after code inspection and independent red-capable reruns",
+  "ease_of_misuse": "none found within the supported public construction and dispatch contract",
+  "privacy_local_boundary": "pass",
+  "remaining_risks": []
+}
