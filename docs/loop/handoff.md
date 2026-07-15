@@ -23,20 +23,21 @@ the next actor can continue from repo files plus the latest message alone.
 - The unchanged frozen acceptance passes 56/56, backend discovery passes 50/50, both frozen hashes are unchanged, all ten iteration-3 evidence records are exit 0, and the completion gate is green. Independent review is now active.
 - Independent review found a write-boundary blocker: publicly exported `CoreStore.add_duplicate_decision()` bypasses the projection and commits a zero-keeper history row. The separate boundary probe is red, and raw fix-cycle usage is 5/5.
 - The human approved iteration 4 with temporary `max_fix_cycles: 7`. Product strengthened the contract so every exposed decision writer must enforce the same validator atomically, and routed review-first freezing of the complete public-writer/proposal matrix before implementation.
+- Review froze the complete iteration-4 boundary contract at `7a99866`: six public import paths, eight proposal classes, and three support states produce 144 executable cases plus six explicit unreachable classes. Baseline 53e57f6 is red in 48 CoreStore-alias invalid-proposal paths and green in 96 compatible paths plus the manifest guard; original matrix remains 56/56.
 
 ## Next Action
 
-- [~] Review inventories and freezes every exposed duplicate-decision writer against zero-keeper, multi-keeper, alternate-path-distinct, and valid guardrail proposals; data-eng remains held until product dispatches the frozen iteration-4 contract.
+- [~] Product commits the frozen boundary handoff and dispatches one authoritative iteration-4 FIX_REQUEST to data-eng; raw usage remains 6/7 until the later data-eng claim.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: review
+- owner_lane: product
 - iteration: 4
 
 ## Blockers
 
-- The exported persistence writer bypass remains red at `53e57f6`. Review must freeze the complete public write-boundary matrix before data-eng starts. Raw fix-cycle use is 6/7 after the authorized resume; the temporary cap must return to 3 with ACCEPTED.
+- The frozen boundary matrix intentionally remains red at `53e57f6`; product alone must dispatch the class-wide repair. Raw fix-cycle use is 6/7 and the temporary cap must return to 3 with ACCEPTED.
 
 ## Pending Inbox Deliveries
 
