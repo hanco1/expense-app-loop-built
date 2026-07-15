@@ -38,7 +38,7 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Next Action
 
-- [~] Frontend implements `REQ-20260715-091230-frontend` from the committed contract; product retains final acceptance and human-QA authority.
+- [~] Frontend implements the request delivered from product snapshot `caacf13`; product retains final acceptance and human-QA authority.
 
 ## Active Request
 
