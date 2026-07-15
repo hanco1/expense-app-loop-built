@@ -40,20 +40,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Product routed the consolidated iteration-2 repair to frontend. The unchanged review acceptance hash is `4EB538618C7455BB857DA7F30F1341F77AE6EA3086B151E87AFA6940B4D3C7D7`; live human QA remains deferred until a later independent code PASS.
 - Frontend implemented the class-wide repair at `8131762`: frozen acceptance 6/6, frontend discovery 9/9, real Chromium E2E 1/1, and backend discovery 68/68. Product mirrored the four evidence files byte-for-byte; completion-gate evidence and formal implementation delivery remain next.
 - Frontend completion gate returned `SHIP_CHECK_OK` and handoff `061bbc3` routed implementation `8131762` to independent iteration-2 review. All five root evidence records are present; code acceptance and live human QA remain separate gates.
+- Independent review passed at `9e8e183`: C1-C7 and INV-1..8 are green, all five gates pass, both blocker classes are closed, and no scope, privacy, traceability, or misuse finding remains. The request is held at REVIEWING for explicit human QA at `http://127.0.0.1:8765`.
 
 ## Next Action
 
-- [~] Review independently validates `8131762`; if code PASS is returned, product starts the live local server and asks the human to perform the final operating-flow QA before acceptance.
+- [~] Await explicit human PASS or a concrete observed issue from the live 30-second operating check; record `human_qa: confirmed` before any ACCEPTED transition.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: review
+- owner_lane: product
 - iteration: 2
 
 ## Blockers
 
-- None known after implementation `8131762`; independent review and explicit live human QA confirmation are still required. No system/browser/runtime installation occurred.
+- None known after independent PASS. Explicit live human QA confirmation is still required. No system/browser/runtime installation occurred.
 
 ## Pending Inbox Deliveries
 
