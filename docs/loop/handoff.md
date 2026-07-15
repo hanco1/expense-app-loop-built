@@ -25,21 +25,22 @@ the next actor can continue from repo files plus the latest message alone.
 - The human approved iteration 4 with temporary `max_fix_cycles: 7`. Product strengthened the contract so every exposed decision writer must enforce the same validator atomically, and routed review-first freezing of the complete public-writer/proposal matrix before implementation.
 - Review froze the complete iteration-4 boundary contract at `7a99866`: six public import paths, eight proposal classes, and three support states produce 144 executable cases plus six explicit unreachable classes. Baseline 53e57f6 is red in 48 CoreStore-alias invalid-proposal paths and green in 96 compatible paths plus the manifest guard; original matrix remains 56/56.
 - Data-eng implemented the centralized underlying write boundary at `9268a5e`. `CoreStore.add_duplicate_decision()` validates the overlaid latest-same graph inside one immediate transaction before allocating a decision ID or appending history; all public import aliases inherit the same rule while valid decisions still append exactly once.
-- The unchanged write-boundary matrix passes 145/145, the unchanged component-state matrix passes 56/56, backend discovery passes 52/52, all four frozen hashes match, and all eleven iteration-4 evidence records are exit 0. Independent review is active.
+- The unchanged write-boundary matrix passes 145/145, the unchanged component-state matrix passes 56/56, backend discovery passes 52/52, all four frozen hashes match, and all eleven iteration-4 evidence records are exit 0.
+- Independent review passed at `329fa51` and delivered at `1e0d0f4`; product accepted implementation `9268a5e` and restored the standing `max_fix_cycles: 3` in the same checkpoint.
 
 ## Next Action
 
-- [~] Review independently evaluates implementation commit `9268a5e` against both frozen matrices, atomic rejection/history behavior, prior C1-C7 invariants, and the eleven flat evidence records.
+- [~] Product prepares the browser import/review and monthly dashboard slice against the accepted typed analysis contracts.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: review
+- owner_lane: product
 - iteration: 4
 
 ## Blockers
 
-- None. Raw fix-cycle usage is the human-authorized 7/7; product must restore the standing cap to 3 only in the same checkpoint as ACCEPTED.
+- None. The request is ACCEPTED and the standing fix-cycle cap is restored to 3.
 
 ## Pending Inbox Deliveries
 
@@ -55,7 +56,7 @@ the next actor can continue from repo files plus the latest message alone.
 ## Done When
 
 - [x] Both approved fixtures import with field-level correctness, bad rows remain visible, exact re-imports do not double-count, legitimate lookalikes remain separate, and each run is inspectable and independently undoable without losing manual corrections.
-- [ ] May and June fixture summaries match the exact oracle, category buckets reconcile to spending, credits remain outside spending, and human category/duplicate decisions persist through undo and re-import.
+- [x] May and June fixture summaries match the exact oracle, category buckets reconcile to spending, credits remain outside spending, and human category/duplicate decisions persist through undo and re-import.
 
 ## Memory Protocol
 

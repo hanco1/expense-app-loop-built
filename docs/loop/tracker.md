@@ -13,7 +13,7 @@ Phase dashboard for the loop. Keep checkpoints small and verifiable. Use the sta
 
 - [x] Confirm objective, Done-When, standing data invariants, operating flow, and approved synthetic input shape.
 - [x] Implement local ingestion, raw/normalized storage, source traceability, deduplication, and reversible `run_id` import units.
-- [~] Implement categorization, persistent human corrections, monthly aggregation, and API contracts.
+- [x] Implement categorization, persistent human corrections, monthly aggregation, and API contracts.
 - [ ] Implement browser import/review flows and the monthly dashboard with reconciled pie-chart data.
 - [ ] Pass independent acceptance/privacy review and human QA on the live local application.
 
@@ -34,4 +34,5 @@ Phase dashboard for the loop. Keep checkpoints small and verifiable. Use the sta
 - REQ-20260712-200417-data-eng accepted the SQLite core foundation at commit `0ea7be5`; ingestion/parsing, deduplication decisions, categorization, aggregation, API, and UI remain unchecked work.
 - The human approved the operating flow and two wholly synthetic TD-style fixtures on 2026-07-13. These fixtures may be committed and are the end-to-end input for the ingestion slice; the real TD statement remains final-local-QA only.
 - REQ-20260713-073512-data-eng accepted the CSV/text-PDF ingestion slice at commit `06ac048`: backend 31/31, frozen numeric matrix 282/282, independent review PASS, and `max_fix_cycles` restored to 3.
+- REQ-20260714-064051-data-eng accepted the analysis core at commit `9268a5e`: frozen public-write and component-state matrices passed 145/145 and 56/56, backend discovery passed 52/52, independent review returned PASS, and `max_fix_cycles` was restored to 3.
 - Record verification commands, evidence paths, and blockers next to each checkpoint as it closes.
