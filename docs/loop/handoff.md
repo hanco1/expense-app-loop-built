@@ -30,20 +30,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Product specified the next dependency in `docs/product/local-web-api.md`: a local JSON-ready application facade, persistent run listing, exact string money, CSRF protection, and approved-fixture end-to-end checks before the browser UI starts.
 - Data-eng implemented the facade at `efff2f4`: typed in-process request/response contracts, persistent newest-first run discovery, raw-byte fixture imports, exact string-money JSON, CSRF on every mutation, stable errors, current duplicate/inclusion state, and a no-listener/no-network/no-raw-content boundary.
 - All nine declared gates are exit 0, backend discovery passes 65/65, fixture hashes are unchanged, and exact May/June totals remain 50340/60000/12 and 277617/72999/22. IMPLEMENTATION_DONE reached product and REVIEW_REQUEST reached the verified review lane.
+- Independent review found four public-boundary blockers despite those green gates: UNC database paths escape local-only storage, concurrent repeated undo can return two successes, mixed-currency analysis hides inspectable run detail, and a constructor-accepted Unicode CSRF token cannot authorize a write. Review acceptance has four tests and five failures at commit `376710f`.
 
 ## Next Action
 
-- [~] Review independently validates implementation commit `efff2f4`; product retains final acceptance authority.
+- [~] Data-eng implements the consolidated iteration-2 FIX_REQUEST and makes the unchanged review-owned acceptance plus all original gates green.
 
 ## Active Request
 
 - request_id: REQ-20260715-082547-data-eng
-- owner_lane: review
-- iteration: 1
+- owner_lane: data-eng
+- iteration: 2
 
 ## Blockers
 
-- None. No system dependency is authorized or expected.
+- Implementation `efff2f4` is not acceptable until all four review-owned boundary families pass. No system dependency is authorized or expected.
 
 ## Pending Inbox Deliveries
 

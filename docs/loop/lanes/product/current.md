@@ -1,21 +1,21 @@
 # Product Current State
 
 current_request_id: REQ-20260715-082547-data-eng
-status: REVIEWING
-iteration: 1
-last_updated: 2026-07-15T08:44:38Z
-heartbeat: 2026-07-15T08:44:38Z
+status: FIX_REQUESTED
+iteration: 2
+last_updated: 2026-07-15T08:54:51Z
+heartbeat: 2026-07-15T08:54:51Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
-- Data-eng implemented the local browser API boundary at `efff2f4` and delivered nine flat exit-0 evidence records.
-- Product independently reproduced all focused tests, backend discovery 65/65, exact fixture oracles, and `SHIP_CHECK_OK`.
+- Review commit `376710f` adds four red-capable boundary tests covering local persistence, atomic undo, inspectable run detail, and CSRF configuration.
+- The original nine gates remain green, but the independent acceptance exits 1 with four tests and five failures.
 
 ## Next Action
 
-- Independent review evaluates C1-C7, privacy, exact-money serialization, error misuse paths, and implementation commit `efff2f4`.
+- Data-eng claims iteration 2 and fixes the four consolidated boundary families without modifying the review-owned acceptance test.
 
 ## Blockers
 
-- None.
+- Implementation `efff2f4` is blocked by the four review-owned boundary failures.

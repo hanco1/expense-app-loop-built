@@ -67,3 +67,4 @@
 | 2026-07-15T08:25:47Z | REQ-20260715-082547-data-eng | Specified and requested the local browser API boundary | persistent run listing; exact JSON money strings; CSRF; nine red-capable gates; no listener or system dependency |
 | 2026-07-15T08:27:46Z | REQ-20260715-082547-data-eng | Delivered the local browser API request | product snapshots 36bbf75/979ca7d; atomic inbox plus verified data-eng thread; nine-gate contract unchanged |
 | 2026-07-15T08:44:38Z | REQ-20260715-082547-data-eng | Reconciled local API implementation and kept independent review active | implementation efff2f4; nine gates exit 0; backend 65/65; exact May/June oracles; SHIP_CHECK_OK; no dependency |
+| 2026-07-15T08:54:11Z | REQ-20260715-082547-data-eng | Routed consolidated local API boundary fixes | review 376710f/d647638; acceptance 4 tests/5 failures; UNC, atomic undo, mixed-currency run detail, and Unicode CSRF contract |
