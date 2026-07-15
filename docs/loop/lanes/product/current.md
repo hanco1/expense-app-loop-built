@@ -1,10 +1,10 @@
 # Product Current State
 
 current_request_id: REQ-20260715-091230-frontend
-status: IMPLEMENTING
+status: REVIEWING
 iteration: 4
-last_updated: 2026-07-15T21:25:31Z
-heartbeat: 2026-07-15T21:25:31Z
+last_updated: 2026-07-15T21:31:52Z
+heartbeat: 2026-07-15T21:31:52Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -27,11 +27,12 @@ model_observed: current-host-default (highest)
 - The human approved iteration 4 with temporary `max_fix_cycles: 7`, restored to 3 only with ACCEPTED. Product strengthened the chart contract to separate exact accounting units from bounded visual geometry and requested a pre-implementation review-owned real-browser red test.
 - Review froze one real-Chromium 720-point visible-ring acceptance at `cc27d2e` with hashes `D5EEA840...A076912` and `EA19310E...2F2C4D0`. Baseline is red for overlap 639/720, 140 cyclic runs, missing topmost Groceries/Shopping, and Housing 81/720; exact accounting and all nine keyboard/legend paths remain green.
 - Frontend claimed iteration 4 at `31779df` and implemented bounded explicit SVG arcs at `4b88b11`. The frozen geometry test is 1/1 with all six PG families green; server is 9/9, prior acceptance 6/6, frontend 13/13, Chromium E2E 1/1, and backend 68/68. Product mirrored all six pre-gate evidence files byte-for-byte.
+- Frontend handoff `659f2bb` records `SHIP_CHECK_OK` and seven exit-0 lane evidence records. Product mirrored the completion-gate evidence, reconciled IMPLEMENTATION_DONE/REVIEW_REQUEST, and assigned independent review without treating machine success as human PASS.
 
 ## Next Action
 
-- Frontend verifies the six root/lane evidence pairs, runs the completion gate, records its lane evidence, and delivers IMPLEMENTATION_DONE plus REVIEW_REQUEST for independent review.
+- Review independently validates `4b88b11`, both frozen hashes, visible-ring geometry, all seven gates, regression/privacy/scope boundaries, and human-QA readiness; product starts renewed live QA only after code PASS.
 
 ## Blockers
 
-- No external blocker. Frontend owns iteration 4 at `IMPLEMENTING`; raw fix-cycle use is 7/7 and no dependency installation is needed.
+- No external blocker. Review owns iteration 4 at `REVIEWING`; raw fix-cycle use is 7/7 and no dependency installation is needed.

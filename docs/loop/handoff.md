@@ -53,17 +53,17 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Next Action
 
-- [~] Frontend implementation `4b88b11` makes the frozen 720-point geometry acceptance and all six pre-gate commands green; product mirrored byte-identical evidence, and frontend now runs the completion gate before independent review and renewed live QA.
+- [~] Independent review validates frontend implementation `4b88b11`, the unchanged frozen geometry artifacts, all seven evidence records, exact accounting, prior runtime/security behavior, and readiness for renewed live human QA.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: frontend
+- owner_lane: review
 - iteration: 4
 
 ## Blockers
 
-- No external blocker. Frontend owns completion-gate finalization for the bounded visual-coordinate repair; no system/browser/runtime installation is required.
+- No external blocker. Review owns the independent iteration-4 verdict; product retains renewed live human QA and final acceptance, and no system/browser/runtime installation is required.
 
 ## Pending Inbox Deliveries
 
