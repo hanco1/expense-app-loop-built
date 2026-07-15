@@ -1,0 +1,234 @@
+<!doctype html>
+<html lang="en-CA">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <meta name="color-scheme" content="light">
+    <title>Monthly Expense Review</title>
+    <link rel="stylesheet" href="/app.css">
+    <script src="/app.js" defer></script>
+  </head>
+  <body>
+    <a class="skip-link" href="#main-content">Skip to main content</a>
+
+    <header class="app-header">
+      <div>
+        <p class="eyebrow">Private · local browser session</p>
+        <h1>Monthly Expense Review</h1>
+      </div>
+      <div class="local-badge" aria-label="Application is local only">
+        <span aria-hidden="true">●</span>
+        127.0.0.1 only
+      </div>
+    </header>
+
+    <nav class="primary-nav" aria-label="Primary">
+      <button class="nav-button is-active" type="button" data-view="overview" aria-current="page">
+        Overview
+      </button>
+      <button class="nav-button" type="button" data-view="imports">
+        Imports
+        <span id="run-count-badge" class="nav-count" aria-label="0 import runs">0</span>
+      </button>
+      <button class="nav-button" type="button" data-view="duplicates">
+        Duplicates
+        <span id="duplicate-count-badge" class="nav-count" aria-label="0 pending duplicates">0</span>
+      </button>
+    </nav>
+
+    <div id="status-region" class="status-region" role="status" aria-live="polite" aria-atomic="true"></div>
+    <div id="error-banner" class="error-banner" role="alert" hidden></div>
+
+    <main id="main-content" tabindex="-1">
+      <section id="view-overview" class="view" data-view-panel="overview" aria-labelledby="overview-title">
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Effective, reconciled activity</p>
+            <h2 id="overview-title" tabindex="-1">Monthly overview</h2>
+          </div>
+          <label class="month-control" for="month-select">
+            Month
+            <select id="month-select" disabled>
+              <option>No imported months</option>
+            </select>
+          </label>
+        </div>
+
+        <div id="overview-loading" class="state-panel" hidden>
+          <span class="spinner" aria-hidden="true"></span>
+          Loading the monthly analysis…
+        </div>
+        <div id="overview-empty" class="state-panel">
+          <h3>No monthly activity yet</h3>
+          <p>Import a supported CSV or text-based PDF statement to begin.</p>
+          <button type="button" class="secondary-button" data-go-view="imports">Go to imports</button>
+        </div>
+
+        <div id="overview-content" hidden>
+          <div class="summary-grid" aria-label="Monthly totals">
+            <article class="summary-card summary-card-primary">
+              <p>Spending</p>
+              <strong id="spending-total" data-minor="0">$0.00</strong>
+              <small id="spending-count">0 spending transactions</small>
+            </article>
+            <article class="summary-card">
+              <p>Credits</p>
+              <strong id="credit-total" data-minor="0">$0.00</strong>
+              <small id="credit-count">0 credit transactions · excluded from chart</small>
+            </article>
+            <article class="summary-card">
+              <p>Included activity</p>
+              <strong id="transaction-count">0</strong>
+              <small>transactions with active support</small>
+            </article>
+          </div>
+
+          <section class="panel chart-panel" aria-labelledby="breakdown-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Exact category sums</p>
+                <h3 id="breakdown-title">Spending breakdown</h3>
+              </div>
+              <p id="reconciliation-status" class="reconciliation-status"></p>
+            </div>
+
+            <div id="zero-spending" class="state-panel compact" hidden>
+              This month has no spending. Credits remain visible in the transaction list.
+            </div>
+            <div id="chart-content" class="chart-layout">
+              <div id="pie-chart" class="pie-wrap" aria-label="Spending pie chart"></div>
+              <div>
+                <div id="chart-legend" class="chart-legend" aria-label="Spending categories"></div>
+              </div>
+            </div>
+
+            <div class="table-scroll">
+              <table>
+                <caption>Category totals derived from included spending transactions</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Category</th>
+                    <th scope="col" class="numeric">Transactions</th>
+                    <th scope="col" class="numeric">Share</th>
+                    <th scope="col" class="numeric">Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="category-table-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="transactions-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Traceable included activity</p>
+                <h3 id="transactions-title">Transactions</h3>
+              </div>
+              <p class="muted">Category edits append history; source facts stay unchanged.</p>
+            </div>
+            <div class="table-scroll">
+              <table>
+                <caption id="transactions-caption">Included transactions for the selected month</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">Date / merchant</th>
+                    <th scope="col">Category</th>
+                    <th scope="col">Source support</th>
+                    <th scope="col">Inclusion</th>
+                    <th scope="col" class="numeric">Amount</th>
+                  </tr>
+                </thead>
+                <tbody id="transaction-table-body"></tbody>
+              </table>
+            </div>
+          </section>
+        </div>
+      </section>
+
+      <section id="view-imports" class="view" data-view-panel="imports" aria-labelledby="imports-title" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">CSV and text-PDF only</p>
+            <h2 id="imports-title" tabindex="-1">Import statements</h2>
+          </div>
+        </div>
+
+        <section class="panel import-panel" aria-labelledby="add-statements-title">
+          <div>
+            <h3 id="add-statements-title">Add statements</h3>
+            <p>Each selected file becomes a separate sequential run. Files and financial data stay in this local process.</p>
+          </div>
+          <div id="drop-zone" class="drop-zone">
+            <input id="statement-files" class="visually-hidden-input" type="file" accept=".csv,.pdf,text/csv,application/pdf" multiple>
+            <label class="primary-button" for="statement-files">Choose CSV or PDF files</label>
+            <strong>or drag and drop files here</strong>
+            <span id="upload-limit">Supported: CSV, text-based PDF</span>
+          </div>
+          <ul id="import-queue" class="import-queue" aria-label="Current import progress"></ul>
+        </section>
+
+        <div class="split-layout">
+          <section class="panel" aria-labelledby="run-history-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Persistent local history</p>
+                <h3 id="run-history-title">Import runs</h3>
+              </div>
+              <button id="refresh-runs" type="button" class="quiet-button">Refresh</button>
+            </div>
+            <div id="run-history-empty" class="state-panel compact">No import runs yet.</div>
+            <div class="table-scroll">
+              <table id="run-history-table" hidden>
+                <caption>Every retained import run, newest first</caption>
+                <thead>
+                  <tr>
+                    <th scope="col">File / run</th>
+                    <th scope="col">State</th>
+                    <th scope="col" class="numeric">Parsed</th>
+                    <th scope="col" class="numeric">Failed</th>
+                    <th scope="col">Actions</th>
+                  </tr>
+                </thead>
+                <tbody id="run-history-body"></tbody>
+              </table>
+            </div>
+          </section>
+
+          <section class="panel" aria-labelledby="run-detail-title">
+            <div class="panel-heading">
+              <div>
+                <p class="eyebrow">Structured review</p>
+                <h3 id="run-detail-title">Run detail</h3>
+              </div>
+            </div>
+            <div id="run-detail-empty" class="state-panel compact">Select a run to inspect its retained rows.</div>
+            <div id="run-detail" hidden></div>
+          </section>
+        </div>
+      </section>
+
+      <section id="view-duplicates" class="view" data-view-panel="duplicates" aria-labelledby="duplicates-title" hidden>
+        <div class="section-heading">
+          <div>
+            <p class="eyebrow">Human decisions outrank automation</p>
+            <h2 id="duplicates-title" tabindex="-1">Duplicate review</h2>
+          </div>
+          <button id="refresh-duplicates" type="button" class="quiet-button">Refresh</button>
+        </div>
+        <div id="duplicates-loading" class="state-panel" hidden>
+          <span class="spinner" aria-hidden="true"></span>
+          Loading suspected duplicates…
+        </div>
+        <div id="duplicates-empty" class="state-panel">
+          <h3>No suspected duplicates</h3>
+          <p>Pending and decided pairs will remain inspectable here.</p>
+        </div>
+        <div id="duplicate-list" class="duplicate-list"></div>
+      </section>
+    </main>
+
+    <footer>
+      <p>Local-only expense analysis · no cloud upload · scanned PDFs/OCR are not supported yet</p>
+    </footer>
+  </body>
+</html>
