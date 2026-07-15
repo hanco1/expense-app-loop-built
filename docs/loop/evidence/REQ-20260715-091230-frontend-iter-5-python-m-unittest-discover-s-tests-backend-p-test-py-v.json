@@ -1,0 +1,18 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 5,
+  "checkpoint": "backend-discovery-regression",
+  "command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T23:08:22Z",
+  "test_count": 68,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "fixture_hashes_unchanged": true,
+  "exact_money_and_month_oracles_green": true,
+  "append_only_history_green": true,
+  "duplicate_graph_boundaries_green": true,
+  "local_privacy_boundary_green": true,
+  "dependencies_unchanged": true
+}

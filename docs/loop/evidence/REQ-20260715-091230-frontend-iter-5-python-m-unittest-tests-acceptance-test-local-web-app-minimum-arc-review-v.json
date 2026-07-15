@@ -1,0 +1,35 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 5,
+  "checkpoint": "frozen-minimum-visible-arcs",
+  "command": "python -m unittest tests.acceptance.test_local_web_app_minimum_arc_review -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T23:08:22Z",
+  "test_count": 1,
+  "scenario_count": 2,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "frozen_test_sha256": "9FABFD79773E1419363E73508D2FB2125B5E6D1F087661C18AE559762984C88D",
+  "frozen_boundary_sha256": "34B7562E606A2B9C691D4629FCB6CB442CD83A28689472189289C8C48B326AED",
+  "accounting": {
+    "pie_scale": "1000000000",
+    "one_unit_case_data_units": ["1", "999999999"],
+    "simultaneous_floor_data_units": ["1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "1", "999999989"],
+    "data_units_reconcile_exactly": true,
+    "amounts_percentages_and_transactions_reconcile": true,
+    "credits_excluded": true,
+    "zero_categories_absent": true
+  },
+  "visual": {
+    "minimum_arc_degrees": 1,
+    "one_unit_case_degrees": [1, 359],
+    "simultaneous_floor_degrees": [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 349],
+    "sample_count_per_scenario": 3600,
+    "full_coverage": true,
+    "boundary_overlap_within_limit": true,
+    "one_contiguous_run_per_category": true,
+    "path_degrees_within_0_05": true,
+    "adjacent_endpoints_continuous": true
+  }
+}

@@ -1,0 +1,54 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 5,
+  "checkpoint": "real-browser-e2e",
+  "command": "python -m unittest tests.frontend.test_browser_e2e -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T23:08:22Z",
+  "test_count": 1,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "browser": {"engine": "Chromium", "headless": true},
+  "viewport": {"width": 1280, "height": 900},
+  "routes": ["#imports", "#overview", "#duplicates"],
+  "actions": [
+    "picker_import_csv_and_pdf_sequentially",
+    "assert_bounded_minimum_one_degree_pie_arcs",
+    "inspect_missing_amount_row_without_raw_input",
+    "assert_newest_june_and_select_may",
+    "correct_loblaws_category_to_dining",
+    "decide_tim_hortons_distinct_then_same_with_keeper",
+    "reload_and_assert_persistence",
+    "exact_csv_reimport",
+    "undo_both_csv_support_runs",
+    "reimport_csv_and_assert_history_restoration"
+  ],
+  "fixture_hashes": {
+    "td-mock-2026-06.csv": "9F93F107DDD02AEE2FB0A0AE19EB962180C680D1FB06D4D90959C96ED8CD7BAA",
+    "td-mock-2026-05.pdf": "F4B6B524D7C6140EE3F3E24CE87C4A36F0B40619395B5DC17B03F1B99DBC11F8"
+  },
+  "fixture_hashes_unchanged": true,
+  "fixture_oracle": {
+    "csv_retained_parsed_failed_occurrences": [23, 22, 1, 22],
+    "pdf_retained_parsed_failed_occurrences": [12, 12, 0, 12],
+    "may_spending_credit_count": ["50340", "60000", 12],
+    "june_spending_credit_count": ["277617", "72999", 22]
+  },
+  "reconciliation": {
+    "category_sum_equals_spending": true,
+    "included_spending_rows_equal_spending": true,
+    "pie_units_equal_integer_scale": true,
+    "visual_units_cover_full_circle": true,
+    "every_nonzero_arc_at_least_one_degree": true,
+    "legend_count_equals_category_count": true,
+    "credits_excluded_from_slices": true
+  },
+  "persistence": {
+    "category_history_entries": 1,
+    "duplicate_history_entries": 2,
+    "survived_reload": true,
+    "survived_complete_support_undo_and_reimport": true
+  },
+  "privacy_safe_structured_evidence": true
+}

@@ -1,0 +1,18 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 5,
+  "checkpoint": "frozen-one-unit-tiny-slice",
+  "command": "python -m unittest tests.acceptance.test_local_web_app_tiny_slice_review -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T23:08:22Z",
+  "test_count": 1,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "frozen_test_sha256": "0A108B0EED3264FB90C31B77B8A7700B333F5CAEAB6A934FDFA3BC0C0CDBA5C1",
+  "exact_data_units": {"tiny": "1", "large": "999999999", "sum": "1000000000"},
+  "both_paths_have_positive_length": true,
+  "tiny_slice_has_visible_hits": true,
+  "large_slice_is_dominant": true,
+  "keyboard_and_legend_selection_synchronized": true
+}

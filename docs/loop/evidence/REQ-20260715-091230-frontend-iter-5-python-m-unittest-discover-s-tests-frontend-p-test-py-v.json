@@ -1,0 +1,18 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 5,
+  "checkpoint": "frontend-discovery",
+  "command": "python -m unittest discover -s tests/frontend -p \"test_*.py\" -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T23:08:22Z",
+  "test_count": 13,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "minimum_visual_arc_unit_tests": true,
+  "simultaneous_visual_floors_reconcile": true,
+  "real_browser_fixture_flow_included": true,
+  "exclusive_loopback_server_tests_included": true,
+  "committed_mutation_refresh_regressions_included": true,
+  "accessibility_and_failure_states_included": true
+}
