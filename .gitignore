@@ -2,6 +2,7 @@
 data/
 uploads/
 private_samples/
+local-data/
 *.db
 *.sqlite
 *.sqlite3
