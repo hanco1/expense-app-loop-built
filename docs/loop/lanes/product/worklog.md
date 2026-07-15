@@ -70,3 +70,4 @@
 | 2026-07-15T08:54:11Z | REQ-20260715-082547-data-eng | Routed consolidated local API boundary fixes | review 376710f/d647638; acceptance 4 tests/5 failures; UNC, atomic undo, mixed-currency run detail, and Unicode CSRF contract |
 | 2026-07-15T09:05:30Z | REQ-20260715-082547-data-eng | Reconciled iteration-2 boundary hardening and kept independent review active | implementation 0362cb0; frozen hash unchanged; acceptance 4/4; backend 68/68; SHIP_CHECK_OK; no dependency |
 | 2026-07-15T09:10:30Z | REQ-20260715-082547-data-eng | Accepted the local browser API boundary | review d66a5d4/40660f9; C1-C7 and INV-1..8 PASS; acceptance 4/4; backend 68/68; SHIP_CHECK_OK |
+| 2026-07-15T09:12:30Z | REQ-20260715-091230-frontend | Specified and requested the complete local browser MVP | loopback-only same-origin server; import/run/decision UX; exact dashboard and pie; browser E2E; human-QA authority retained |

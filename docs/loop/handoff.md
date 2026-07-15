@@ -34,20 +34,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Data-eng fixed the complete batch at `0362cb0`: `CoreStore` rejects UNC/device paths before SQLite, strict facade undo compares and transitions under one immediate transaction, run detail no longer invokes currency aggregation, and unsupported configured CSRF text fails before exposure. The unchanged review acceptance passes 4/4, backend discovery passes 68/68, all ten gates are exit 0, and fixture hashes remain unchanged.
 - Product independently reproduced the unchanged acceptance 4/4, all focused local-API suites, backend discovery 68/68, and `SHIP_CHECK_OK`; review owns the final iteration-2 assessment.
 - Independent review passed at `d66a5d4` and delivered at `40660f9`; product accepted `0362cb0` after C1-C7 and INV-1 through INV-8 remained green with no scope, privacy, traceability, misuse, or non-UI human-QA blocker.
+- Product specified the complete user-facing slice in `docs/product/local-web-app.md` and created `REQ-20260715-091230-frontend`: loopback-only same-origin serving, picker/drop imports, run/duplicate/category review, exact monthly dashboard, reconciled pie chart, browser E2E, and final human-QA readiness.
 
 ## Next Action
 
-- [~] Specify and dispatch the frontend slice: loopback-only server, same-origin UI, file import/review, run undo, duplicate/category corrections, monthly dashboard, reconciled pie chart, and live human QA.
+- [~] Frontend implements `REQ-20260715-091230-frontend` from the committed contract; product retains final acceptance and human-QA authority.
 
 ## Active Request
 
-- request_id: REQ-20260715-082547-data-eng
-- owner_lane: product
-- iteration: 2
+- request_id: REQ-20260715-091230-frontend
+- owner_lane: frontend
+- iteration: 1
 
 ## Blockers
 
-- None. The accepted facade introduces no dependency or scope expansion; the browser UI and final live human-QA gate remain.
+- None. Any required system package, OCR engine, or browser/runtime installation must stop for explicit human approval.
 
 ## Pending Inbox Deliveries
 

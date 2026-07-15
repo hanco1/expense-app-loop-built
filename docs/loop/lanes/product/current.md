@@ -1,22 +1,21 @@
 # Product Current State
 
-current_request_id: REQ-20260715-082547-data-eng
-status: ACCEPTED
-iteration: 2
-last_updated: 2026-07-15T09:10:30Z
-heartbeat: 2026-07-15T09:10:30Z
+current_request_id: REQ-20260715-091230-frontend
+status: REQUESTED
+iteration: 1
+last_updated: 2026-07-15T09:12:30Z
+heartbeat: 2026-07-15T09:12:30Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
-- Data-eng implementation `0362cb0` fixes all four public-boundary families without changing the review-owned acceptance test; its SHA-256 remains `D1E9C7E00429E234980F367ED64913143D33415198665D7EF6EB5C89E7F962E2`.
-- Product independently reran the unchanged acceptance 4/4, every focused suite, backend discovery 68/68, and the completion gate with `SHIP_CHECK_OK`.
-- Independent review commit `d66a5d4` passed C1-C7 and INV-1 through INV-8 with no scope, privacy, traceability, misuse, or non-UI human-QA blocker.
+- The accepted backend facade is ready at `0362cb0` with review PASS and backend 68/68.
+- `docs/product/local-web-app.md` defines the complete loopback-only browser MVP, exact dashboard/pie reconciliation, approved-fixture browser flow, and human-QA boundary.
 
 ## Next Action
 
-- Prepare the frontend slice: loopback-only server, same-origin browser UI, file selection/drag-and-drop, import/run/duplicate/category review, monthly dashboard, reconciled pie chart, and live human QA.
+- Deliver the committed iteration-1 request to the verified frontend thread; product retains final acceptance and human-QA authority.
 
 ## Blockers
 
-- None. The listener-free backend slice is accepted; the user-facing UI and its live human-QA gate remain outstanding.
+- None. System-level or browser-runtime installation would require a new human decision; no such installation is currently requested.
