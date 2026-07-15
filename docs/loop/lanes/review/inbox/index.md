@@ -13,3 +13,4 @@ message. Readers process inbox/new, then move each file to inbox/cur.
 | 2026-07-15T09:03:09Z | REQ-20260715-082547-data-eng--REVIEW_REQUEST--iter-2 | REQ-20260715-082547-data-eng | 2 | data-eng | REVIEW_REQUEST | new |
 | 2026-07-15T09:38:19Z | REQ-20260715-091230-frontend--REVIEW_REQUEST--iter-1 | REQ-20260715-091230-frontend | 1 | frontend | REVIEW_REQUEST | new |
 | 2026-07-15T09:42:51Z | REQ-20260715-091230-frontend--VERIFY-MANIFEST--iter-1 | REQ-20260715-091230-frontend | 1 | product | IMPLEMENTATION_REQUEST | new |
+| 2026-07-15T10:02:09Z | REQ-20260715-091230-frontend--REVIEW_REQUEST--iter-2 | REQ-20260715-091230-frontend | 2 | frontend | REVIEW_REQUEST | new |

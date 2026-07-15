@@ -39,20 +39,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Independent review at `6fe6083` kept those original gates green but found two blocker classes: unsupported public HTTP methods return default HTML 501 before Host/security handling, and four successful mutation families can be falsely reported failed when their follow-up canonical refresh is unavailable.
 - Product routed the consolidated iteration-2 repair to frontend. The unchanged review acceptance hash is `4EB538618C7455BB857DA7F30F1341F77AE6EA3086B151E87AFA6940B4D3C7D7`; live human QA remains deferred until a later independent code PASS.
 - Frontend implemented the class-wide repair at `8131762`: frozen acceptance 6/6, frontend discovery 9/9, real Chromium E2E 1/1, and backend discovery 68/68. Product mirrored the four evidence files byte-for-byte; completion-gate evidence and formal implementation delivery remain next.
+- Frontend completion gate returned `SHIP_CHECK_OK` and handoff `061bbc3` routed implementation `8131762` to independent iteration-2 review. All five root evidence records are present; code acceptance and live human QA remain separate gates.
 
 ## Next Action
 
-- [~] Frontend runs the completion gate against the root evidence mirror, completes lane delivery, and routes implementation `8131762` to independent re-review.
+- [~] Review independently validates `8131762`; if code PASS is returned, product starts the live local server and asks the human to perform the final operating-flow QA before acceptance.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: frontend
+- owner_lane: review
 - iteration: 2
 
 ## Blockers
 
-- None known after implementation `8131762`; independent review and live human QA are still required. No system/browser/runtime installation occurred.
+- None known after implementation `8131762`; independent review and explicit live human QA confirmation are still required. No system/browser/runtime installation occurred.
 
 ## Pending Inbox Deliveries
 
