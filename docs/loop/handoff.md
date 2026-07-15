@@ -57,20 +57,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Frontend claimed iteration 5 at `de20862`, reaching the human-authorized raw limit 9/9 with both frozen hashes verified. The class-wide one-degree water-filling implementation is active; no further automatic fix round is available.
 - Frontend implementation `5f458cf` and handoff `bccfc97` make both frozen minimum-arc scenarios green while leaving exact amounts, percentages, reconciliation, `data-units`, and `PIE_SCALE` unchanged. All nine evidence records are mirrored at root, prior geometry/security/browser/backend gates remain green, and the completion gate returns `SHIP_CHECK_OK`.
 - Product routed iteration 5 to independent review with the temporary cap still at 9 and renewed live human QA still required before acceptance.
+- Independent review `d2c490a` returned PASS for both frozen cases, all nine gates, recursive-cascade/full-circle/narrow-width probes, exact numerical separation, regression, scope, privacy, and misuse. Review did not perform or claim live human QA.
 
 ## Next Action
 
-- [~] Review independently validates implementation `5f458cf`, the immutable minimum-arc contract, all prior guardrails, and scope/privacy/misuse before product starts renewed live human QA.
+- [~] Product starts reviewed implementation `5f458cf` on the verified 8766 expense-app origin and requests renewed explicit human QA; ACCEPTED and cap restoration remain forbidden until the human passes it.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: review
+- owner_lane: product
 - iteration: 5
 
 ## Blockers
 
-- Machine review and renewed explicit human QA are pending; no code, dependency, or system-installation blocker is currently reported.
+- Renewed explicit human QA is pending; no code, dependency, or system-installation blocker is currently reported.
 
 ## Pending Inbox Deliveries
 

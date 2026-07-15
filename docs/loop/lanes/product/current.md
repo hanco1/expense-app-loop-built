@@ -3,8 +3,8 @@
 current_request_id: REQ-20260715-091230-frontend
 status: REVIEWING
 iteration: 5
-last_updated: 2026-07-15T23:12:00Z
-heartbeat: 2026-07-15T23:12:00Z
+last_updated: 2026-07-15T23:20:02Z
+heartbeat: 2026-07-15T23:20:02Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -37,11 +37,13 @@ model_observed: current-host-default (highest)
 - Frontend implementation `5f458cf` and handoff `bccfc97` deliver the class-wide visual-only water-filling layer. Both frozen scenarios now render the exact required `1/359` and eleven `1` plus `349` visual degrees while accounting `data-units` remain unchanged at the exact `1e9` base.
 - Product mirrored all nine iteration-5 evidence records. Minimum-arc, prior pie geometry, prior tiny-slice, server, HTTP/mutation acceptance, frontend discovery, real Chromium, backend discovery, and completion gate all exit 0; `SHIP_CHECK_OK` returned and both frozen hashes are unchanged.
 - The request is assigned to independent review. Temporary `max_fix_cycles: 9` and renewed live human QA remain held; neither acceptance nor cap restoration is authorized by machine gates alone.
+- Independent review `d2c490a` returned PASS. Both frozen scenarios, all nine gates, a recursive redistribution cascade, a single-category full circle, and a 390px narrow-width 12-category probe are green; review found no scope, privacy, looks-done-but-wrong, or ease-of-misuse blocker.
+- Product now owns the renewed live human-QA hold. The old 8766 process must be replaced with implementation `5f458cf` and its actual root/session endpoints verified before the human is asked to inspect the chart.
 
 ## Next Action
 
-- Review independently validates implementation `5f458cf`, both frozen scenarios, all nine gates, class-wide visual/numerical separation, scope, privacy, looks-done-but-wrong paths, and misuse. Only a later review PASS may start renewed live human QA.
+- Start the reviewed implementation on the actual 8766 expense-app origin, verify root and `/api/session`, then ask the human to refresh and explicitly PASS or fail the live chart. Keep the request REVIEWING and cap 9 until that answer.
 
 ## Blockers
 
-- Independent review and renewed explicit human QA are pending. No implementation, dependency, or system-installation blocker is currently reported.
+- Renewed explicit human QA is pending. No machine-verifiable implementation, dependency, or system-installation blocker remains.
