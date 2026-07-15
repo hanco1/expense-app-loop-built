@@ -28,6 +28,14 @@ This is the MVP's user-facing slice. OCR execution remains out of scope.
   its exact CSRF token on every mutation. Tokens never enter URLs or logs.
 - Startup may print the loopback URL and database location, but never statement
   bytes, retained source input, transaction descriptions, or CSRF tokens.
+- The stable human default port must not be the loop dashboard's `8765`; use
+  `8766`. Startup must print the URL derived from the listener's actual bound
+  address and port (including the allocated port for `--port 0`), and that URL
+  must reach this expense app's static page and `/api/session`.
+- Listener binding is exclusive. If the requested port is already occupied,
+  startup must emit a clear bind error and exit non-zero before printing a
+  success URL or entering the serving loop. It must never coexist on one port
+  in a state where another process receives the requests.
 
 ## Browser Information Architecture
 
@@ -146,7 +154,9 @@ Live and automated browser checks use only the two committed synthetic fixtures:
   database location behavior, supported formats, synthetic test command, and
   the explicit note that scanned receipts/OCR are not yet supported.
 - The server must support an ephemeral port for automated tests and a stable
-  documented default for humans. Shutdown must close the listener cleanly.
+  documented default of `8766` for humans. Shutdown must close the listener
+  cleanly. Automated tests must hold a port open and prove a second app server
+  fails to bind rather than silently sharing it.
 
 ## Non-Goals
 

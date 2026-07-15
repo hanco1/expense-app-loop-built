@@ -41,20 +41,22 @@ the next actor can continue from repo files plus the latest message alone.
 - Frontend implemented the class-wide repair at `8131762`: frozen acceptance 6/6, frontend discovery 9/9, real Chromium E2E 1/1, and backend discovery 68/68. Product mirrored the four evidence files byte-for-byte; completion-gate evidence and formal implementation delivery remain next.
 - Frontend completion gate returned `SHIP_CHECK_OK` and handoff `061bbc3` routed implementation `8131762` to independent iteration-2 review. All five root evidence records are present; code acceptance and live human QA remain separate gates.
 - Independent review passed at `9e8e183`: C1-C7 and INV-1..8 are green, all five gates pass, both blocker classes are closed, and no scope, privacy, traceability, or misuse finding remains. The request is held at REVIEWING for explicit human QA at `http://127.0.0.1:8765`.
+- Live human QA failed because the documented/default port `8765` served the loop dashboard while the expense-app process silently co-bound the same Windows port. Product stopped only the app process; the dashboard remains on 8765.
+- The human explicitly requested iteration 3: move the stable app default to `8766`, derive startup output from the actual bound listener, and reject an occupied requested port with a clear non-zero startup failure. Product temporarily raised `max_fix_cycles` to 5 for this bounded round and must restore it to 3 only with ACCEPTED.
 
 ## Next Action
 
-- [~] Await explicit human PASS or a concrete observed issue from the live 30-second operating check; record `human_qa: confirmed` before any ACCEPTED transition.
+- [~] Frontend closes the default-port/exclusive-bind class with red-capable tests; independent review rechecks it, then product starts the app on the actual printed URL and repeats live human QA before ACCEPTED.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: product
-- iteration: 2
+- owner_lane: frontend
+- iteration: 3
 
 ## Blockers
 
-- None known after independent PASS. Explicit live human QA confirmation is still required. No system/browser/runtime installation occurred.
+- The current listener permits a wrong-service/co-bound outcome on Windows and the documented default collides with the loop dashboard. No system/browser/runtime installation is required for the fix.
 
 ## Pending Inbox Deliveries
 
