@@ -82,11 +82,23 @@ horizontal page scrolling.
   categories remain represented and selectable without changing their amount.
 - Exact BigInt allocation and visual SVG coordinates are separate concerns.
   No 1e9-scale accounting unit may be written directly into CSS/SVG length
-  geometry. The rendered chart must show exactly one contiguous, non-repeating
-  visible arc per non-zero category, cover one complete circumference without
-  overlap or gaps, and preserve each category's proportional share within a
-  browser-pixel tolerance. For the approved June oracle, nine categories render
-  and Housing is one dominant arc covering more than half of the circle.
+  geometry. Numerical truth remains the exact amount, percentage, `data-units`,
+  and `PIE_SCALE=1000000000`; visual arc angles are a separate derived layer and
+  never flow back into those values.
+- Every non-zero category receives a minimum visible arc of 1 degree. Categories
+  whose exact proportional angle is below 1 degree render at 1 degree; after
+  those floors are reserved, the remaining circumference is distributed among
+  the larger categories in proportion to their exact spending amounts. This
+  water-filling rule preserves the relative proportions of the non-floored
+  categories while keeping the rendered arcs gap-free, non-overlapping, and
+  exactly one full circumference. The legend/table continues to show exact
+  numerical shares, never the visually adjusted angle.
+- The rendered chart must show exactly one contiguous, non-repeating visible arc
+  per non-zero category. Real-browser acceptance measures each non-zero arc at
+  or above the 1-degree visual floor and separately proves exact numerical
+  reconciliation; it does not require pixel-exact visual proportionality for a
+  category lifted by the floor. For the approved June oracle, nine categories
+  render and Housing remains one dominant arc covering more than half the circle.
 - Every category amount must equal the sum of its included spending rows, and
   all category amounts must equal the displayed spending total. Tests assert
   reconciliation before any visual assertion.
@@ -148,7 +160,8 @@ Live and automated browser checks use only the two committed synthetic fixtures:
   persistence, keyboard operation, and error/empty states.
 - A browser end-to-end test starts the real loopback adapter with a temporary
   database, imports both approved fixtures, checks the exact May/June oracle,
-  validates pie/legend reconciliation, non-repeating visible arc geometry, and
+  validates exact pie/legend reconciliation, the one-degree minimum visible arc
+  for every non-zero category, non-repeating gap-free geometry, and
   the visible bad row, exercises one
   correction, duplicate decision, re-import, and undo, then confirms persistence
   after a page reload.

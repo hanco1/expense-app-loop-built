@@ -9,7 +9,7 @@
 ## Request Policy
 
 <!-- max_fix_cycles bounds token burn per request; humans may edit it here or via the loop dashboard's POST /api/policy control. Keep the "max_fix_cycles: <int>" line format. -->
-max_fix_cycles: 7
+max_fix_cycles: 9
 auto_dispatch: true
 auto_chain_next_session: false
 
@@ -26,7 +26,8 @@ dependency_install: auto-pip-only
 - Superseded override: `REQ-20260714-064051-data-eng` iteration 3 used `max_fix_cycles: 5` for the frozen component-state/operation matrix, but review found an exported write-boundary bypass before acceptance.
 - Completed temporary override: `REQ-20260714-064051-data-eng` iteration 4 used `max_fix_cycles: 7` to close every exposed duplicate-decision write boundary against the frozen writer/proposal matrix, reached `ACCEPTED`, and restored the standing cap to `3` in the same product checkpoint.
 - Superseded human-authorized override: `REQ-20260715-091230-frontend` iteration 3 used `max_fix_cycles: 5` to close the live-QA default-port collision and exclusive-bind failure class; renewed human QA then exposed an SVG visual-coordinate overflow in the donut.
-- Active human-authorized override: `REQ-20260715-091230-frontend` iteration 4 may use `max_fix_cycles: 7` only to close the diagnosed repeated-stripe donut rendering class; restore the standing cap to `3` in the same checkpoint as `ACCEPTED`.
+- Superseded human-authorized override: `REQ-20260715-091230-frontend` iteration 4 used `max_fix_cycles: 7` for the repeated-stripe donut class, but independent review found that exact one-unit and near-full slices can both collapse to zero visible length.
+- Active human-authorized override: `REQ-20260715-091230-frontend` iteration 5 may use `max_fix_cycles: 9` only to implement the one-degree minimum-visible-arc strategy while keeping all numerical values exact; restore the standing cap to `3` in the same checkpoint as `ACCEPTED`.
 
 ## Completion Token
 

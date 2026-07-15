@@ -3,8 +3,8 @@
 current_request_id: REQ-20260715-091230-frontend
 status: BLOCKED
 iteration: 4
-last_updated: 2026-07-15T21:42:14Z
-heartbeat: 2026-07-15T21:42:14Z
+last_updated: 2026-07-15T22:48:17Z
+heartbeat: 2026-07-15T22:48:17Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -30,11 +30,12 @@ model_observed: current-host-default (highest)
 - Frontend handoff `659f2bb` records `SHIP_CHECK_OK` and seven exit-0 lane evidence records. Product mirrored the completion-gate evidence, reconciled IMPLEMENTATION_DONE/REVIEW_REQUEST, and assigned independent review without treating machine success as human PASS.
 - Independent review `20210f0` kept all seven declared gates green but proved a blocker outside the June fixture: the supported exact `1/1e9` slice and its near-full complement both render as zero-length SVG paths after six-decimal endpoint rounding, while keyboard and legend state falsely appear valid.
 - The request is BLOCKED at raw fix-cycle use 7/7. Product recommends one narrowly bounded iteration 5 under temporary `max_fix_cycles: 9`; no dispatch occurs without explicit human authority, and the standing cap returns to 3 only with a later ACCEPTED checkpoint.
+- The human authorized iteration 5 and temporary `max_fix_cycles: 9`, explicitly rejecting further coordinate-precision tuning. The superseding strategy gives every non-zero category a one-degree visual floor while retaining exact numerical amounts, percentages, `data-units`, and `PIE_SCALE`; review owns a pre-implementation real-browser freeze before frontend starts.
 
 ## Next Action
 
-- Await the human decision on the recommended temporary cap of 9 and one class-wide iteration-5 repair that guarantees visible geometry for every exact non-zero allocation.
+- Review freezes the superseding one-degree minimum-visible-arc acceptance and returns hashes/red inventory; Product then performs the sole `BLOCKED -> FIX_REQUESTED` iteration-5 transition to frontend.
 
 ## Blockers
 
-- Machine blocker: a valid non-zero category can silently disappear from the painted chart. Raw fix-cycle use is 7/7, so further implementation requires explicit human authority; no dependency installation is needed.
+- The zero-length tiny-slice implementation blocker remains until iteration 5. Human authority is present, but frontend dispatch waits for the review-owned red acceptance; no dependency installation is needed.

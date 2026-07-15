@@ -52,10 +52,11 @@ the next actor can continue from repo files plus the latest message alone.
 - Review froze the real-Chromium visible-ring contract at `cc27d2e` and recorded evidence at `30dab03`. The 720-sample baseline is red in four geometry families while exact 1e9 accounting and all nine interaction paths are green; product routed the sole iteration-4 FIX_REQUEST to frontend.
 - Frontend implementation `4b88b11` closes the approved-June repeated-stripe failure and keeps all seven declared gates green, but independent review `20210f0` found a class-boundary blocker: the supported minimum one-unit slice and its near-full complement both collapse to zero-length SVG paths after six-decimal endpoint rounding.
 - The request is BLOCKED at raw fix-cycle use 7/7. Product recommends temporary `max_fix_cycles: 9` for one bounded iteration-5 repair that guarantees visible geometry for every exact non-zero allocation; no dispatch occurs without explicit human authority, and the cap returns to 3 only with a later ACCEPTED checkpoint.
+- The human authorized iteration 5 and temporary `max_fix_cycles: 9`, rejecting any further coordinate-precision patching. The new product contract sets a one-degree visual floor for every non-zero category, distributes the remaining circle proportionally among larger categories, and leaves amounts, percentages, `data-units`, `PIE_SCALE`, reconciliation, and credits exact and unchanged.
 
 ## Next Action
 
-- [!] Await human authority for one bounded iteration-5 repair of the non-zero-to-zero-length SVG collapse; retain exact accounting, the June geometry contract, all prior gates, and the live human-QA hold.
+- [~] Review freezes the superseding one-degree minimum-visible-arc acceptance against `4b88b11`; Product then dispatches the sole iteration-5 frontend repair while retaining exact numerical and prior regression gates.
 
 ## Active Request
 
@@ -65,7 +66,7 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Blockers
 
-- A valid exact non-zero category can silently disappear from the rendered chart. Raw fix-cycle use is 7/7, so iteration 5 requires explicit human authority; no system/browser/runtime installation is required.
+- A valid exact non-zero category can silently disappear from the rendered chart. Human authority for iteration 5 is present; implementation waits only for the review-owned red acceptance, and no system/browser/runtime installation is required.
 
 ## Pending Inbox Deliveries
 
