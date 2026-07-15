@@ -1,10 +1,10 @@
 # Product Current State
 
 current_request_id: REQ-20260715-091230-frontend
-status: BLOCKED
-iteration: 4
-last_updated: 2026-07-15T22:49:32Z
-heartbeat: 2026-07-15T22:49:32Z
+status: FIX_REQUESTED
+iteration: 5
+last_updated: 2026-07-15T22:56:30Z
+heartbeat: 2026-07-15T22:56:30Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -31,11 +31,12 @@ model_observed: current-host-default (highest)
 - Independent review `20210f0` kept all seven declared gates green but proved a blocker outside the June fixture: the supported exact `1/1e9` slice and its near-full complement both render as zero-length SVG paths after six-decimal endpoint rounding, while keyboard and legend state falsely appear valid.
 - The request is BLOCKED at raw fix-cycle use 7/7. Product recommends one narrowly bounded iteration 5 under temporary `max_fix_cycles: 9`; no dispatch occurs without explicit human authority, and the standing cap returns to 3 only with a later ACCEPTED checkpoint.
 - The human authorized iteration 5 and temporary `max_fix_cycles: 9`, explicitly rejecting further coordinate-precision tuning. The superseding strategy gives every non-zero category a one-degree visual floor while retaining exact numerical amounts, percentages, `data-units`, and `PIE_SCALE`; review owns a pre-implementation real-browser freeze before frontend starts.
+- Review froze the two-scenario real-Chromium minimum-arc contract at `4b3e0d8`. Baseline `4b88b11` is red for the `1/999999999` pair and for 11 simultaneous one-unit categories, while both scenarios keep every numerical and credit-exclusion assertion green. Product verified hashes `9FABFD79...C88D` and `34B7562E...6AED` and routed the sole iteration-5 FIX_REQUEST to frontend at raw use 8/9.
 
 ## Next Action
 
-- Review freezes the superseding one-degree minimum-visible-arc acceptance and returns hashes/red inventory; Product then performs the sole `BLOCKED -> FIX_REQUESTED` iteration-5 transition to frontend.
+- Frontend claims iteration 5, implements one visual water-filling allocation with a one-degree floor, keeps both frozen artifacts unchanged, and returns all nine verification commands plus `SHIP_CHECK_OK`.
 
 ## Blockers
 
-- The zero-length tiny-slice implementation blocker remains until iteration 5. Human authority is present, but frontend dispatch waits for the review-owned red acceptance; no dependency installation is needed.
+- The zero-length tiny-slice blocker remains until frontend closes both frozen minimum-arc scenarios; no dependency or system installation is needed.

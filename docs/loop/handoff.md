@@ -53,20 +53,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Frontend implementation `4b88b11` closes the approved-June repeated-stripe failure and keeps all seven declared gates green, but independent review `20210f0` found a class-boundary blocker: the supported minimum one-unit slice and its near-full complement both collapse to zero-length SVG paths after six-decimal endpoint rounding.
 - The request is BLOCKED at raw fix-cycle use 7/7. Product recommends temporary `max_fix_cycles: 9` for one bounded iteration-5 repair that guarantees visible geometry for every exact non-zero allocation; no dispatch occurs without explicit human authority, and the cap returns to 3 only with a later ACCEPTED checkpoint.
 - The human authorized iteration 5 and temporary `max_fix_cycles: 9`, rejecting any further coordinate-precision patching. The new product contract sets a one-degree visual floor for every non-zero category, distributes the remaining circle proportionally among larger categories, and leaves amounts, percentages, `data-units`, `PIE_SCALE`, reconciliation, and credits exact and unchanged.
+- Review froze the iteration-5 contract at `4b3e0d8`: exactly two real-Chromium scenarios cover `1 + 999999999` and 12 canonical categories with 11 simultaneous one-unit floors. Both are geometry-red on `4b88b11` while all numerical, reconciliation, zero-category, and credit-exclusion checks are green. Product verified both hashes and dispatched the immutable contract to frontend at raw use 8/9.
 
 ## Next Action
 
-- [~] Review freezes the superseding one-degree minimum-visible-arc acceptance against `4b88b11`; Product then dispatches the sole iteration-5 frontend repair while retaining exact numerical and prior regression gates.
+- [~] Frontend implements one class-wide minimum-visible-arc allocation against the frozen iteration-5 acceptance, preserving exact numerical and all prior regression gates.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: product
-- iteration: 4
+- owner_lane: frontend
+- iteration: 5
 
 ## Blockers
 
-- A valid exact non-zero category can silently disappear from the rendered chart. Human authority for iteration 5 is present; implementation waits only for the review-owned red acceptance, and no system/browser/runtime installation is required.
+- A valid exact non-zero category can silently disappear from the rendered chart. The frozen class-wide repair is now with frontend; no system/browser/runtime installation is required.
 
 ## Pending Inbox Deliveries
 
