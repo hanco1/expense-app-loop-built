@@ -21,7 +21,7 @@ acceptance_criteria:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: sent
-- sent_at: 2026-07-15T09:42:55Z
+- delivery_status: pending
+- sent_at:
 expected_reply:
 - Review uses the unchanged C1-C7 contract, four committed root evidence records, and its separate review-owned red-capable acceptance. This supplement only repairs archived manifest syntax.
