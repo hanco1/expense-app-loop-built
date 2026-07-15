@@ -2,6 +2,8 @@
   "use strict";
 
   const PIE_SCALE = 1000000000n;
+  const PIE_CENTER = 100;
+  const PIE_RADIUS = 70;
   const VIEW_NAMES = new Set(["overview", "imports", "duplicates"]);
   const state = {
     session: null,
@@ -114,6 +116,39 @@
       throw new Error("pie allocation does not reconcile");
     }
     return allocated;
+  }
+
+  function piePointAtUnits(units) {
+    const angle = (Number(units) / Number(PIE_SCALE)) * 2 * Math.PI;
+    return {
+      x: PIE_CENTER + PIE_RADIUS * Math.cos(angle),
+      y: PIE_CENTER + PIE_RADIUS * Math.sin(angle),
+    };
+  }
+
+  function boundedPieCoordinate(value) {
+    return value.toFixed(6);
+  }
+
+  function pieArcPath(startUnits, sliceUnits) {
+    if (
+      typeof startUnits !== "bigint"
+      || typeof sliceUnits !== "bigint"
+      || startUnits < 0n
+      || sliceUnits <= 0n
+      || startUnits + sliceUnits > PIE_SCALE
+    ) {
+      throw new Error("pie visual arc requires bounded positive accounting units");
+    }
+    const start = piePointAtUnits(startUnits);
+    const end = piePointAtUnits(startUnits + sliceUnits);
+    const move = `M ${boundedPieCoordinate(start.x)} ${boundedPieCoordinate(start.y)}`;
+    if (sliceUnits === PIE_SCALE) {
+      const midpoint = piePointAtUnits(startUnits + PIE_SCALE / 2n);
+      return `${move} A ${PIE_RADIUS} ${PIE_RADIUS} 0 0 1 ${boundedPieCoordinate(midpoint.x)} ${boundedPieCoordinate(midpoint.y)} A ${PIE_RADIUS} ${PIE_RADIUS} 0 0 1 ${boundedPieCoordinate(end.x)} ${boundedPieCoordinate(end.y)}`;
+    }
+    const largeArc = sliceUnits * 2n > PIE_SCALE ? 1 : 0;
+    return `${move} A ${PIE_RADIUS} ${PIE_RADIUS} 0 ${largeArc} 1 ${boundedPieCoordinate(end.x)} ${boundedPieCoordinate(end.y)}`;
   }
 
   function reconcileMonth(summary) {
@@ -479,35 +514,27 @@
 
     let offset = 0n;
     allocations.forEach((item, index) => {
-      const circle = document.createElementNS(svgNamespace, "circle");
-      circle.setAttribute("class", `pie-segment pie-color-${index % 12}`);
-      circle.setAttribute("cx", "100");
-      circle.setAttribute("cy", "100");
-      circle.setAttribute("r", "70");
-      circle.setAttribute("pathLength", PIE_SCALE.toString());
-      circle.setAttribute(
-        "stroke-dasharray",
-        `${item.units.toString()} ${(PIE_SCALE - item.units).toString()}`,
-      );
-      circle.setAttribute("stroke-dashoffset", `-${offset.toString()}`);
-      circle.setAttribute("tabindex", "0");
-      circle.setAttribute("role", "button");
-      circle.setAttribute(
+      const segment = document.createElementNS(svgNamespace, "path");
+      segment.setAttribute("class", `pie-segment pie-color-${index % 12}`);
+      segment.setAttribute("d", pieArcPath(offset, item.units));
+      segment.setAttribute("tabindex", "0");
+      segment.setAttribute("role", "button");
+      segment.setAttribute(
         "aria-label",
         `${item.bucket.category}: ${formatMoney(item.bucket.spending_minor, summary.currency)}, ${formatPercent(item.bucket.spending_minor, summary.spending_total_minor)}`,
       );
-      circle.dataset.category = item.bucket.category;
-      circle.dataset.minor = item.bucket.spending_minor;
-      circle.dataset.units = item.units.toString();
-      circle.classList.toggle("is-selected", state.selectedCategory === item.bucket.category);
-      circle.addEventListener("click", () => selectChartCategory(item.bucket.category));
-      circle.addEventListener("keydown", (event) => {
+      segment.dataset.category = item.bucket.category;
+      segment.dataset.minor = item.bucket.spending_minor;
+      segment.dataset.units = item.units.toString();
+      segment.classList.toggle("is-selected", state.selectedCategory === item.bucket.category);
+      segment.addEventListener("click", () => selectChartCategory(item.bucket.category));
+      segment.addEventListener("keydown", (event) => {
         if (event.key === "Enter" || event.key === " ") {
           event.preventDefault();
           selectChartCategory(item.bucket.category);
         }
       });
-      svg.append(circle);
+      svg.append(segment);
       offset += item.units;
 
       const legendButton = node("button", "legend-button");
@@ -1255,6 +1282,7 @@
     allocatePieUnits,
     formatMoney,
     formatPercent,
+    pieArcPath,
     queueFiles,
     reconcileMonth,
   });

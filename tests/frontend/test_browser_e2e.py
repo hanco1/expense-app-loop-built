@@ -63,6 +63,18 @@ class LocalExpenseBrowserEndToEndTests(BrowserAppTestCase):
                 scale: window.ExpenseAppTesting.PIE_SCALE,
                 chartLabels: document.querySelectorAll("#chart-legend .legend-button").length,
                 categoryRows: document.querySelectorAll("#category-table-body tr").length,
+                boundedArcs: [...document.querySelectorAll(".pie-segment")].every((segment) => {
+                  const geometry = segment.getAttribute("d") || "";
+                  const geometryValues = (geometry.match(/-?[0-9]+(?:\\.[0-9]+)?/g) || [])
+                    .map(Number);
+                  return segment.tagName === "path"
+                    && !segment.hasAttribute("pathLength")
+                    && !segment.hasAttribute("stroke-dasharray")
+                    && !segment.hasAttribute("stroke-dashoffset")
+                    && !geometry.includes(window.ExpenseAppTesting.PIE_SCALE)
+                    && geometryValues.length > 0
+                    && geometryValues.every(value => Number.isFinite(value) && Math.abs(value) <= 200);
+                }),
               };
             }"""
         )
@@ -70,6 +82,7 @@ class LocalExpenseBrowserEndToEndTests(BrowserAppTestCase):
         self.assertEqual(reconciliation["transactionSpending"], reconciliation["spending"])
         self.assertEqual(reconciliation["pieUnits"], reconciliation["scale"])
         self.assertEqual(reconciliation["chartLabels"], reconciliation["categoryRows"])
+        self.assertTrue(reconciliation["boundedArcs"])
         self.assertEqual(self.page.locator("#reconciliation-status").inner_text(), "Reconciled exactly")
 
         self.page.locator("#month-select").select_option("2026-05")

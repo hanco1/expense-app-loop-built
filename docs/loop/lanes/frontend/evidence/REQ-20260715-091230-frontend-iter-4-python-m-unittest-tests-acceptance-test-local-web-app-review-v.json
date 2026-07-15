@@ -1,0 +1,17 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 4,
+  "checkpoint": "prior-frozen-review-acceptance",
+  "command": "python -m unittest tests.acceptance.test_local_web_app_review -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T21:22:27Z",
+  "test_count": 6,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "acceptance_sha256": "4EB538618C7455BB857DA7F30F1341F77AE6EA3086B151E87AFA6940B4D3C7D7",
+  "http_method_host_cells": 8,
+  "security_headers_on_all_cells": true,
+  "committed_mutation_refresh_paths": ["import", "category", "duplicate", "undo"],
+  "safe_error_families": [400, 413, 422, 500]
+}

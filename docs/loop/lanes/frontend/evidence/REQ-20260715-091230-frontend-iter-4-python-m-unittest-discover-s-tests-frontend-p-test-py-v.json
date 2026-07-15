@@ -1,0 +1,29 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 4,
+  "checkpoint": "frontend-discovery",
+  "command": "python -m unittest discover -s tests/frontend -p \"test_*.py\" -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T21:22:27Z",
+  "test_count": 13,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "bounded_arc_regression": true,
+  "accounting_scale_absent_from_svg_length_geometry": true,
+  "fixture_oracle": {
+    "csv": {"source_records": 23, "parsed": 22, "failed": 1, "occurrences": 22, "failure_code": "missing_amount"},
+    "pdf": {"source_records": 12, "parsed": 12, "failed": 0, "occurrences": 12},
+    "may": {"spending_minor": "50340", "credit_minor": "60000", "transaction_count": 12},
+    "june": {"spending_minor": "277617", "credit_minor": "72999", "transaction_count": 22}
+  },
+  "reconciliation": {
+    "category_sum_equals_spending": true,
+    "included_spending_rows_equal_spending": true,
+    "pie_units_equal_integer_scale": true,
+    "legend_count_equals_category_count": true,
+    "credits_excluded_from_slices": true
+  },
+  "fixture_hashes_unchanged": true,
+  "privacy_safe_structured_evidence": true
+}
