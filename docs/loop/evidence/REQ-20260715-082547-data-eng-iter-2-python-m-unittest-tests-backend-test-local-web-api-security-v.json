@@ -1,0 +1,15 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 2,
+  "checkpoint": "local-web-api-csrf-configuration",
+  "command": "python -m unittest tests.backend.test_local_web_api_security -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T09:00:31Z",
+  "test_count": 3,
+  "failures": 0,
+  "errors": 0,
+  "ascii_exact_token_authorizes": true,
+  "unsupported_unicode_rejected_before_session_exposure": true,
+  "missing_or_wrong_token_writes": 0,
+  "cors_allowed": false
+}

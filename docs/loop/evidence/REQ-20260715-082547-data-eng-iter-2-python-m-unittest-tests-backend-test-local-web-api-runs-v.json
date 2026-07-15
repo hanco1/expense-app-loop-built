@@ -1,0 +1,17 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 2,
+  "checkpoint": "local-web-api-atomic-run-undo",
+  "command": "python -m unittest tests.backend.test_local_web_api_runs -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T09:00:31Z",
+  "test_count": 2,
+  "failures": 0,
+  "errors": 0,
+  "concurrent_facade_statuses": [200, 409],
+  "final_run_state": "undone",
+  "entity_counts_preserved": true,
+  "correction_ids_preserved": true,
+  "exact_reimport_idempotent": true,
+  "later_reimport_restores_human_category": true
+}

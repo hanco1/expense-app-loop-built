@@ -1,0 +1,16 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 2,
+  "checkpoint": "local-web-api-exact-month-json",
+  "command": "python -m unittest tests.backend.test_local_web_api_months -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T09:00:31Z",
+  "test_count": 1,
+  "failures": 0,
+  "errors": 0,
+  "may": {"spending_minor": "50340", "credit_minor": "60000", "transaction_count": 12},
+  "june": {"spending_minor": "277617", "credit_minor": "72999", "transaction_count": 22},
+  "all_json_money_is_string": true,
+  "credit_spending_contribution": "0",
+  "category_sums_reconcile": true
+}

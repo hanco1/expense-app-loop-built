@@ -1,21 +1,21 @@
 # Product Current State
 
 current_request_id: REQ-20260715-082547-data-eng
-status: FIX_REQUESTED
+status: REVIEWING
 iteration: 2
-last_updated: 2026-07-15T08:54:51Z
-heartbeat: 2026-07-15T08:54:51Z
+last_updated: 2026-07-15T09:05:30Z
+heartbeat: 2026-07-15T09:05:30Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
-- Review commit `376710f` adds four red-capable boundary tests covering local persistence, atomic undo, inspectable run detail, and CSRF configuration.
-- The original nine gates remain green, but the independent acceptance exits 1 with four tests and five failures.
+- Data-eng implementation `0362cb0` fixes all four public-boundary families without changing the review-owned acceptance test; its SHA-256 remains `D1E9C7E00429E234980F367ED64913143D33415198665D7EF6EB5C89E7F962E2`.
+- Product independently reran the unchanged acceptance 4/4, every focused suite, backend discovery 68/68, and the completion gate with `SHIP_CHECK_OK`.
 
 ## Next Action
 
-- Data-eng claims iteration 2 and fixes the four consolidated boundary families without modifying the review-owned acceptance test.
+- Review independently evaluates implementation `0362cb0`; product retains final acceptance authority.
 
 ## Blockers
 
-- Implementation `efff2f4` is blocked by the four review-owned boundary failures.
+- None. Review is active and no dependency, system package, OCR, listener, network, or scope expansion was introduced.

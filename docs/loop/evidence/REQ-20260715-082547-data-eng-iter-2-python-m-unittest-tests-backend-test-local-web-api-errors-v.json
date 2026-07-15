@@ -1,0 +1,16 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 2,
+  "checkpoint": "local-web-api-errors-and-inspectability",
+  "command": "python -m unittest tests.backend.test_local_web_api_errors -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T09:00:31Z",
+  "test_count": 3,
+  "failures": 0,
+  "errors": 0,
+  "mixed_currency_month_status": 409,
+  "mixed_currency_run_detail_statuses": [200, 200],
+  "stable_error_statuses": [400, 404, 409, 413, 415, 422, 500],
+  "raw_content_exposed": false,
+  "traceback_exposed": false
+}

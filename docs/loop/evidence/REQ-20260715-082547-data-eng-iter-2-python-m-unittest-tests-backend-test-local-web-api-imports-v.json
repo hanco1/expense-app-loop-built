@@ -1,0 +1,16 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 2,
+  "checkpoint": "local-web-api-fixture-imports",
+  "command": "python -m unittest tests.backend.test_local_web_api_imports -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T09:00:31Z",
+  "test_count": 2,
+  "failures": 0,
+  "errors": 0,
+  "csv": {"source_records": 23, "parsed": 22, "failed": 1, "occurrences": 22},
+  "pdf": {"source_records": 12, "parsed": 12, "failed": 0, "occurrences": 12},
+  "persistent_states": ["active", "failed", "undone"],
+  "newest_first_stable": true,
+  "retained_input_in_json": false
+}

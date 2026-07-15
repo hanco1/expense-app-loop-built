@@ -31,20 +31,22 @@ the next actor can continue from repo files plus the latest message alone.
 - Data-eng implemented the facade at `efff2f4`: typed in-process request/response contracts, persistent newest-first run discovery, raw-byte fixture imports, exact string-money JSON, CSRF on every mutation, stable errors, current duplicate/inclusion state, and a no-listener/no-network/no-raw-content boundary.
 - All nine declared gates are exit 0, backend discovery passes 65/65, fixture hashes are unchanged, and exact May/June totals remain 50340/60000/12 and 277617/72999/22. IMPLEMENTATION_DONE reached product and REVIEW_REQUEST reached the verified review lane.
 - Independent review found four public-boundary blockers despite those green gates: UNC database paths escape local-only storage, concurrent repeated undo can return two successes, mixed-currency analysis hides inspectable run detail, and a constructor-accepted Unicode CSRF token cannot authorize a write. Review acceptance has four tests and five failures at commit `376710f`.
+- Data-eng fixed the complete batch at `0362cb0`: `CoreStore` rejects UNC/device paths before SQLite, strict facade undo compares and transitions under one immediate transaction, run detail no longer invokes currency aggregation, and unsupported configured CSRF text fails before exposure. The unchanged review acceptance passes 4/4, backend discovery passes 68/68, all ten gates are exit 0, and fixture hashes remain unchanged.
+- Product independently reproduced the unchanged acceptance 4/4, all focused local-API suites, backend discovery 68/68, and `SHIP_CHECK_OK`; review owns the final iteration-2 assessment.
 
 ## Next Action
 
-- [~] Data-eng implements the consolidated iteration-2 FIX_REQUEST and makes the unchanged review-owned acceptance plus all original gates green.
+- [~] Review independently validates implementation commit `0362cb0`; product retains final acceptance authority.
 
 ## Active Request
 
 - request_id: REQ-20260715-082547-data-eng
-- owner_lane: data-eng
+- owner_lane: review
 - iteration: 2
 
 ## Blockers
 
-- Implementation `efff2f4` is not acceptable until all four review-owned boundary families pass. No system dependency is authorized or expected.
+- None. No dependency or scope expansion was introduced; independent review is active.
 
 ## Pending Inbox Deliveries
 
