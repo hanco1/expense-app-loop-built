@@ -1,10 +1,10 @@
 # Product Current State
 
 current_request_id: REQ-20260715-091230-frontend
-status: REVIEWING
+status: ACCEPTED
 iteration: 5
-last_updated: 2026-07-15T23:21:42Z
-heartbeat: 2026-07-15T23:21:42Z
+last_updated: 2026-07-15T23:50:44Z
+heartbeat: 2026-07-15T23:50:44Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -40,11 +40,12 @@ model_observed: current-host-default (highest)
 - Independent review `d2c490a` returned PASS. Both frozen scenarios, all nine gates, a recursive redistribution cascade, a single-category full circle, and a 390px narrow-width 12-category probe are green; review found no scope, privacy, looks-done-but-wrong, or ease-of-misuse blocker.
 - Product now owns the renewed live human-QA hold. The old 8766 process must be replaced with implementation `5f458cf` and its actual root/session endpoints verified before the human is asked to inspect the chart.
 - Product stopped only the verified old expense-app PID 176376 and started reviewed implementation `5f458cf` as PID 173184. Its printed `http://127.0.0.1:8766` root and `/api/session` both return 200, the page title matches `Monthly Expense Review`, and a competing default instance exits 1 without fallback; dashboard PID 73908 remains on 8765.
+- The human explicitly returned `PASS` for the reviewed live app. Product accepted implementation `5f458cf`, completed every MVP Done-When item, and restored the temporary cap from 9 to the standing value 3 in the same checkpoint.
 
 ## Next Action
 
-- Ask the human to hard-refresh `http://127.0.0.1:8766`, inspect the June ring and interactions, and explicitly PASS or report the next concrete failure. Keep the request REVIEWING and cap 9 until that answer.
+- No active MVP request remains. Keep the local app available at `http://127.0.0.1:8766`; scanned-receipt OCR requires a future request and explicit approval before any system OCR installation.
 
 ## Blockers
 
-- Renewed explicit human QA is pending. No machine-verifiable implementation, dependency, or system-installation blocker remains.
+- None for the accepted MVP.

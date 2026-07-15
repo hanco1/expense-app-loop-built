@@ -59,10 +59,11 @@ the next actor can continue from repo files plus the latest message alone.
 - Product routed iteration 5 to independent review with the temporary cap still at 9 and renewed live human QA still required before acceptance.
 - Independent review `d2c490a` returned PASS for both frozen cases, all nine gates, recursive-cascade/full-circle/narrow-width probes, exact numerical separation, regression, scope, privacy, and misuse. Review did not perform or claim live human QA.
 - Product replaced only the verified old 8766 expense-app process with reviewed implementation `5f458cf`. PID 173184 prints and serves `http://127.0.0.1:8766`; root and `/api/session` return 200, a competing default instance exits 1, and dashboard PID 73908 remains untouched on 8765.
+- The human explicitly returned `PASS`. Product accepted implementation `5f458cf`, marked all MVP Done-When items complete, and restored `max_fix_cycles` from 9 to 3 atomically with acceptance.
 
 ## Next Action
 
-- [~] Human hard-refreshes `http://127.0.0.1:8766`, inspects the June category ring and interactions, then explicitly PASSes or reports a concrete failure; ACCEPTED and cap restoration remain forbidden until that answer.
+- [x] MVP accepted after independent review and explicit live human PASS. A future scanned-receipt OCR slice requires a new request and explicit approval before installing a system OCR engine.
 
 ## Active Request
 
@@ -72,7 +73,7 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Blockers
 
-- Renewed explicit human QA is pending; no code, dependency, or system-installation blocker is currently reported.
+- None for the accepted MVP.
 
 ## Pending Inbox Deliveries
 

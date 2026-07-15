@@ -15,18 +15,18 @@ Phase dashboard for the loop. Keep checkpoints small and verifiable. Use the sta
 - [x] Implement local ingestion, raw/normalized storage, source traceability, deduplication, and reversible `run_id` import units.
 - [x] Implement categorization, persistent human corrections, monthly aggregation, and API contracts.
 - [x] Implement browser import/review flows and the monthly dashboard with reconciled pie-chart data.
-- [~] Pass independent acceptance/privacy review and human QA on the live local application.
+- [x] Pass independent acceptance/privacy review and human QA on the live local application.
 
 ## Done When
 
-- [ ] Browser file selection and drag-and-drop import text-based PDF and CSV statements without a path textbox.
-- [ ] Parseable transactions are stored; unparseable rows are retained and visibly reported rather than silently dropped.
-- [ ] Re-import does not double-count, and suspected duplicate decisions are visible and user-correctable.
-- [ ] Automatic categories can be corrected, and human corrections survive later imports and processing runs.
-- [ ] Monthly total, category breakdown, transaction list, and pie chart reconcile exactly.
-- [ ] Transactions and aggregates trace to their source file and CSV row or PDF page/record.
-- [ ] Each import has a `run_id`, can be inspected as a unit, and can be undone without losing manual correction history.
-- [ ] The app runs locally without default data upload, with automated verification and reproducible startup instructions.
+- [x] Browser file selection and drag-and-drop import text-based PDF and CSV statements without a path textbox.
+- [x] Parseable transactions are stored; unparseable rows are retained and visibly reported rather than silently dropped.
+- [x] Re-import does not double-count, and suspected duplicate decisions are visible and user-correctable.
+- [x] Automatic categories can be corrected, and human corrections survive later imports and processing runs.
+- [x] Monthly total, category breakdown, transaction list, and pie chart reconcile exactly.
+- [x] Transactions and aggregates trace to their source file and CSV row or PDF page/record.
+- [x] Each import has a `run_id`, can be inspected as a unit, and can be undone without losing manual correction history.
+- [x] The app runs locally without default data upload, with automated verification and reproducible startup instructions.
 
 ## Notes
 
@@ -37,4 +37,5 @@ Phase dashboard for the loop. Keep checkpoints small and verifiable. Use the sta
 - REQ-20260714-064051-data-eng accepted the analysis core at commit `9268a5e`: frozen public-write and component-state matrices passed 145/145 and 56/56, backend discovery passed 52/52, independent review returned PASS, and `max_fix_cycles` was restored to 3.
 - REQ-20260715-082547-data-eng accepted the local JSON-ready facade at `0362cb0`: independent review PASS, unchanged boundary acceptance 4/4, backend discovery 68/68, exact string money, persistent run listing, and all local-only invariants preserved.
 - Live UI QA on 2026-07-15 failed before statement import: the documented/default port 8765 served the loop dashboard because the app allowed a silent co-bind. Iteration 3 must move the default to 8766, print the actual reachable listener URL, and fail startup when the requested port is occupied before the final human-QA retry.
+- REQ-20260715-091230-frontend accepted implementation `5f458cf` after iteration-5 independent PASS and explicit renewed live human PASS. All nine gates are green, every non-zero category has a minimum visible arc while numerical data remains exact, and `max_fix_cycles` was restored to 3.
 - Record verification commands, evidence paths, and blockers next to each checkpoint as it closes.

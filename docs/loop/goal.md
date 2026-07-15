@@ -6,14 +6,14 @@ Build a local-first Canadian monthly expense analysis web application that impor
 
 ## Done When
 
-- [ ] A user can select or drag text-based PDF and CSV statement files into the browser and import them without entering a filesystem path.
-- [ ] Every parseable transaction is stored locally, while rows that cannot be parsed are retained and shown with a clear error instead of being silently dropped.
-- [ ] Re-importing the same statement does not double-count transactions; suspected duplicates are visible and can be confirmed or rejected by the user.
-- [ ] Transactions receive an automatic category, the user can correct categories, and those corrections survive later imports and processing runs.
-- [ ] For a selected month, the total, category breakdown, transaction list, and pie chart reconcile exactly to the same included transactions.
-- [ ] Every transaction and displayed aggregate can be traced to its source file and original CSV row or PDF page/record.
-- [ ] Every import is an independently identifiable unit with a `run_id`; the user can inspect all transactions introduced by a run and undo the entire run without losing the user's manual correction history.
-- [ ] The application runs locally, does not upload financial data by default, has automated verification for its core and user-visible behavior, and includes reproducible local startup instructions.
+- [x] A user can select or drag text-based PDF and CSV statement files into the browser and import them without entering a filesystem path.
+- [x] Every parseable transaction is stored locally, while rows that cannot be parsed are retained and shown with a clear error instead of being silently dropped.
+- [x] Re-importing the same statement does not double-count transactions; suspected duplicates are visible and can be confirmed or rejected by the user.
+- [x] Transactions receive an automatic category, the user can correct categories, and those corrections survive later imports and processing runs.
+- [x] For a selected month, the total, category breakdown, transaction list, and pie chart reconcile exactly to the same included transactions.
+- [x] Every transaction and displayed aggregate can be traced to its source file and original CSV row or PDF page/record.
+- [x] Every import is an independently identifiable unit with a `run_id`; the user can inspect all transactions introduced by a run and undo the entire run without losing the user's manual correction history.
+- [x] The application runs locally, does not upload financial data by default, has automated verification for its core and user-visible behavior, and includes reproducible local startup instructions.
 
 ## Invariants
 
