@@ -1,0 +1,50 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "checkpoint": "iter-4-pie-geometry-red-baseline",
+  "command": "python -m unittest tests.acceptance.test_local_web_app_pie_geometry_review -v",
+  "exit_code": 1,
+  "ran_at": "2026-07-15T21:14:34Z",
+  "implementation_commit": "38479e5",
+  "freeze_commit": "cc27d2e",
+  "sample_count": 720,
+  "frozen_artifacts": {
+    "tests/acceptance/test_local_web_app_pie_geometry_review.py": "D5EEA84080B915C6C1978A20D47C61EE06FD96DFF65E6ED46A822BD33A076912",
+    "docs/review/REQ-20260715-091230-frontend-iter-4-pie-geometry-boundary.md": "EA19310EDC2DE2DA13AD447872E569BB845F410B74E9AA21EDE54C23A2F2C4D0"
+  },
+  "inventory": {
+    "green_case_families": [
+      "PG-01-exact-accounting-guardrail",
+      "PG-06-operable-legend-match (all 9 category paths)"
+    ],
+    "red_case_families": [
+      "PG-02-visible-coverage-no-gap-or-overlap",
+      "PG-03-one-cyclic-run-per-category",
+      "PG-04-every-category-visible-and-proportional",
+      "PG-05-housing-dominates-visible-ring"
+    ]
+  },
+  "observed": {
+    "overlap_samples": 639,
+    "maximum_allowed_boundary_overlap_samples": 18,
+    "visible_cyclic_runs": 140,
+    "expected_cyclic_runs": 9,
+    "missing_topmost_visible_categories": [
+      "Groceries",
+      "Shopping"
+    ],
+    "housing_visible_samples": 81,
+    "housing_required_minimum_samples": 361,
+    "unittest_tests_run": 1,
+    "unittest_failure_count": 4
+  },
+  "guardrails": {
+    "june_spending_minor": "277617",
+    "june_credit_minor": "72999",
+    "june_transaction_count": 22,
+    "category_count": 9,
+    "pie_scale": "1000000000",
+    "pie_unit_sum": "1000000000",
+    "all_nine_focus_selection_legend_paths": true,
+    "raw_financial_content_recorded": false
+  }
+}
