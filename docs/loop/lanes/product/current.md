@@ -3,14 +3,15 @@
 current_request_id: REQ-20260715-091230-frontend
 status: REVIEWING
 iteration: 1
-last_updated: 2026-07-15T09:37:00Z
-heartbeat: 2026-07-15T09:37:00Z
+last_updated: 2026-07-15T09:42:22Z
+heartbeat: 2026-07-15T09:42:22Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
 - Frontend implementation `aaa931d` and handoff `3225194` deliver the complete loopback browser MVP within lane scope; product cross-lane evidence/README is committed at `f70d6a7`.
 - Product independently reproduced frontend 8/8, real Chromium E2E 1/1, backend 68/68, and `SHIP_CHECK_OK`; all four flat root evidence records are present.
+- A product-owned VERIFY manifest supplement preserves the same four commands and C1-C7 while repairing only the archived parser syntax.
 
 ## Next Action
 
