@@ -9,14 +9,19 @@
 - Duplicate decisions use a dedicated append-only `duplicate_decisions` table.
   `same_transaction` requires a kept identity belonging to the linked pair;
   `distinct` has no kept identity. Updates and deletes are rejected by triggers.
-- `AnalysisService` uses one component projection for decision validation and
-  every read. Only effective latest-wins `same_transaction` edges connect a
-  component; pending and `distinct` links do not. The identities that are never
-  named as a non-keeper by those edges define the structural keeper, and every
-  committed component must have exactly one. A proposal with zero or multiple
-  structural keepers is rejected before history append. A `distinct` proposal
-  is also rejected when its endpoints remain connected through another
-  `same_transaction` path.
+- `CoreStore.add_duplicate_decision()` owns one component projection used by
+  both the persistence write boundary and every analysis read. All public
+  `CoreStore` import aliases therefore enforce the same rule, while
+  `AnalysisService.set_duplicate_decision()` delegates to that boundary.
+  Validation and append run inside one immediate SQLite transaction; an
+  invalid proposal is rejected before a decision ID is allocated or a history
+  row is inserted.
+- Only effective latest-wins `same_transaction` edges connect a component;
+  pending and `distinct` links do not. The identities that are never named as
+  a non-keeper by those edges define the structural keeper, and every committed
+  component must have exactly one. A proposal with zero or multiple structural
+  keepers is rejected. A `distinct` proposal is also rejected when its
+  endpoints remain connected through another `same_transaction` path.
 - An active component includes exactly one representative. Its structural keeper
   is used while active; otherwise the lexicographically smallest active stable
   identity is the deterministic fallback. A component with no active identity

@@ -1,17 +1,124 @@
 from __future__ import annotations
 
 import sqlite3
-from collections.abc import Iterator
+from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
+from dataclasses import dataclass
 from datetime import UTC, date, datetime
 from os import PathLike
 from pathlib import Path
-from typing import Any
+from typing import AbstractSet, Any, Protocol
 from uuid import uuid4
 
 
 SQLITE_INTEGER_MIN = -(2**63)
 SQLITE_INTEGER_MAX = 2**63 - 1
+
+
+class _DuplicateDecisionGraphState(Protocol):
+    left_identity_id: str
+    right_identity_id: str
+    effective_decision: str
+    kept_identity_id: str | None
+
+
+@dataclass(frozen=True)
+class _StoredDuplicateDecisionGraphState:
+    duplicate_link_id: str
+    left_identity_id: str
+    right_identity_id: str
+    effective_decision: str
+    kept_identity_id: str | None
+
+
+@dataclass(frozen=True)
+class _DuplicateComponentProjection:
+    included_identity_ids: frozenset[str]
+    same_component_identity_ids: frozenset[str]
+
+
+def _project_duplicate_components(
+    states: Iterable[_DuplicateDecisionGraphState],
+    active_identity_ids: AbstractSet[str],
+    *,
+    invalid_state_error: type[Exception] = RuntimeError,
+    distinct_endpoints: tuple[str, str] | None = None,
+) -> _DuplicateComponentProjection:
+    """Validate latest-same structure and select active representatives."""
+
+    adjacency: dict[str, set[str]] = {}
+    excluded_by_edges: set[str] = set()
+    for state in states:
+        if state.effective_decision != "same_transaction":
+            continue
+        adjacency.setdefault(state.left_identity_id, set()).add(
+            state.right_identity_id
+        )
+        adjacency.setdefault(state.right_identity_id, set()).add(
+            state.left_identity_id
+        )
+        if state.kept_identity_id == state.left_identity_id:
+            excluded_by_edges.add(state.right_identity_id)
+        elif state.kept_identity_id == state.right_identity_id:
+            excluded_by_edges.add(state.left_identity_id)
+        else:
+            raise invalid_state_error(
+                "same_transaction decision has no valid structural keeper"
+            )
+
+    if distinct_endpoints is not None:
+        left_identity_id, right_identity_id = distinct_endpoints
+        reachable = {left_identity_id}
+        pending = [left_identity_id]
+        while pending:
+            identity_id = pending.pop()
+            for neighbor in adjacency.get(identity_id, ()):
+                if neighbor not in reachable:
+                    reachable.add(neighbor)
+                    pending.append(neighbor)
+        if right_identity_id in reachable:
+            raise invalid_state_error(
+                "distinct decision contradicts an alternate "
+                "same_transaction path"
+            )
+
+    active_identity_id_set = set(active_identity_ids)
+    included_identity_ids = active_identity_id_set - set(adjacency)
+    same_component_identity_ids = set(adjacency)
+    visited: set[str] = set()
+    for root_identity_id in sorted(adjacency):
+        if root_identity_id in visited:
+            continue
+        component: set[str] = set()
+        pending = [root_identity_id]
+        while pending:
+            identity_id = pending.pop()
+            if identity_id in component:
+                continue
+            component.add(identity_id)
+            pending.extend(adjacency[identity_id])
+        visited.update(component)
+
+        structural_keepers = component - excluded_by_edges
+        if len(structural_keepers) != 1:
+            raise invalid_state_error(
+                "same_transaction component must have exactly one "
+                "structural keeper"
+            )
+        structural_keeper_id = next(iter(structural_keepers))
+        active_component = component & active_identity_id_set
+        if not active_component:
+            continue
+        included_identity_ids.add(
+            structural_keeper_id
+            if structural_keeper_id in active_component
+            else min(active_component)
+        )
+
+    return _DuplicateComponentProjection(
+        included_identity_ids=frozenset(included_identity_ids),
+        same_component_identity_ids=frozenset(same_component_identity_ids),
+    )
 
 
 SCHEMA = """
@@ -972,8 +1079,8 @@ class CoreStore:
         elif kept_identity_id is not None:
             raise ValueError("a distinct decision cannot name a kept identity")
 
-        decision_id = self._new_id("ddn")
         with self._connection() as connection, connection:
+            connection.execute("BEGIN IMMEDIATE")
             link = connection.execute(
                 "SELECT left_identity_id, right_identity_id FROM duplicate_links "
                 "WHERE duplicate_link_id = ?",
@@ -986,6 +1093,40 @@ class CoreStore:
                 link["right_identity_id"],
             }:
                 raise ValueError("kept_identity_id must belong to the duplicate link")
+
+            proposed_states = tuple(
+                _StoredDuplicateDecisionGraphState(
+                    duplicate_link_id=state.duplicate_link_id,
+                    left_identity_id=state.left_identity_id,
+                    right_identity_id=state.right_identity_id,
+                    effective_decision=(
+                        decision
+                        if state.duplicate_link_id == duplicate_link_id
+                        else state.effective_decision
+                    ),
+                    kept_identity_id=(
+                        kept_identity_id
+                        if state.duplicate_link_id == duplicate_link_id
+                        else state.kept_identity_id
+                    ),
+                )
+                for state in self._duplicate_graph_states(connection)
+            )
+            _project_duplicate_components(
+                proposed_states,
+                frozenset(),
+                invalid_state_error=ValueError,
+                distinct_endpoints=(
+                    (
+                        str(link["left_identity_id"]),
+                        str(link["right_identity_id"]),
+                    )
+                    if decision == "distinct"
+                    else None
+                ),
+            )
+
+            decision_id = self._new_id("ddn")
             connection.execute(
                 "INSERT INTO duplicate_decisions "
                 "(decision_id, duplicate_link_id, decision, kept_identity_id, "
@@ -999,6 +1140,37 @@ class CoreStore:
                 ),
             )
         return decision_id
+
+    @staticmethod
+    def _duplicate_graph_states(
+        connection: sqlite3.Connection,
+    ) -> tuple[_StoredDuplicateDecisionGraphState, ...]:
+        rows = connection.execute(
+            "SELECT l.duplicate_link_id, l.left_identity_id, "
+            "l.right_identity_id, COALESCE(d.decision, 'pending') "
+            "AS effective_decision, d.kept_identity_id "
+            "FROM duplicate_links AS l "
+            "LEFT JOIN duplicate_decisions AS d ON d.decision_id = ("
+            "SELECT candidate.decision_id FROM duplicate_decisions AS candidate "
+            "WHERE candidate.duplicate_link_id = l.duplicate_link_id "
+            "ORDER BY candidate.created_at DESC, candidate.decision_id DESC "
+            "LIMIT 1) "
+            "ORDER BY l.created_at, l.duplicate_link_id"
+        ).fetchall()
+        return tuple(
+            _StoredDuplicateDecisionGraphState(
+                duplicate_link_id=str(row["duplicate_link_id"]),
+                left_identity_id=str(row["left_identity_id"]),
+                right_identity_id=str(row["right_identity_id"]),
+                effective_decision=str(row["effective_decision"]),
+                kept_identity_id=(
+                    None
+                    if row["kept_identity_id"] is None
+                    else str(row["kept_identity_id"])
+                ),
+            )
+            for row in rows
+        )
 
     def list_duplicate_decisions(
         self,

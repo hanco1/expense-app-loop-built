@@ -36,6 +36,41 @@ class AnalysisDuplicateDecisionTests(AnalysisStoreTestCase):
         self.assertEqual(len(matches), 1)
         return matches[0]
 
+    def _direct_store_decision(
+        self,
+        identities: dict[str, str],
+        left: str,
+        right: str,
+        decision: str,
+        keeper: str | None = None,
+    ) -> str:
+        candidate = self._candidate_for(identities[left], identities[right])
+        return self.store.add_duplicate_decision(
+            candidate.duplicate_link_id,
+            decision=decision,
+            kept_identity_id=(
+                None if keeper is None else identities[keeper]
+            ),
+        )
+
+    def _decision_id_signature(
+        self,
+        identity_ids: set[str],
+    ) -> dict[str, tuple[str, ...]]:
+        return {
+            candidate.duplicate_link_id: tuple(
+                str(row["decision_id"])
+                for row in self.store.list_duplicate_decisions(
+                    candidate.duplicate_link_id
+                )
+            )
+            for candidate in self.analysis.list_duplicate_candidates()
+            if {
+                candidate.left_identity_id,
+                candidate.right_identity_id,
+            } <= identity_ids
+        }
+
     def test_duplicate_decisions_are_append_only_latest_wins_and_reversible(self) -> None:
         run_id = self.import_csv()
         raw_counts = self.store.entity_counts()
@@ -313,6 +348,131 @@ class AnalysisDuplicateDecisionTests(AnalysisStoreTestCase):
         self.assertEqual(
             self.store.entity_counts()["duplicate_decisions"],
             before,
+        )
+
+    def test_store_write_boundary_rejects_all_invalid_graph_families_atomically(self) -> None:
+        scenarios = (
+            (
+                "ZK",
+                "ABC",
+                (("A", "B", "same_transaction", "A"),
+                 ("B", "C", "same_transaction", "B")),
+                ("A", "C", "same_transaction", "C"),
+            ),
+            (
+                "MC",
+                "DEF",
+                (("D", "E", "same_transaction", "D"),),
+                ("E", "F", "same_transaction", "F"),
+            ),
+            (
+                "MM",
+                "GHIJ",
+                (("G", "H", "same_transaction", "G"),
+                 ("I", "J", "same_transaction", "I")),
+                ("H", "J", "same_transaction", "H"),
+            ),
+            (
+                "AD",
+                "KLM",
+                (("K", "L", "same_transaction", "K"),
+                 ("K", "M", "same_transaction", "K"),
+                 ("L", "M", "same_transaction", "L")),
+                ("K", "L", "distinct", None),
+            ),
+        )
+
+        for name, labels, setup, proposal in scenarios:
+            identities = {
+                label: self._import_duplicate_identity(
+                    label,
+                    group=f"INVALID {name}",
+                )[1]
+                for label in labels
+            }
+            for left, right, decision, keeper in setup:
+                self._direct_store_decision(
+                    identities,
+                    left,
+                    right,
+                    decision,
+                    keeper,
+                )
+
+            counts_before = self.store.entity_counts()
+            history_before = self._decision_id_signature(set(identities.values()))
+            left, right, decision, keeper = proposal
+            with self.subTest(proposal=name), self.assertRaises(ValueError):
+                self._direct_store_decision(
+                    identities,
+                    left,
+                    right,
+                    decision,
+                    keeper,
+                )
+            self.assertEqual(self.store.entity_counts(), counts_before)
+            self.assertEqual(
+                self._decision_id_signature(set(identities.values())),
+                history_before,
+            )
+
+        self.assertEqual(
+            self.analysis.get_month_summary("2026-06").transaction_count,
+            6,
+        )
+
+    def test_store_write_boundary_accepts_all_valid_graph_families(self) -> None:
+        identities: dict[str, str] = {}
+        for group, labels in (
+            ("VALID VS", "AB"),
+            ("VALID BD", "CDE"),
+            ("VALID KR", "FGH"),
+            ("VALID LR", "IJ"),
+        ):
+            identities.update(
+                {
+                    label: self._import_duplicate_identity(label, group=group)[1]
+                    for label in labels
+                }
+            )
+
+        self._direct_store_decision(
+            identities, "A", "B", "same_transaction", "A"
+        )
+
+        self._direct_store_decision(
+            identities, "C", "D", "same_transaction", "C"
+        )
+        self._direct_store_decision(
+            identities, "D", "E", "same_transaction", "D"
+        )
+        self._direct_store_decision(identities, "D", "E", "distinct")
+
+        self._direct_store_decision(
+            identities, "F", "G", "same_transaction", "F"
+        )
+        self._direct_store_decision(
+            identities, "G", "H", "same_transaction", "G"
+        )
+        self._direct_store_decision(
+            identities, "F", "G", "same_transaction", "G"
+        )
+
+        self._direct_store_decision(
+            identities, "I", "J", "same_transaction", "I"
+        )
+        self._direct_store_decision(identities, "I", "J", "distinct")
+        self._direct_store_decision(
+            identities, "I", "J", "same_transaction", "I"
+        )
+
+        summary = self.analysis.get_month_summary("2026-06")
+        self.assertEqual(len(summary.transactions), 10)
+        self.assertEqual(summary.transaction_count, 5)
+        self.assertEqual(summary.spending_total_minor, 2_250)
+        self.assertEqual(
+            sum(transaction.included for transaction in summary.transactions),
+            5,
         )
 
 

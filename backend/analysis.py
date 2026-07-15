@@ -1,10 +1,13 @@
 from __future__ import annotations
 
 import re
-from dataclasses import dataclass, replace
+from dataclasses import dataclass
 from typing import Literal, cast
 
-from backend.persistence import CoreStore
+from backend.persistence import (
+    CoreStore,
+    _project_duplicate_components,
+)
 from contracts.analysis import (
     CANONICAL_CATEGORIES,
     CATEGORY_RULE_VERSION,
@@ -44,12 +47,6 @@ class _DuplicateLinkState:
     effective_decision_id: str | None
     kept_identity_id: str | None
     history: tuple[DuplicateDecision, ...]
-
-
-@dataclass(frozen=True)
-class _DuplicateComponentProjection:
-    included_identity_ids: frozenset[str]
-    same_component_identity_ids: frozenset[str]
 
 
 def automatic_category(merchant: str, amount_minor: int) -> CategoryName:
@@ -169,49 +166,6 @@ class AnalysisService:
         decision: str,
         kept_identity_id: str | None = None,
     ) -> DuplicateCandidate:
-        if decision not in {"same_transaction", "distinct"}:
-            raise ValueError("decision must be 'same_transaction' or 'distinct'")
-        link = self.store.get_duplicate_link(duplicate_link_id)
-        left_identity_id = str(link["left_identity_id"])
-        right_identity_id = str(link["right_identity_id"])
-        if decision == "same_transaction":
-            if (
-                not isinstance(kept_identity_id, str)
-                or not kept_identity_id.strip()
-            ):
-                raise ValueError("kept_identity_id must be a non-empty string")
-            if kept_identity_id not in {left_identity_id, right_identity_id}:
-                raise ValueError(
-                    "kept_identity_id must belong to the duplicate link"
-                )
-        elif kept_identity_id is not None:
-            raise ValueError("a distinct decision cannot name a kept identity")
-
-        proposed_states = tuple(
-            replace(
-                state,
-                effective_decision=cast(DuplicateDecisionValue, decision),
-                effective_decision_id=None,
-                kept_identity_id=kept_identity_id,
-            )
-            if state.duplicate_link_id == duplicate_link_id
-            else state
-            for state in self._duplicate_states()
-        )
-        active_identity_ids = {
-            str(transaction["identity_id"])
-            for transaction in self.store.list_effective_transactions()
-        }
-        self._project_duplicate_components(
-            proposed_states,
-            active_identity_ids,
-            invalid_state_error=ValueError,
-            distinct_endpoints=(
-                (left_identity_id, right_identity_id)
-                if decision == "distinct"
-                else None
-            ),
-        )
         self.store.add_duplicate_decision(
             duplicate_link_id,
             decision=decision,
@@ -232,7 +186,7 @@ class AnalysisService:
             str(transaction["identity_id"])
             for transaction in effective_transactions
         }
-        projection = self._project_duplicate_components(
+        projection = _project_duplicate_components(
             states,
             active_identity_ids,
         )
@@ -263,7 +217,7 @@ class AnalysisService:
         active_identity_ids = {
             str(row["identity_id"]) for row in effective_transactions
         }
-        projection = self._project_duplicate_components(
+        projection = _project_duplicate_components(
             duplicate_states,
             active_identity_ids,
         )
@@ -424,91 +378,6 @@ class AnalysisService:
                 )
             )
         return tuple(states)
-
-    @staticmethod
-    def _project_duplicate_components(
-        states: tuple[_DuplicateLinkState, ...],
-        active_identity_ids: set[str],
-        *,
-        invalid_state_error: type[Exception] = RuntimeError,
-        distinct_endpoints: tuple[str, str] | None = None,
-    ) -> _DuplicateComponentProjection:
-        adjacency: dict[str, set[str]] = {}
-        excluded_by_edges: set[str] = set()
-        for state in states:
-            if state.effective_decision != "same_transaction":
-                continue
-            adjacency.setdefault(state.left_identity_id, set()).add(
-                state.right_identity_id
-            )
-            adjacency.setdefault(state.right_identity_id, set()).add(
-                state.left_identity_id
-            )
-            if state.kept_identity_id == state.left_identity_id:
-                excluded_by_edges.add(state.right_identity_id)
-            elif state.kept_identity_id == state.right_identity_id:
-                excluded_by_edges.add(state.left_identity_id)
-            else:
-                raise invalid_state_error(
-                    "same_transaction decision has no valid structural keeper"
-                )
-
-        if distinct_endpoints is not None:
-            left_identity_id, right_identity_id = distinct_endpoints
-            reachable = {left_identity_id}
-            pending = [left_identity_id]
-            while pending:
-                identity_id = pending.pop()
-                for neighbor in adjacency.get(identity_id, ()):
-                    if neighbor not in reachable:
-                        reachable.add(neighbor)
-                        pending.append(neighbor)
-            if right_identity_id in reachable:
-                raise invalid_state_error(
-                    "distinct decision contradicts an alternate "
-                    "same_transaction path"
-                )
-
-        included_identity_ids = set(active_identity_ids)
-        same_component_identity_ids = set(adjacency)
-        included_identity_ids -= same_component_identity_ids
-        visited: set[str] = set()
-        for root_identity_id in sorted(adjacency):
-            if root_identity_id in visited:
-                continue
-            component: set[str] = set()
-            pending = [root_identity_id]
-            while pending:
-                identity_id = pending.pop()
-                if identity_id in component:
-                    continue
-                component.add(identity_id)
-                pending.extend(adjacency[identity_id])
-            visited.update(component)
-
-            structural_keepers = component - excluded_by_edges
-            if len(structural_keepers) != 1:
-                raise invalid_state_error(
-                    "same_transaction component must have exactly one "
-                    "structural keeper"
-                )
-            structural_keeper_id = next(iter(structural_keepers))
-            active_component = component & active_identity_ids
-            if not active_component:
-                continue
-            representative_id = (
-                structural_keeper_id
-                if structural_keeper_id in active_component
-                else min(active_component)
-            )
-            included_identity_ids.add(representative_id)
-
-        return _DuplicateComponentProjection(
-            included_identity_ids=frozenset(included_identity_ids),
-            same_component_identity_ids=frozenset(
-                same_component_identity_ids
-            ),
-        )
 
     @staticmethod
     def _identity_decision(
