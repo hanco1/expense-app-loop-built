@@ -1,0 +1,61 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 4,
+  "reviewed_commit": "9268a5e",
+  "ran_at": "2026-07-15T08:18:56Z",
+  "verdict": "PASS",
+  "severity": "none",
+  "frozen_artifact_hashes": {
+    "tests/acceptance/test_analysis_core_review.py": "01A02F973E884D3BA917FDF73260E6E5524F9D21B8D5DE77CDD57755989C6E6B",
+    "docs/review/REQ-20260714-064051-data-eng-iter-3-component-state-matrix.md": "ADB423E55F10058A556F551EECCC92CFCC998DFFC87D6FD003CF856B68FF61FB",
+    "tests/acceptance/test_analysis_core_write_boundary_review.py": "974432935CBB3C8EB957297DA50E3FD52E1F877D1C5D9C3BBAFD4D16818D809B",
+    "docs/review/REQ-20260714-064051-data-eng-iter-4-write-boundary-matrix.md": "91B1DFD3792A04DBD42E2847544896EB239594C7D9F7C2BAEAC1E4A26FCD421C"
+  },
+  "write_boundary_matrix": {
+    "executable_paths": 144,
+    "executable_paths_passed": 144,
+    "manifest_guard": "passed",
+    "unreachable_classes": 6,
+    "previously_red_invalid_store_alias_paths": 48,
+    "previously_red_paths_closed": 48,
+    "compatible_guardrail_paths": 96,
+    "compatible_guardrail_paths_passed": 96,
+    "changed_after_freeze": false
+  },
+  "component_state_matrix": {
+    "executable_paths": 55,
+    "executable_paths_passed": 55,
+    "manifest_guard": "passed",
+    "changed_after_freeze": false
+  },
+  "commands": [
+    {"command": "python -m unittest tests.acceptance.test_analysis_core_write_boundary_review -v", "exit_code": 0, "tests": 145, "failures": 0},
+    {"command": "python -m unittest tests.acceptance.test_analysis_core_review -v", "exit_code": 0, "tests": 56, "failures": 0},
+    {"command": "python -m unittest tests.backend.test_analysis_categories -v", "exit_code": 0, "tests": 3, "failures": 0},
+    {"command": "python -m unittest tests.backend.test_analysis_corrections -v", "exit_code": 0, "tests": 1, "failures": 0},
+    {"command": "python -m unittest tests.backend.test_analysis_duplicates -v", "exit_code": 0, "tests": 6, "failures": 0},
+    {"command": "python -m unittest tests.backend.test_analysis_monthly -v", "exit_code": 0, "tests": 1, "failures": 0},
+    {"command": "python -m unittest tests.backend.test_analysis_inclusion -v", "exit_code": 0, "tests": 5, "failures": 0},
+    {"command": "python -m unittest tests.backend.test_analysis_contracts -v", "exit_code": 0, "tests": 2, "failures": 0},
+    {"command": "python -m unittest tests.backend.test_analysis_local_boundary -v", "exit_code": 0, "tests": 3, "failures": 0},
+    {"command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v", "exit_code": 0, "tests": 52, "failures": 0},
+    {"command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260714-064051-data-eng", "exit_code": 0, "result": "SHIP_CHECK_OK REQ-20260714-064051-data-eng"}
+  ],
+  "static_review": {
+    "public_writer_aliases": 6,
+    "single_underlying_writer": "CoreStore.add_duplicate_decision",
+    "transaction": "BEGIN IMMEDIATE",
+    "validation_before_id_allocation": true,
+    "validation_before_insert": true,
+    "analysis_reads_share_projection": true
+  },
+  "atomic_rejection": "pass; counts, IDs, readable graph, analysis, facts, supports, and provenance remain unchanged",
+  "append_only_history": "pass; rejected proposals append zero and accepted proposals append exactly one row",
+  "scope_creep": "none",
+  "privacy": "pass",
+  "traceability": "pass",
+  "looks_done_but_wrong": "none found",
+  "ease_of_misuse": "none within the supported public Python API",
+  "human_qa": "not applicable",
+  "remaining_risks": []
+}
