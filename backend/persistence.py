@@ -907,6 +907,26 @@ class CoreStore:
             entity="import run",
         )
 
+    def list_import_run_summaries(self) -> list[dict[str, Any]]:
+        """Return every retained run newest first with a stable ID tie-breaker."""
+
+        return self._fetch_all(
+            "SELECT r.run_id, r.created_at, r.source_name, r.source_type, "
+            "r.source_fingerprint, r.state, r.exact_reimport_of_run_id, "
+            "COUNT(DISTINCT s.source_record_id) AS source_record_count, "
+            "COALESCE(SUM(CASE WHEN s.parse_status = 'parsed' THEN 1 ELSE 0 END), 0) "
+            "AS parsed_count, "
+            "COALESCE(SUM(CASE WHEN s.parse_status = 'failed' THEN 1 ELSE 0 END), 0) "
+            "AS failed_count, "
+            "COUNT(DISTINCT o.occurrence_id) AS occurrence_count "
+            "FROM import_runs AS r "
+            "LEFT JOIN source_records AS s ON s.run_id = r.run_id "
+            "LEFT JOIN imported_occurrences AS o "
+            "ON o.source_record_id = s.source_record_id "
+            "GROUP BY r.run_id ORDER BY r.created_at DESC, r.run_id DESC",
+            (),
+        )
+
     def get_import_run_detail(self, run_id: str) -> list[dict[str, Any]]:
         with self._connection() as connection:
             run = connection.execute(

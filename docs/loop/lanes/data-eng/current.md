@@ -1,20 +1,20 @@
 # Data Eng Current State
 
-current_request_id: REQ-20260714-064051-data-eng
-status: REVIEWING
-iteration: 4
-last_updated: 2026-07-15T08:14:19Z
-heartbeat: 2026-07-15T08:14:19Z
+current_request_id: REQ-20260715-082547-data-eng
+status: IMPLEMENTING
+iteration: 1
+last_updated: 2026-07-15T08:29:03Z
+heartbeat: 2026-07-15T08:29:03Z
 model_observed: gpt-5.6-sol xhigh (highest)
 
 ## Current Checkpoint
 
-- Implementation commit `9268a5e` centralizes latest-same graph validation at `CoreStore.add_duplicate_decision` inside one immediate SQLite transaction. Both frozen matrices, all focused regressions, backend discovery 52/52, and the completion gate are green.
+- Implementing the local JSON-ready application facade and persistent newest-first import-run listing on top of the accepted import, analysis, and persistence services.
 
 ## Next Action
 
-- Independent review evaluates commit `9268a5e` against the unchanged 145-test write-boundary matrix, unchanged 56-test component-state matrix, four frozen hashes, and eleven flat evidence records.
+- Add the typed in-process request dispatcher, exact string-money serialization, CSRF mutation guard, stable errors/privacy boundary, persistent run discovery, and approved-fixture crossings; then run all nine gates.
 
 ## Blockers
 
-- None. Product retains final acceptance authority and must restore `max_fix_cycles: 3` in the same checkpoint as ACCEPTED.
+- None. No system dependency is authorized or expected.
