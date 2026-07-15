@@ -1,0 +1,20 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 4,
+  "checkpoint": "analysis-core-write-boundary-matrix",
+  "command": "python -m unittest tests.acceptance.test_analysis_core_write_boundary_review -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T08:11:08Z",
+  "test_count": 145,
+  "executable_paths": 144,
+  "manifest_guards": 1,
+  "failures": 0,
+  "errors": 0,
+  "writers": 6,
+  "invalid_paths_rejected_atomically": 48,
+  "valid_guardrail_paths_preserved": 96,
+  "baseline_red_paths": 48,
+  "final_red_paths": 0,
+  "acceptance_sha256": "974432935CBB3C8EB957297DA50E3FD52E1F877D1C5D9C3BBAFD4D16818D809B",
+  "matrix_sha256": "91B1DFD3792A04DBD42E2847544896EB239594C7D9F7C2BAEAC1E4A26FCD421C"
+}

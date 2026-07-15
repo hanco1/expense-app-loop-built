@@ -1,21 +1,21 @@
 # Product Current State
 
 current_request_id: REQ-20260714-064051-data-eng
-status: FIX_REQUESTED
+status: REVIEWING
 iteration: 4
-last_updated: 2026-07-15T08:00:59Z
-heartbeat: 2026-07-15T08:00:59Z
+last_updated: 2026-07-15T08:16:04Z
+heartbeat: 2026-07-15T08:16:04Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
-- Review froze 144 executable public-writer paths plus six unreachable classes at `7a99866`; baseline `53e57f6` is red in all 48 CoreStore-alias invalid-proposal paths and green in 96 compatible guardrails.
-- The authoritative iteration-4 FIX_REQUEST requires one underlying atomic validator while preserving all four frozen artifacts.
+- Data-eng implemented centralized atomic validation at the underlying `CoreStore.add_duplicate_decision` boundary in commit `9268a5e`; all six public import paths share it.
+- All eleven implementation gates are exit 0: frozen matrices 145/145 and 56/56, backend 52/52, four hashes unchanged, and `SHIP_CHECK_OK`.
 
 ## Next Action
 
-- Await data-eng's claim and class-wide implementation; the claim is the only remaining counted transition and reaches raw 7/7.
+- Await independent review of implementation `9268a5e`; only product may ACCEPT and atomically restore `max_fix_cycles` to 3.
 
 ## Blockers
 
-- The public write-boundary acceptance remains intentionally red at `53e57f6`; restore `max_fix_cycles` to 3 only with ACCEPTED.
+- None. Raw fix-cycle usage is the authorized 7/7; restore `max_fix_cycles` to 3 only with ACCEPTED.

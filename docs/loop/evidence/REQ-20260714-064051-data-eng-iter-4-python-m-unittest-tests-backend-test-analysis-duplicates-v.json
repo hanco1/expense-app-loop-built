@@ -1,0 +1,17 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 4,
+  "checkpoint": "analysis-core-central-write-boundary-regression",
+  "command": "python -m unittest tests.backend.test_analysis_duplicates -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T08:11:08Z",
+  "test_count": 6,
+  "failures": 0,
+  "errors": 0,
+  "invalid_proposal_families": ["ZK", "MC", "MM", "AD"],
+  "valid_proposal_families": ["VS", "BD", "KR", "LR"],
+  "rejected_history_rows": 0,
+  "rejected_entity_count_changes": 0,
+  "accepted_history_append_only": true,
+  "core_store_boundary_exercised_directly": true
+}

@@ -24,20 +24,22 @@ the next actor can continue from repo files plus the latest message alone.
 - Independent review found a write-boundary blocker: publicly exported `CoreStore.add_duplicate_decision()` bypasses the projection and commits a zero-keeper history row. The separate boundary probe is red, and raw fix-cycle usage is 5/5.
 - The human approved iteration 4 with temporary `max_fix_cycles: 7`. Product strengthened the contract so every exposed decision writer must enforce the same validator atomically, and routed review-first freezing of the complete public-writer/proposal matrix before implementation.
 - Review froze the complete iteration-4 boundary contract at `7a99866`: six public import paths, eight proposal classes, and three support states produce 144 executable cases plus six explicit unreachable classes. Baseline 53e57f6 is red in 48 CoreStore-alias invalid-proposal paths and green in 96 compatible paths plus the manifest guard; original matrix remains 56/56.
+- Data-eng implemented the centralized underlying write boundary at `9268a5e`. `CoreStore.add_duplicate_decision()` validates the overlaid latest-same graph inside one immediate transaction before allocating a decision ID or appending history; all public import aliases inherit the same rule while valid decisions still append exactly once.
+- The unchanged write-boundary matrix passes 145/145, the unchanged component-state matrix passes 56/56, backend discovery passes 52/52, all four frozen hashes match, and all eleven iteration-4 evidence records are exit 0. Independent review is active.
 
 ## Next Action
 
-- [~] Data-eng claims and implements the single authoritative iteration-4 FIX_REQUEST against the unchanged 144-path public-write matrix; the claim is the final counted transition and reaches raw usage 7/7.
+- [~] Review independently evaluates implementation commit `9268a5e` against both frozen matrices, atomic rejection/history behavior, prior C1-C7 invariants, and the eleven flat evidence records.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: data-eng
+- owner_lane: review
 - iteration: 4
 
 ## Blockers
 
-- The frozen boundary matrix intentionally remains red at `53e57f6`; data-eng must centralize validation at the underlying decision-write boundary. Raw fix-cycle use remains 6/7 until claim, and the temporary cap must return to 3 with ACCEPTED.
+- None. Raw fix-cycle usage is the human-authorized 7/7; product must restore the standing cap to 3 only in the same checkpoint as ACCEPTED.
 
 ## Pending Inbox Deliveries
 

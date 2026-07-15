@@ -1,0 +1,15 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 4,
+  "checkpoint": "analysis-core-component-state-matrix-regression",
+  "command": "python -m unittest tests.acceptance.test_analysis_core_review -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T08:11:08Z",
+  "test_count": 56,
+  "compatible_executable_paths": 55,
+  "manifest_guards": 1,
+  "failures": 0,
+  "errors": 0,
+  "acceptance_sha256": "01A02F973E884D3BA917FDF73260E6E5524F9D21B8D5DE77CDD57755989C6E6B",
+  "matrix_sha256": "ADB423E55F10058A556F551EECCC92CFCC998DFFC87D6FD003CF856B68FF61FB"
+}
