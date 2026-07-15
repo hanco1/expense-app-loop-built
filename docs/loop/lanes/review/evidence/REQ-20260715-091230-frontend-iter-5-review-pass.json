@@ -1,0 +1,138 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 5,
+  "reviewed_commit": "5f458cf",
+  "verdict": "PASS",
+  "ran_at": "2026-07-15T23:17:42Z",
+  "human_qa": "NOT_PERFORMED_READY_FOR_PRODUCT_RENEWAL",
+  "commands": [
+    {
+      "command": "python -m unittest tests.acceptance.test_local_web_app_minimum_arc_review -v",
+      "exit_code": 0,
+      "test_count": 1,
+      "scenario_count": 2,
+      "result": "OK; 1/359 degrees and eleven 1-degree floors plus 349 degrees"
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_local_web_app_pie_geometry_review -v",
+      "exit_code": 0,
+      "test_count": 1,
+      "result": "OK; approved June geometry and interaction contract"
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_local_web_app_tiny_slice_review -v",
+      "exit_code": 0,
+      "test_count": 1,
+      "result": "OK; one-unit exact slice visible and operable"
+    },
+    {
+      "command": "python -m unittest tests.frontend.test_server -v",
+      "exit_code": 0,
+      "test_count": 9,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_local_web_app_review -v",
+      "exit_code": 0,
+      "test_count": 6,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest discover -s tests/frontend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "test_count": 13,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest tests.frontend.test_browser_e2e -v",
+      "exit_code": 0,
+      "test_count": 1,
+      "browser": "existing Chromium runtime",
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "test_count": 68,
+      "result": "OK"
+    },
+    {
+      "command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260715-091230-frontend",
+      "exit_code": 0,
+      "result": "SHIP_CHECK_OK REQ-20260715-091230-frontend"
+    },
+    {
+      "command": "real-Chromium single-category full-circle and 390px narrow-width probes",
+      "exit_code": 0,
+      "result": {
+        "single_full_circle": {
+          "empty_samples": 0,
+          "overlap_samples": 0,
+          "cyclic_runs": [
+            "Housing"
+          ],
+          "path_degree_sum": 360,
+          "exact_unit_sum": "1000000000"
+        },
+        "narrow_390x2200_canonical_12": {
+          "empty_samples": 0,
+          "overlap_samples": 0,
+          "cyclic_run_count": 12,
+          "visible_category_count": 12,
+          "path_degree_sum": 360.00002927219083,
+          "max_endpoint_gap_px": 0.0001220703125,
+          "exact_unit_sum": "1000000000"
+        }
+      }
+    },
+    {
+      "command": "browser-export recursive water-fill cascade probe",
+      "exit_code": 0,
+      "result": {
+        "exact_unit_sum": "1000000000",
+        "visual_unit_sum": "360000000",
+        "minimum_visual_units": "1000000",
+        "one_degree_count": 11,
+        "visual_degrees": [
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          1,
+          349
+        ]
+      }
+    },
+    {
+      "command": "python multi_agent_loop_doctor.py --loop-dir docs/loop --json",
+      "exit_code": 0,
+      "result": "ok true; durable REVIEWING owner review iteration 5; raw fix_cycles 9/max 9; human-QA hold recognized"
+    }
+  ],
+  "criteria": {
+    "frozen_minimum_arc_scenarios": "PASS",
+    "minimum_one_degree_and_full_coverage": "PASS",
+    "exact_accounting_visual_separation": "PASS",
+    "class_wide_recursive_water_fill": "PASS",
+    "prior_geometry_and_tiny_slice": "PASS",
+    "server_http_mutation_and_browser_regressions": "PASS",
+    "backend_privacy_and_local_boundary": "PASS"
+  },
+  "scope_creep": "none",
+  "looks_done_but_wrong": "none found; painted geometry, hit testing, path length, cyclic runs, exact DOM values, and interactions all agree",
+  "ease_of_misuse": "No remaining wrong-but-accepted rendering path found. All non-zero pie allocations pass through one visual allocator; recursive flooring handles redistribution cascades, and full-circle plus narrow-width probes remain complete without gaps or overlap.",
+  "privacy_local_boundary": "PASS; no listener, network, CORS, telemetry, OCR, subprocess, raw-data logging, dependency, runtime-port, or backend-rule change.",
+  "frozen_minimum_arc_test_sha256": "9FABFD79773E1419363E73508D2FB2125B5E6D1F087661C18AE559762984C88D",
+  "frozen_minimum_arc_boundary_sha256": "34B7562E606A2B9C691D4629FCB6CB442CD83A28689472189289C8C48B326AED",
+  "prior_geometry_test_sha256": "D5EEA84080B915C6C1978A20D47C61EE06FD96DFF65E6ED46A822BD33A076912",
+  "prior_tiny_slice_test_sha256": "0A108B0EED3264FB90C31B77B8A7700B333F5CAEAB6A934FDFA3BC0C0CDBA5C1",
+  "prior_http_mutation_acceptance_sha256": "4EB538618C7455BB857DA7F30F1341F77AE6EA3086B151E87AFA6940B4D3C7D7",
+  "root_lane_iteration_5_evidence_pairs_byte_identical": true,
+  "acceptance_note": "Review code gate is PASS. Product retains renewed live human QA and final ACCEPTED authority and must restore max_fix_cycles from 9 to 3 only in the ACCEPTED checkpoint."
+}
