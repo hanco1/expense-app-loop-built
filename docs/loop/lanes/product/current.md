@@ -3,8 +3,8 @@
 current_request_id: REQ-20260715-091230-frontend
 status: REVIEWING
 iteration: 5
-last_updated: 2026-07-15T23:20:02Z
-heartbeat: 2026-07-15T23:20:02Z
+last_updated: 2026-07-15T23:21:42Z
+heartbeat: 2026-07-15T23:21:42Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -39,10 +39,11 @@ model_observed: current-host-default (highest)
 - The request is assigned to independent review. Temporary `max_fix_cycles: 9` and renewed live human QA remain held; neither acceptance nor cap restoration is authorized by machine gates alone.
 - Independent review `d2c490a` returned PASS. Both frozen scenarios, all nine gates, a recursive redistribution cascade, a single-category full circle, and a 390px narrow-width 12-category probe are green; review found no scope, privacy, looks-done-but-wrong, or ease-of-misuse blocker.
 - Product now owns the renewed live human-QA hold. The old 8766 process must be replaced with implementation `5f458cf` and its actual root/session endpoints verified before the human is asked to inspect the chart.
+- Product stopped only the verified old expense-app PID 176376 and started reviewed implementation `5f458cf` as PID 173184. Its printed `http://127.0.0.1:8766` root and `/api/session` both return 200, the page title matches `Monthly Expense Review`, and a competing default instance exits 1 without fallback; dashboard PID 73908 remains on 8765.
 
 ## Next Action
 
-- Start the reviewed implementation on the actual 8766 expense-app origin, verify root and `/api/session`, then ask the human to refresh and explicitly PASS or fail the live chart. Keep the request REVIEWING and cap 9 until that answer.
+- Ask the human to hard-refresh `http://127.0.0.1:8766`, inspect the June ring and interactions, and explicitly PASS or report the next concrete failure. Keep the request REVIEWING and cap 9 until that answer.
 
 ## Blockers
 

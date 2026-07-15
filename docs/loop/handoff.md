@@ -58,10 +58,11 @@ the next actor can continue from repo files plus the latest message alone.
 - Frontend implementation `5f458cf` and handoff `bccfc97` make both frozen minimum-arc scenarios green while leaving exact amounts, percentages, reconciliation, `data-units`, and `PIE_SCALE` unchanged. All nine evidence records are mirrored at root, prior geometry/security/browser/backend gates remain green, and the completion gate returns `SHIP_CHECK_OK`.
 - Product routed iteration 5 to independent review with the temporary cap still at 9 and renewed live human QA still required before acceptance.
 - Independent review `d2c490a` returned PASS for both frozen cases, all nine gates, recursive-cascade/full-circle/narrow-width probes, exact numerical separation, regression, scope, privacy, and misuse. Review did not perform or claim live human QA.
+- Product replaced only the verified old 8766 expense-app process with reviewed implementation `5f458cf`. PID 173184 prints and serves `http://127.0.0.1:8766`; root and `/api/session` return 200, a competing default instance exits 1, and dashboard PID 73908 remains untouched on 8765.
 
 ## Next Action
 
-- [~] Product starts reviewed implementation `5f458cf` on the verified 8766 expense-app origin and requests renewed explicit human QA; ACCEPTED and cap restoration remain forbidden until the human passes it.
+- [~] Human hard-refreshes `http://127.0.0.1:8766`, inspects the June category ring and interactions, then explicitly PASSes or reports a concrete failure; ACCEPTED and cap restoration remain forbidden until that answer.
 
 ## Active Request
 
