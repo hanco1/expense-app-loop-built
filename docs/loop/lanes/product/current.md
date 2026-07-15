@@ -1,10 +1,10 @@
 # Product Current State
 
 current_request_id: REQ-20260715-091230-frontend
-status: BLOCKED
-iteration: 3
-last_updated: 2026-07-15T21:08:14Z
-heartbeat: 2026-07-15T21:08:14Z
+status: FIX_REQUESTED
+iteration: 4
+last_updated: 2026-07-15T21:15:56Z
+heartbeat: 2026-07-15T21:15:56Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -25,11 +25,12 @@ model_observed: current-host-default (highest)
 - Product live verification passed: dashboard PID 73908 remains on 8765; expense app PID 176376 printed `http://127.0.0.1:8766`, serves the `Monthly Expense Review` root and `/api/session` at HTTP 200, and a competing default instance exits 1 with a clear bind error and no success URL.
 - Renewed human QA is not a final PASS: the donut renders repeated colored stripes instead of nine contiguous category arcs. Live DOM shows Housing's intended `666385709 333614291` dash pair is computed by Chromium as approximately `3.35544e+07px, 3.35544e+07px`; the 1e9 visual scale overflows the SVG length clamp and repeats a shortened pattern around the circle. Category amounts and exact BigInt reconciliation remain correct.
 - The human approved iteration 4 with temporary `max_fix_cycles: 7`, restored to 3 only with ACCEPTED. Product strengthened the chart contract to separate exact accounting units from bounded visual geometry and requested a pre-implementation review-owned real-browser red test.
+- Review froze one real-Chromium 720-point visible-ring acceptance at `cc27d2e` with hashes `D5EEA840...A076912` and `EA19310E...2F2C4D0`. Baseline is red for overlap 639/720, 140 cyclic runs, missing topmost Groceries/Shopping, and Housing 81/720; exact accounting and all nine keyboard/legend paths remain green.
 
 ## Next Action
 
-- Review freezes a red-capable real-browser geometry contract without changing implementation: one contiguous visible arc per category, nine June arcs, Housing over half the circle, tiny slices visible/selectable, no repeated runs, and exact reconciliation unchanged. Product then issues the sole iteration-4 FIX_REQUEST to frontend.
+- Frontend implements the unchanged frozen contract without touching its artifacts: exact BigInt/data-units remain 1e9, rendered coordinates are bounded, all nine categories become one contiguous visible run, and all seven declared gates return exit 0 before independent review.
 
 ## Blockers
 
-- Implementation remains held until review freezes the iteration-4 visual geometry acceptance. The human-authorized cap is now 7; no system dependency is needed.
+- No external blocker. Frontend owns iteration 4 at `FIX_REQUESTED`; raw fix-cycle use is 6/7 and no dependency installation is needed.

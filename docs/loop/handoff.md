@@ -49,20 +49,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Product started the live app as PID 176376. The exact printed `http://127.0.0.1:8766` origin serves the expense-app root and `/api/session` at HTTP 200, dashboard PID 73908 remains on 8765, and a second default instance exits 1 with no success URL.
 - Human QA is not a final PASS because the donut renders repeated colored stripes. The live chart has nine correct category allocations, but Chromium clamps the 1e9-scale SVG dash values near 33554400px before path normalization, so each shortened dash pattern repeats around the circumference.
 - The human approved iteration 4 with temporary `max_fix_cycles: 7`, restored to 3 only with ACCEPTED. Product added the bounded-geometry contract and asked review to freeze a real-browser red test before the sole frontend FIX_REQUEST transition.
+- Review froze the real-Chromium visible-ring contract at `cc27d2e` and recorded evidence at `30dab03`. The 720-sample baseline is red in four geometry families while exact 1e9 accounting and all nine interaction paths are green; product routed the sole iteration-4 FIX_REQUEST to frontend.
 
 ## Next Action
 
-- [~] Review freezes a complete non-repeating visible-arc acceptance test; product then dispatches the one bounded iteration-4 frontend repair, followed by independent review and renewed live QA.
+- [~] Frontend makes the unchanged frozen 720-point acceptance and all prior gates green, then independent review and renewed live QA repeat before ACCEPTED.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: product
-- iteration: 3
+- owner_lane: frontend
+- iteration: 4
 
 ## Blockers
 
-- No external blocker. Frontend implementation is intentionally held until the review-owned red geometry test is frozen; no system/browser/runtime installation is required.
+- No external blocker. Frontend owns the bounded visual-coordinate repair; no system/browser/runtime installation is required.
 
 ## Pending Inbox Deliveries
 
