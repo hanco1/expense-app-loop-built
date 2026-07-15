@@ -60,8 +60,8 @@ human_qa:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: sent
-- sent_at: 2026-07-15T19:58:20Z
+- delivery_status: pending
+- sent_at:
 expected_reply:
 - changed_files and implementation commit
 - red-capable occupied-port, CLI-failure, and printed-URL verification results with flat evidence
