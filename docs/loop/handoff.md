@@ -27,20 +27,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Data-eng implemented the centralized underlying write boundary at `9268a5e`. `CoreStore.add_duplicate_decision()` validates the overlaid latest-same graph inside one immediate transaction before allocating a decision ID or appending history; all public import aliases inherit the same rule while valid decisions still append exactly once.
 - The unchanged write-boundary matrix passes 145/145, the unchanged component-state matrix passes 56/56, backend discovery passes 52/52, all four frozen hashes match, and all eleven iteration-4 evidence records are exit 0.
 - Independent review passed at `329fa51` and delivered at `1e0d0f4`; product accepted implementation `9268a5e` and restored the standing `max_fix_cycles: 3` in the same checkpoint.
+- Product specified the next dependency in `docs/product/local-web-api.md`: a local JSON-ready application facade, persistent run listing, exact string money, CSRF protection, and approved-fixture end-to-end checks before the browser UI starts.
 
 ## Next Action
 
-- [~] Product prepares the browser import/review and monthly dashboard slice against the accepted typed analysis contracts.
+- [~] Data-eng implements `REQ-20260715-082547-data-eng` and routes the nine-gate result to independent review.
 
 ## Active Request
 
-- request_id: REQ-20260714-064051-data-eng
-- owner_lane: product
-- iteration: 4
+- request_id: REQ-20260715-082547-data-eng
+- owner_lane: data-eng
+- iteration: 1
 
 ## Blockers
 
-- None. The request is ACCEPTED and the standing fix-cycle cap is restored to 3.
+- None. No system dependency is authorized or expected.
 
 ## Pending Inbox Deliveries
 
