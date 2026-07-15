@@ -1,0 +1,81 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 1,
+  "reviewed_commit": "aaa931d",
+  "verdict": "FIX_REQUESTED",
+  "ran_at": "2026-07-15T09:44:39Z",
+  "commands": [
+    {
+      "command": "python -m unittest discover -s tests/frontend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "test_count": 8,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest tests.frontend.test_browser_e2e -v",
+      "exit_code": 0,
+      "test_count": 1,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "test_count": 68,
+      "result": "OK"
+    },
+    {
+      "command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260715-091230-frontend",
+      "exit_code": 0,
+      "result": "SHIP_CHECK_OK REQ-20260715-091230-frontend"
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_local_web_app_review -v",
+      "exit_code": 1,
+      "test_count": 6,
+      "reported_failures_including_subtests": 12,
+      "green_guardrail_methods": 1,
+      "red_committed_mutation_methods": 4,
+      "red_http_matrix_cells": 8,
+      "result": "FAILED"
+    },
+    {
+      "command": "python multi_agent_loop_doctor.py --loop-dir docs/loop --json",
+      "exit_code": 0,
+      "result": "ok true; evidence_manifest_gaps empty after VERIFY supplement"
+    }
+  ],
+  "findings": [
+    {
+      "id": "B1",
+      "severity": "blocker",
+      "criteria": ["C1", "C5"],
+      "summary": "Unimplemented public HTTP methods bypass Host validation and required security headers.",
+      "code_locations": ["frontend/server.py:84", "frontend/server.py:116", "frontend/server.py:136"],
+      "review_test": "tests/acceptance/test_local_web_app_review.py:56"
+    },
+    {
+      "id": "B2",
+      "severity": "blocker",
+      "criteria": ["C2", "C4", "C5"],
+      "summary": "Committed import, category, duplicate, and undo mutations are falsely reported failed when their follow-up refresh fails.",
+      "code_locations": [
+        "frontend/static/app.js:624",
+        "frontend/static/app.js:691",
+        "frontend/static/app.js:931",
+        "frontend/static/app.js:1056"
+      ],
+      "review_tests": [
+        "tests/acceptance/test_local_web_app_review.py:120",
+        "tests/acceptance/test_local_web_app_review.py:147",
+        "tests/acceptance/test_local_web_app_review.py:169",
+        "tests/acceptance/test_local_web_app_review.py:192"
+      ]
+    }
+  ],
+  "scope_creep": "none",
+  "looks_done_but_wrong": true,
+  "ease_of_misuse": "Retry after a false failure can append redundant human history, create a needless exact re-import, or generate a stale undo conflict.",
+  "privacy_local_boundary": "Financial data stays local and raw content is not logged; unsupported methods still bypass the required Host/security-header response boundary.",
+  "human_qa": "HOLD_NOT_READY; after a later code PASS, product must request explicit live human confirmation before ACCEPTED.",
+  "acceptance_sha256": "4EB538618C7455BB857DA7F30F1341F77AE6EA3086B151E87AFA6940B4D3C7D7"
+}
