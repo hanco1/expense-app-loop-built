@@ -1,0 +1,14 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 5,
+  "checkpoint": "completion-gate",
+  "command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260715-091230-frontend",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T23:10:20Z",
+  "result": "SHIP_CHECK_OK REQ-20260715-091230-frontend",
+  "passing_evidence_records": 8,
+  "root_lane_evidence_byte_equal": true,
+  "frozen_minimum_arc_test_sha256": "9FABFD79773E1419363E73508D2FB2125B5E6D1F087661C18AE559762984C88D",
+  "frozen_minimum_arc_boundary_sha256": "34B7562E606A2B9C691D4629FCB6CB442CD83A28689472189289C8C48B326AED",
+  "earlier_frozen_artifacts_unchanged": true
+}

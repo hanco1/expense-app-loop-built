@@ -55,20 +55,22 @@ the next actor can continue from repo files plus the latest message alone.
 - The human authorized iteration 5 and temporary `max_fix_cycles: 9`, rejecting any further coordinate-precision patching. The new product contract sets a one-degree visual floor for every non-zero category, distributes the remaining circle proportionally among larger categories, and leaves amounts, percentages, `data-units`, `PIE_SCALE`, reconciliation, and credits exact and unchanged.
 - Review froze the iteration-5 contract at `4b3e0d8`: exactly two real-Chromium scenarios cover `1 + 999999999` and 12 canonical categories with 11 simultaneous one-unit floors. Both are geometry-red on `4b88b11` while all numerical, reconciliation, zero-category, and credit-exclusion checks are green. Product verified both hashes and dispatched the immutable contract to frontend at raw use 8/9.
 - Frontend claimed iteration 5 at `de20862`, reaching the human-authorized raw limit 9/9 with both frozen hashes verified. The class-wide one-degree water-filling implementation is active; no further automatic fix round is available.
+- Frontend implementation `5f458cf` and handoff `bccfc97` make both frozen minimum-arc scenarios green while leaving exact amounts, percentages, reconciliation, `data-units`, and `PIE_SCALE` unchanged. All nine evidence records are mirrored at root, prior geometry/security/browser/backend gates remain green, and the completion gate returns `SHIP_CHECK_OK`.
+- Product routed iteration 5 to independent review with the temporary cap still at 9 and renewed live human QA still required before acceptance.
 
 ## Next Action
 
-- [~] Frontend implements one class-wide minimum-visible-arc allocation against the frozen iteration-5 acceptance, preserving exact numerical and all prior regression gates.
+- [~] Review independently validates implementation `5f458cf`, the immutable minimum-arc contract, all prior guardrails, and scope/privacy/misuse before product starts renewed live human QA.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: frontend
+- owner_lane: review
 - iteration: 5
 
 ## Blockers
 
-- A valid exact non-zero category can silently disappear from the rendered chart. The frozen class-wide repair is now with frontend; no system/browser/runtime installation is required.
+- Machine review and renewed explicit human QA are pending; no code, dependency, or system-installation blocker is currently reported.
 
 ## Pending Inbox Deliveries
 
