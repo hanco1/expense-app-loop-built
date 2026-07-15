@@ -1,0 +1,52 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 2,
+  "checkpoint": "real-browser-e2e",
+  "command": "python -m unittest tests.frontend.test_browser_e2e -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T09:56:00Z",
+  "test_count": 1,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "browser": {"engine": "Chromium", "version": "145.0.7632.6", "headless": true},
+  "viewport": {"width": 1280, "height": 900},
+  "routes": ["#imports", "#overview", "#duplicates"],
+  "actions": [
+    "picker_import_csv_and_pdf_sequentially",
+    "inspect_missing_amount_row_without_raw_input",
+    "assert_newest_june_and_select_may",
+    "correct_loblaws_category_to_dining",
+    "decide_tim_hortons_distinct_then_same_with_keeper",
+    "reload_and_assert_persistence",
+    "exact_csv_reimport",
+    "undo_both_csv_support_runs",
+    "reimport_csv_and_assert_history_restoration"
+  ],
+  "fixture_hashes": {
+    "td-mock-2026-06.csv": "9F93F107DDD02AEE2FB0A0AE19EB962180C680D1FB06D4D90959C96ED8CD7BAA",
+    "td-mock-2026-05.pdf": "F4B6B524D7C6140EE3F3E24CE87C4A36F0B40619395B5DC17B03F1B99DBC11F8"
+  },
+  "fixture_hashes_unchanged": true,
+  "initial_oracle": {
+    "csv": {"source_records": 23, "parsed": 22, "failed": 1, "occurrences": 22, "failure_code": "missing_amount"},
+    "pdf": {"source_records": 12, "parsed": 12, "failed": 0, "occurrences": 12},
+    "may": {"spending_minor": "50340", "credit_minor": "60000", "transaction_count": 12},
+    "june": {"spending_minor": "277617", "credit_minor": "72999", "transaction_count": 22}
+  },
+  "post_same_decision_june": {"spending_minor": "277167", "credit_minor": "72999", "transaction_count": 21},
+  "reconciliation": {
+    "category_sum_equals_spending": true,
+    "included_spending_rows_equal_spending": true,
+    "pie_units_equal_integer_scale": true,
+    "legend_count_equals_category_count": true,
+    "credits_excluded_from_slices": true
+  },
+  "persistence": {
+    "category_history_entries": 1,
+    "duplicate_history_entries": 2,
+    "survived_reload": true,
+    "survived_complete_support_undo_and_reimport": true
+  },
+  "privacy_safe_structured_evidence": true
+}

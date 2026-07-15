@@ -200,10 +200,26 @@ class LoopbackServerTests(unittest.TestCase):
         self.assertEqual(json.loads(body)["error"]["code"], "upload_too_large")
         self.assertNotIn("Access-Control-Allow-Origin", headers)
 
-        status, headers, body = self.request("OPTIONS", "/api/session")
-        self.assertEqual(status, 405)
-        self.assertEqual(json.loads(body)["error"]["code"], "method_not_allowed")
-        self.assertNotIn("Access-Control-Allow-Origin", headers)
+        for method in ("OPTIONS", "PATCH", "TRACE", "CONNECT", "PROPFIND"):
+            with self.subTest(method=method, host="loopback"):
+                status, headers, body = self.request(method, "/api/session")
+                self.assertEqual(status, 405)
+                self.assertEqual(json.loads(body)["error"]["code"], "method_not_allowed")
+                for name, value in SECURITY_HEADERS.items():
+                    self.assertEqual(headers.get(name), value)
+                self.assertNotIn("Access-Control-Allow-Origin", headers)
+
+            with self.subTest(method=method, host="invalid"):
+                status, headers, body = self.request(
+                    method,
+                    "/api/session",
+                    headers={"Host": "expense.example.test"},
+                )
+                self.assertEqual(status, 421)
+                self.assertEqual(json.loads(body)["error"]["code"], "invalid_host")
+                for name, value in SECURITY_HEADERS.items():
+                    self.assertEqual(headers.get(name), value)
+                self.assertNotIn("Access-Control-Allow-Origin", headers)
 
     def test_run_history_survives_a_new_listener_process_facade(self) -> None:
         fixture_bytes = CSV_FIXTURE.read_bytes()

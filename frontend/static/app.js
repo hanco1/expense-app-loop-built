@@ -320,7 +320,7 @@
       if (state.activeRun) {
         const matching = runs.find((run) => run.run_id === state.activeRun.summary.run_id);
         if (matching) {
-          await viewRun(matching.run_id, { focus: false, announce: false });
+          await viewRun(matching.run_id, { focus: false, announce: false, throwOnError: true });
         } else {
           state.activeRun = null;
           renderRunDetail();
@@ -333,6 +333,22 @@
     } finally {
       elements.overviewLoading.hidden = true;
       elements.duplicatesLoading.hidden = true;
+    }
+  }
+
+  function reportCommittedRefreshFailure(committedMessage, error) {
+    const message = `${committedMessage} The write is committed, but current views could not refresh. Reload to synchronize. ${errorText(error)}`;
+    showGlobalError(new Error(message));
+    announce(message);
+    return false;
+  }
+
+  async function refreshAfterCommit(committedMessage) {
+    try {
+      await refreshAll({ loading: false });
+      return true;
+    } catch (error) {
+      return reportCommittedRefreshFailure(committedMessage, error);
     }
   }
 
@@ -623,8 +639,9 @@
 
   async function saveCategory(transaction, select, button) {
     await withAction(button, async () => {
+      let result;
       try {
-        const result = await requestJson(
+        result = await requestJson(
           `/api/transactions/${encodeURIComponent(transaction.identity_id)}/category`,
           {
             method: "POST",
@@ -632,14 +649,14 @@
             body: JSON.stringify({ category: select.value }),
           },
         );
-        announce(
-          `${transaction.merchant} changed to ${result.effective_category}; ${result.history.length} correction ${result.history.length === 1 ? "entry" : "entries"}.`,
-        );
-        await refreshAll({ loading: false });
       } catch (error) {
         showGlobalError(error);
         announce(errorText(error));
+        return;
       }
+      const committedMessage = `${transaction.merchant} changed to ${result.effective_category}; ${result.history.length} correction ${result.history.length === 1 ? "entry" : "entries"}.`;
+      announce(committedMessage);
+      await refreshAfterCommit(committedMessage);
     });
   }
 
@@ -713,8 +730,9 @@
     item.state = "importing";
     item.message = "Importing…";
     renderImportQueue();
+    let result;
     try {
-      const result = await requestJson("/api/import", {
+      result = await requestJson("/api/import", {
         method: "POST",
         headers: {
           "Content-Type": mediaTypeFor(item.file),
@@ -722,27 +740,44 @@
         },
         body: item.file,
       });
-      item.state = "success";
-      item.runId = result.summary.run_id;
-      item.message = `${result.summary.parsed_count} parsed · ${result.summary.failed_count} failed · ${result.summary.occurrence_count} occurrences`;
-      announce(`${item.name} imported as a separate run.`);
-      state.selectedMonth = null;
-      await refreshAll({ loading: false });
-      await viewRun(item.runId, { focus: false, announce: false });
     } catch (error) {
       item.state = "error";
       if (error instanceof ApiError && error.status === 422 && error.details.run) {
         item.runId = error.details.run_id;
         item.message = `${error.code}: inspect the retained failed run.`;
-        await refreshAll({ loading: false });
-        await viewRun(item.runId, { focus: false, announce: false });
+        renderImportQueue();
+        announce(`${item.name} failed: ${item.message}`);
+        try {
+          await refreshAll({ loading: false });
+          await viewRun(item.runId, { focus: false, announce: false, throwOnError: true });
+        } catch (refreshError) {
+          showGlobalError(refreshError);
+          announce(`${item.name} was retained as a failed run, but current views could not refresh. Reload to synchronize. ${errorText(refreshError)}`);
+        }
       } else {
         item.message = errorText(error);
+        announce(`${item.name} failed: ${item.message}`);
       }
-      announce(`${item.name} failed: ${item.message}`);
-    } finally {
       renderImportQueue();
       elements.statementFiles.value = "";
+      return;
+    }
+
+    item.state = "success";
+    item.runId = result.summary.run_id;
+    item.message = `${result.summary.parsed_count} parsed · ${result.summary.failed_count} failed · ${result.summary.occurrence_count} occurrences`;
+    const committedMessage = `${item.name} imported as a separate run.`;
+    announce(committedMessage);
+    elements.statementFiles.value = "";
+    state.selectedMonth = null;
+    const refreshed = await refreshAfterCommit(committedMessage);
+    renderImportQueue();
+    if (refreshed) {
+      try {
+        await viewRun(item.runId, { focus: false, announce: false, throwOnError: true });
+      } catch (error) {
+        reportCommittedRefreshFailure(committedMessage, error);
+      }
     }
   }
 
@@ -815,6 +850,9 @@
         announce(`Run ${runId} loaded for structured review.`);
       }
     } catch (error) {
+      if (options.throwOnError) {
+        throw error;
+      }
       showGlobalError(error);
       announce(errorText(error));
     }
@@ -937,18 +975,22 @@
       return;
     }
     await withAction(button, async () => {
+      let result;
       try {
-        const result = await requestJson(
+        result = await requestJson(
           `/api/import-runs/${encodeURIComponent(run.run_id)}/undo`,
           { method: "POST" },
         );
-        state.activeRun = result;
-        announce(`${run.source_name || run.run_id} is now undone.`);
-        await refreshAll({ loading: false });
       } catch (error) {
         showGlobalError(error);
         announce(errorText(error));
+        return;
       }
+      state.activeRun = result;
+      renderRunDetail();
+      const committedMessage = `${run.source_name || run.run_id} is now undone.`;
+      announce(committedMessage);
+      await refreshAfterCommit(committedMessage);
     });
   }
 
@@ -1070,8 +1112,9 @@
     error.hidden = true;
     setText(error, "");
     await withAction(button, async () => {
+      let result;
       try {
-        const result = await requestJson(
+        result = await requestJson(
           `/api/duplicates/${encodeURIComponent(candidate.duplicate_link_id)}/decision`,
           {
             method: "POST",
@@ -1079,16 +1122,16 @@
             body: JSON.stringify(payload),
           },
         );
-        announce(
-          `Duplicate decision saved as ${result.effective_decision.replace("_", " ")}; history now has ${result.history.length} entries.`,
-        );
-        await refreshAll({ loading: false });
       } catch (caught) {
         setText(error, errorText(caught));
         error.hidden = false;
         error.focus();
         announce(`Duplicate decision was not saved: ${errorText(caught)}`);
+        return;
       }
+      const committedMessage = `Duplicate decision saved as ${result.effective_decision.replace("_", " ")}; history now has ${result.history.length} entries.`;
+      announce(committedMessage);
+      await refreshAfterCommit(committedMessage);
     });
   }
 

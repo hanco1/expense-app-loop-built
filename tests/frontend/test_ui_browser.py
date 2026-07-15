@@ -8,6 +8,42 @@ from tests.frontend.browser_support import BrowserAppTestCase, CSV_FIXTURE
 
 
 class BrowserUiTests(BrowserAppTestCase):
+    def arm_refresh_failure(self, mutation_path_fragment: str):
+        state = {"committed": False, "aborted": 0}
+
+        def observe(response) -> None:
+            if (
+                response.request.method == "POST"
+                and mutation_path_fragment in response.url
+                and 200 <= response.status < 300
+            ):
+                state["committed"] = True
+
+        def fail_refresh(route) -> None:
+            if state["committed"] and state["aborted"] == 0:
+                state["aborted"] = 1
+                route.abort()
+            else:
+                route.continue_()
+
+        self.page.on("response", observe)
+        self.page.route("**/api/import-runs", fail_refresh)
+        return state, fail_refresh
+
+    def wait_for_refresh_failure(self, state) -> None:
+        for _ in range(50):
+            if state["aborted"] == 1:
+                break
+            self.page.wait_for_timeout(100)
+        self.assertTrue(state["committed"])
+        self.assertEqual(state["aborted"], 1)
+        self.page.wait_for_timeout(300)
+
+    def restore_after_refresh_failure(self, route_handler) -> None:
+        self.page.unroute("**/api/import-runs", route_handler)
+        self.page.reload(wait_until="networkidle")
+        self.page.locator("#status-region").filter(has_text="Local session ready").wait_for()
+
     def test_empty_keyboard_narrow_and_offline_states_are_accessible(self) -> None:
         self.assertTrue(self.page.locator("#overview-empty").is_visible())
         self.assertEqual(self.page.locator('input[type="text"]').count(), 0)
@@ -143,6 +179,47 @@ class BrowserUiTests(BrowserAppTestCase):
             self.page.locator(f'#run-history-body tr[data-run-id="{run_id}"]').get_attribute("data-state"),
             "active",
         )
+
+    def test_committed_mutations_keep_success_acknowledgement_when_refresh_fails(self) -> None:
+        self.go_to("imports")
+        state, route_handler = self.arm_refresh_failure("/api/import")
+        self.page.locator("#statement-files").set_input_files(str(CSV_FIXTURE))
+        self.wait_for_refresh_failure(state)
+        self.assertEqual(
+            self.page.locator("#import-queue .import-item").first.get_attribute("data-state"),
+            "success",
+        )
+        self.assertIn("imported", self.page.locator("#status-region").inner_text().casefold())
+        self.restore_after_refresh_failure(route_handler)
+
+        self.go_to("overview")
+        loblaws = self.page.locator("#transaction-table-body tr", has_text="LOBLAWS").first
+        loblaws.locator("select").select_option("Dining")
+        state, route_handler = self.arm_refresh_failure("/category")
+        loblaws.locator('button[data-action="category-correction"]').click()
+        self.wait_for_refresh_failure(state)
+        self.assertIn("changed to Dining", self.page.locator("#status-region").inner_text())
+        self.restore_after_refresh_failure(route_handler)
+
+        self.go_to("duplicates")
+        state, route_handler = self.arm_refresh_failure("/decision")
+        self.page.locator(".duplicate-card").first.locator(
+            'button[data-action="duplicate-distinct"]'
+        ).click()
+        self.wait_for_refresh_failure(state)
+        duplicate_status = self.page.locator("#status-region").inner_text()
+        self.assertIn("saved as distinct", duplicate_status)
+        self.assertNotIn("not saved", duplicate_status.casefold())
+        self.restore_after_refresh_failure(route_handler)
+
+        self.go_to("imports")
+        active_run = self.page.locator('#run-history-body tr[data-state="active"]').first
+        state, route_handler = self.arm_refresh_failure("/undo")
+        self.page.once("dialog", lambda dialog: dialog.accept())
+        active_run.locator('button[data-action="undo-run"]').click()
+        self.wait_for_refresh_failure(state)
+        self.assertIn("now undone", self.page.locator("#status-region").inner_text())
+        self.page.unroute("**/api/import-runs", route_handler)
 
 
 if __name__ == "__main__":

@@ -81,6 +81,14 @@ class LocalExpenseRequestHandler(BaseHTTPRequestHandler):
     def version_string(self) -> str:
         return self.server_version
 
+    def __getattr__(self, name: str) -> object:
+        # BaseHTTPRequestHandler otherwise sends its default HTML 501 before
+        # our Host validation and security headers run. Route every parsed
+        # public method through the same Host-first structured boundary.
+        if name.startswith("do_"):
+            return self._method_not_allowed
+        raise AttributeError(name)
+
     def do_GET(self) -> None:  # noqa: N802 - BaseHTTPRequestHandler API
         if not self._valid_host():
             self._write_error(
@@ -321,7 +329,7 @@ class LocalExpenseRequestHandler(BaseHTTPRequestHandler):
         self.close_connection = True
         try:
             self.wfile.write(body)
-        except (BrokenPipeError, ConnectionResetError):
+        except (BrokenPipeError, ConnectionAbortedError, ConnectionResetError):
             pass
 
     def log_message(self, format: str, *args: object) -> None:
