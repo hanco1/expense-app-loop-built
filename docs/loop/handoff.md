@@ -27,17 +27,17 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Next Action
 
-- [~] Product commits the frozen boundary handoff and dispatches one authoritative iteration-4 FIX_REQUEST to data-eng; raw usage remains 6/7 until the later data-eng claim.
+- [~] Data-eng claims and implements the single authoritative iteration-4 FIX_REQUEST against the unchanged 144-path public-write matrix; the claim is the final counted transition and reaches raw usage 7/7.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: product
+- owner_lane: data-eng
 - iteration: 4
 
 ## Blockers
 
-- The frozen boundary matrix intentionally remains red at `53e57f6`; product alone must dispatch the class-wide repair. Raw fix-cycle use is 6/7 and the temporary cap must return to 3 with ACCEPTED.
+- The frozen boundary matrix intentionally remains red at `53e57f6`; data-eng must centralize validation at the underlying decision-write boundary. Raw fix-cycle use remains 6/7 until claim, and the temporary cap must return to 3 with ACCEPTED.
 
 ## Pending Inbox Deliveries
 
