@@ -50,20 +50,22 @@ the next actor can continue from repo files plus the latest message alone.
 - Human QA is not a final PASS because the donut renders repeated colored stripes. The live chart has nine correct category allocations, but Chromium clamps the 1e9-scale SVG dash values near 33554400px before path normalization, so each shortened dash pattern repeats around the circumference.
 - The human approved iteration 4 with temporary `max_fix_cycles: 7`, restored to 3 only with ACCEPTED. Product added the bounded-geometry contract and asked review to freeze a real-browser red test before the sole frontend FIX_REQUEST transition.
 - Review froze the real-Chromium visible-ring contract at `cc27d2e` and recorded evidence at `30dab03`. The 720-sample baseline is red in four geometry families while exact 1e9 accounting and all nine interaction paths are green; product routed the sole iteration-4 FIX_REQUEST to frontend.
+- Frontend implementation `4b88b11` closes the approved-June repeated-stripe failure and keeps all seven declared gates green, but independent review `20210f0` found a class-boundary blocker: the supported minimum one-unit slice and its near-full complement both collapse to zero-length SVG paths after six-decimal endpoint rounding.
+- The request is BLOCKED at raw fix-cycle use 7/7. Product recommends temporary `max_fix_cycles: 9` for one bounded iteration-5 repair that guarantees visible geometry for every exact non-zero allocation; no dispatch occurs without explicit human authority, and the cap returns to 3 only with a later ACCEPTED checkpoint.
 
 ## Next Action
 
-- [~] Independent review validates frontend implementation `4b88b11`, the unchanged frozen geometry artifacts, all seven evidence records, exact accounting, prior runtime/security behavior, and readiness for renewed live human QA.
+- [!] Await human authority for one bounded iteration-5 repair of the non-zero-to-zero-length SVG collapse; retain exact accounting, the June geometry contract, all prior gates, and the live human-QA hold.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: review
+- owner_lane: product
 - iteration: 4
 
 ## Blockers
 
-- No external blocker. Review owns the independent iteration-4 verdict; product retains renewed live human QA and final acceptance, and no system/browser/runtime installation is required.
+- A valid exact non-zero category can silently disappear from the rendered chart. Raw fix-cycle use is 7/7, so iteration 5 requires explicit human authority; no system/browser/runtime installation is required.
 
 ## Pending Inbox Deliveries
 

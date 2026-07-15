@@ -1,10 +1,10 @@
 # Product Current State
 
 current_request_id: REQ-20260715-091230-frontend
-status: REVIEWING
+status: BLOCKED
 iteration: 4
-last_updated: 2026-07-15T21:31:52Z
-heartbeat: 2026-07-15T21:31:52Z
+last_updated: 2026-07-15T21:42:14Z
+heartbeat: 2026-07-15T21:42:14Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -28,11 +28,13 @@ model_observed: current-host-default (highest)
 - Review froze one real-Chromium 720-point visible-ring acceptance at `cc27d2e` with hashes `D5EEA840...A076912` and `EA19310E...2F2C4D0`. Baseline is red for overlap 639/720, 140 cyclic runs, missing topmost Groceries/Shopping, and Housing 81/720; exact accounting and all nine keyboard/legend paths remain green.
 - Frontend claimed iteration 4 at `31779df` and implemented bounded explicit SVG arcs at `4b88b11`. The frozen geometry test is 1/1 with all six PG families green; server is 9/9, prior acceptance 6/6, frontend 13/13, Chromium E2E 1/1, and backend 68/68. Product mirrored all six pre-gate evidence files byte-for-byte.
 - Frontend handoff `659f2bb` records `SHIP_CHECK_OK` and seven exit-0 lane evidence records. Product mirrored the completion-gate evidence, reconciled IMPLEMENTATION_DONE/REVIEW_REQUEST, and assigned independent review without treating machine success as human PASS.
+- Independent review `20210f0` kept all seven declared gates green but proved a blocker outside the June fixture: the supported exact `1/1e9` slice and its near-full complement both render as zero-length SVG paths after six-decimal endpoint rounding, while keyboard and legend state falsely appear valid.
+- The request is BLOCKED at raw fix-cycle use 7/7. Product recommends one narrowly bounded iteration 5 under temporary `max_fix_cycles: 9`; no dispatch occurs without explicit human authority, and the standing cap returns to 3 only with a later ACCEPTED checkpoint.
 
 ## Next Action
 
-- Review independently validates `4b88b11`, both frozen hashes, visible-ring geometry, all seven gates, regression/privacy/scope boundaries, and human-QA readiness; product starts renewed live QA only after code PASS.
+- Await the human decision on the recommended temporary cap of 9 and one class-wide iteration-5 repair that guarantees visible geometry for every exact non-zero allocation.
 
 ## Blockers
 
-- No external blocker. Review owns iteration 4 at `REVIEWING`; raw fix-cycle use is 7/7 and no dependency installation is needed.
+- Machine blocker: a valid non-zero category can silently disappear from the painted chart. Raw fix-cycle use is 7/7, so further implementation requires explicit human authority; no dependency installation is needed.
