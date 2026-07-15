@@ -1,0 +1,100 @@
+{
+  "request_id": "REQ-20260714-064051-data-eng",
+  "iteration": 4,
+  "phase": "pre_implementation_public_write_boundary_matrix",
+  "baseline_commit": "53e57f6",
+  "freeze_commit": "7a99866",
+  "ran_at": "2026-07-15T07:55:32Z",
+  "inventory": {
+    "writers": 6,
+    "proposal_classes": 8,
+    "support_states": 3,
+    "executable_paths": 144,
+    "unreachable_classes": 6,
+    "total_entries": 150,
+    "unittest_count": 145
+  },
+  "baseline": {
+    "command": "python -m unittest tests.acceptance.test_analysis_core_write_boundary_review -v",
+    "exit_code": 1,
+    "tests": 145,
+    "failures": 48,
+    "errors": 0,
+    "red_paths": 48,
+    "green_paths": 96,
+    "manifest_guard": "green"
+  },
+  "red_case_ids": [
+    "CP-ZK-A", "CP-ZK-P", "CP-ZK-I",
+    "CP-MC-A", "CP-MC-P", "CP-MC-I",
+    "CP-MM-A", "CP-MM-P", "CP-MM-I",
+    "CP-AD-A", "CP-AD-P", "CP-AD-I",
+    "CM-ZK-A", "CM-ZK-P", "CM-ZK-I",
+    "CM-MC-A", "CM-MC-P", "CM-MC-I",
+    "CM-MM-A", "CM-MM-P", "CM-MM-I",
+    "CM-AD-A", "CM-AD-P", "CM-AD-I",
+    "CA-ZK-A", "CA-ZK-P", "CA-ZK-I",
+    "CA-MC-A", "CA-MC-P", "CA-MC-I",
+    "CA-MM-A", "CA-MM-P", "CA-MM-I",
+    "CA-AD-A", "CA-AD-P", "CA-AD-I",
+    "CT-ZK-A", "CT-ZK-P", "CT-ZK-I",
+    "CT-MC-A", "CT-MC-P", "CT-MC-I",
+    "CT-MM-A", "CT-MM-P", "CT-MM-I",
+    "CT-AD-A", "CT-AD-P", "CT-AD-I"
+  ],
+  "green_case_inventory": {
+    "service_writers": ["SP", "SM"],
+    "service_proposals": ["ZK", "MC", "MM", "AD", "VS", "BD", "KR", "LR"],
+    "persistence_aliases": ["CP", "CM", "CA", "CT"],
+    "persistence_valid_proposals": ["VS", "BD", "KR", "LR"],
+    "support_states": ["A", "P", "I"],
+    "count": 96
+  },
+  "unsafe_writer_family": {
+    "callable": "CoreStore.add_duplicate_decision",
+    "public_import_paths": [
+      "backend.CoreStore",
+      "backend.persistence.CoreStore",
+      "backend.analysis.CoreStore",
+      "backend.statement_import.CoreStore"
+    ],
+    "proposal_classes": [
+      "zero_structural_keeper",
+      "multiple_structural_keeper_chain",
+      "multiple_structural_keeper_merge",
+      "alternate_path_distinct"
+    ],
+    "support_independent": true
+  },
+  "verification": [
+    {
+      "command": "python -m unittest tests.acceptance.test_analysis_core_review -v",
+      "exit_code": 0,
+      "tests": 56,
+      "failures": 0
+    },
+    {
+      "command": "python -m unittest tests.backend.test_analysis_local_boundary -v",
+      "exit_code": 0,
+      "tests": 3,
+      "failures": 0
+    },
+    {
+      "command": "git diff --name-only 53e57f6..HEAD -- backend contracts requirements.txt pyproject.toml setup.cfg setup.py package.json package-lock.json frontend",
+      "exit_code": 0,
+      "changed_paths": 0
+    }
+  ],
+  "artifact_hashes": {
+    "tests/acceptance/test_analysis_core_write_boundary_review.py": "974432935CBB3C8EB957297DA50E3FD52E1F877D1C5D9C3BBAFD4D16818D809B",
+    "docs/review/REQ-20260714-064051-data-eng-iter-4-write-boundary-matrix.md": "91B1DFD3792A04DBD42E2847544896EB239594C7D9F7C2BAEAC1E4A26FCD421C",
+    "tests/acceptance/test_analysis_core_review.py": "01A02F973E884D3BA917FDF73260E6E5524F9D21B8D5DE77CDD57755989C6E6B",
+    "docs/review/REQ-20260714-064051-data-eng-iter-3-component-state-matrix.md": "ADB423E55F10058A556F551EECCC92CFCC998DFFC87D6FD003CF856B68FF61FB"
+  },
+  "discarded_capture_attempt": {
+    "counted_as_evidence": false,
+    "reason": "PowerShell in-memory capture returned no auditable output or exit summary; the unchanged direct unittest rerun is the recorded baseline"
+  },
+  "implementation_surface_changed": false,
+  "implementation_dispatched": false
+}
