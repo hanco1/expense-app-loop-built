@@ -32,3 +32,4 @@ Messages sent or queued by this lane.
 | 2026-07-15T10:05:48Z | REQ-20260715-091230-frontend | product | docs/loop/messages/REQ-20260715-091230-frontend/REVIEW_DONE-iter-2.md | sent 2026-07-15T10:06:14Z |
 | 2026-07-15T20:12:42Z | REQ-20260715-091230-frontend | product | docs/loop/messages/REQ-20260715-091230-frontend/REVIEW_DONE-iter-3.md | sent 2026-07-15T20:12:42Z |
 | 2026-07-15T21:15:17Z | REQ-20260715-091230-frontend | product | docs/loop/messages/REQ-20260715-091230-frontend/LOOP_STATUS-review-pie-geometry-frozen-iter-4.md | sent 2026-07-15T21:15:17Z |
+| 2026-07-15T21:41:34Z | REQ-20260715-091230-frontend | product | BLOCKED review commit `20210f0`; one-unit/near-full zero-length SVG evidence | sent 2026-07-15T21:41:34Z |
