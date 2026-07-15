@@ -11,3 +11,4 @@ message. Readers process inbox/new, then move each file to inbox/cur.
 | 2026-07-15T08:43:00Z | REQ-20260715-082547-data-eng--IMPLEMENTATION_DONE--iter-1 | REQ-20260715-082547-data-eng | 1 | data-eng | IMPLEMENTATION_DONE | new |
 | 2026-07-15T09:03:09Z | REQ-20260715-082547-data-eng--IMPLEMENTATION_DONE--iter-2 | REQ-20260715-082547-data-eng | 2 | data-eng | IMPLEMENTATION_DONE | new |
 | 2026-07-15T09:09:45Z | REQ-20260715-082547-data-eng--REVIEW_DONE--iter-2 | REQ-20260715-082547-data-eng | 2 | review | REVIEW_DONE | new |
+| 2026-07-15T09:38:19Z | REQ-20260715-091230-frontend--IMPLEMENTATION_DONE--iter-1 | REQ-20260715-091230-frontend | 1 | frontend | IMPLEMENTATION_DONE | new |

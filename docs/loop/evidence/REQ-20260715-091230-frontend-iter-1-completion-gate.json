@@ -1,0 +1,10 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 1,
+  "checkpoint": "completion-gate",
+  "command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260715-091230-frontend",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T09:34:20Z",
+  "result": "SHIP_CHECK_OK REQ-20260715-091230-frontend",
+  "passing_evidence_records": 3
+}
