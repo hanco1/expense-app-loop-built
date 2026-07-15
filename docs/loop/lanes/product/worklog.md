@@ -58,3 +58,4 @@
 | 2026-07-14T17:57:45Z | REQ-20260714-064051-data-eng | Delivered pre-implementation component-matrix request | product snapshot c6f85bd; review thread 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx; durable inbox delivered |
 | 2026-07-14T18:10:54Z | REQ-20260714-064051-data-eng | Prepared authoritative iteration-3 FIX_REQUEST | freeze 6fdc57d; evidence 7ab8341; 55 executable/20 impossible; 13 red/42 green; hashes verified; raw count stays 4/5 until data-eng claim |
 | 2026-07-14T18:12:05Z | REQ-20260714-064051-data-eng | Delivered authoritative iteration-3 FIX_REQUEST | product snapshot 9cc6ac4; data-eng thread 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx; durable inbox delivered; matrix unchanged |
+| 2026-07-15T07:45:17Z | REQ-20260714-064051-data-eng | Resumed iteration 4 with review-first public write-boundary matrix | human-approved temporary cap 7; all exposed decision writers and invalid proposal classes must be frozen before data-eng starts; restore cap 3 with ACCEPTED |

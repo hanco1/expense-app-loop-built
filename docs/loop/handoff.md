@@ -22,20 +22,21 @@ the next actor can continue from repo files plus the latest message alone.
 - Data-eng implemented the class-wide invariant at `53e57f6`: one latest-same component projection now validates structural keepers, rejects alternate-path distinct contradictions, and selects the active keeper or deterministic fallback without rewriting human history.
 - The unchanged frozen acceptance passes 56/56, backend discovery passes 50/50, both frozen hashes are unchanged, all ten iteration-3 evidence records are exit 0, and the completion gate is green. Independent review is now active.
 - Independent review found a write-boundary blocker: publicly exported `CoreStore.add_duplicate_decision()` bypasses the projection and commits a zero-keeper history row. The separate boundary probe is red, and raw fix-cycle usage is 5/5.
+- The human approved iteration 4 with temporary `max_fix_cycles: 7`. Product strengthened the contract so every exposed decision writer must enforce the same validator atomically, and routed review-first freezing of the complete public-writer/proposal matrix before implementation.
 
 ## Next Action
 
-- [!] Product commits the review BLOCKED handoff and obtains explicit human authority before any additional write-boundary round; do not dispatch at raw 5/5.
+- [~] Review inventories and freezes every exposed duplicate-decision writer against zero-keeper, multi-keeper, alternate-path-distinct, and valid guardrail proposals; data-eng remains held until product dispatches the frozen iteration-4 contract.
 
 ## Active Request
 
 - request_id: REQ-20260714-064051-data-eng
-- owner_lane: product
-- iteration: 3
+- owner_lane: review
+- iteration: 4
 
 ## Blockers
 
-- The frozen contract is green at `53e57f6`, but the exported persistence writer bypasses the component invariant. Raw fix-cycle use is 5/5; another round requires human authority. The temporary cap must still return to 3 after ACCEPTED.
+- The exported persistence writer bypass remains red at `53e57f6`. Review must freeze the complete public write-boundary matrix before data-eng starts. Raw fix-cycle use is 6/7 after the authorized resume; the temporary cap must return to 3 with ACCEPTED.
 
 ## Pending Inbox Deliveries
 

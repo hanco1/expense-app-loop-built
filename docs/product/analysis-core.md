@@ -81,6 +81,12 @@ effective human correction.
   human same/distinct/keeper redecision, per-run undo including final-support
   loss, and exact or renamed re-import. Operation-specific patches that can
   diverge are not part of the contract.
+- Every exported or otherwise public decision-writing entry point must enforce
+  that same rule atomically before appending history. In particular, a public
+  persistence writer may not bypass the service validator. Zero-keeper,
+  multiple-keeper, and alternate-path `distinct` proposals must be rejected
+  before any history row is committed; an unvalidated low-level writer must be
+  private and unreachable from the supported public API.
 - `distinct` includes both identities. A later decision may reverse an earlier
   one because history is append-only and latest-wins.
 - Decisions survive undo, exact re-import, and automatic reprocessing.

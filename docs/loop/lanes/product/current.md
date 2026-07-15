@@ -2,20 +2,20 @@
 
 current_request_id: REQ-20260714-064051-data-eng
 status: FIX_REQUESTED
-iteration: 3
-last_updated: 2026-07-14T18:12:05Z
-heartbeat: 2026-07-14T18:12:05Z
+iteration: 4
+last_updated: 2026-07-15T07:45:17Z
+heartbeat: 2026-07-15T07:45:17Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
 
-- The human approved temporary `max_fix_cycles: 5` for iteration 3 and required a component-level invariant: every `same_transaction` connected component with at least one active identity must always retain an active kept representative.
-- Review froze 55 executable paths and 20 impossible/invalid classes at `6fdc57d`; the baseline is 13 red and 42 green with both artifact hashes verified unchanged.
+- Review blocked implementation `53e57f6` because public `CoreStore.add_duplicate_decision()` can bypass the service validator and commit invalid zero-keeper history.
+- The human approved temporary `max_fix_cycles: 7` for iteration 4; every exposed decision writer must reject zero-keeper, multi-keeper, and alternate-path-distinct proposals atomically before history append.
 
 ## Next Action
 
-- Deliver the committed authoritative iteration-3 FIX_REQUEST to data-eng. Data-eng's claim is the only remaining counted transition and reaches raw 5/5.
+- Have review freeze the complete exposed-writer by proposal-class matrix and red-capable acceptance before product dispatches the authoritative iteration-4 FIX_REQUEST to data-eng.
 
 ## Blockers
 
-- No external blocker. The frozen acceptance is intentionally red until data-eng implements the class-wide repair; restore `max_fix_cycles` to 3 immediately after ACCEPTED.
+- The public write-boundary acceptance remains intentionally red at `53e57f6`. Data-eng is held until review freezes the class-wide matrix; restore `max_fix_cycles` to 3 with ACCEPTED.
