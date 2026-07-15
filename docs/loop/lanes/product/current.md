@@ -3,8 +3,8 @@
 current_request_id: REQ-20260715-091230-frontend
 status: REVIEWING
 iteration: 3
-last_updated: 2026-07-15T20:08:06Z
-heartbeat: 2026-07-15T20:08:06Z
+last_updated: 2026-07-15T20:12:42Z
+heartbeat: 2026-07-15T20:12:42Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -21,10 +21,11 @@ model_observed: current-host-default (highest)
 - The human explicitly requested a bounded iteration-3 repair: stable default `8766`, startup output from the actual bound listener, and exclusive bind semantics that exit non-zero on any occupied requested port. The anti-thrash cap is temporarily `5` for this round and returns to `3` only with ACCEPTED.
 - Frontend implemented the class-wide repair at `38479e5` with handoff `2b09659`: default 8766, non-reusable/exclusive loopback binding, clear exit-1 bind failure with no success URL, and actual allocated-port output for `--port 0`.
 - Product mirrored all six iteration-3 evidence files. Startup tests are 9/9, unchanged acceptance 6/6, frontend discovery 13/13, real Chromium 1/1, backend 68/68, and `SHIP_CHECK_OK`.
+- Independent review commit `c56c4e1` returned PASS: all six gates, reverse exclusive-rebind probing, frozen hashes, scope, privacy, local-only behavior, and misuse checks are green. Review did not perform or claim human QA.
 
 ## Next Action
 
-- Review independently validates implementation `38479e5` and all six gates. After code PASS, product starts the app on the actual printed 8766 URL, verifies live occupied-port rejection, and requests renewed explicit human QA.
+- Product starts implementation `38479e5` on the actual printed 8766 URL, verifies root and `/api/session`, proves a second default-port startup exits non-zero, and requests renewed explicit human QA.
 
 ## Blockers
 

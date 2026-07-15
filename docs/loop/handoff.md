@@ -45,15 +45,16 @@ the next actor can continue from repo files plus the latest message alone.
 - The human explicitly requested iteration 3: move the stable app default to `8766`, derive startup output from the actual bound listener, and reject an occupied requested port with a clear non-zero startup failure. Product temporarily raised `max_fix_cycles` to 5 for this bounded round and must restore it to 3 only with ACCEPTED.
 - Frontend implemented the exclusive-binding repair at `38479e5` and finalized handoff at `2b09659`. The default is 8766, Windows uses exclusive address binding, reuse is disabled, occupied ports exit 1 without a success URL or fallback, and `--port 0` prints the actual reachable allocation.
 - Product mirrored all six flat iteration-3 evidence files. Startup tests pass 9/9, unchanged acceptance 6/6, frontend discovery 13/13, Chromium E2E 1/1, backend discovery 68/68, and the completion gate returns `SHIP_CHECK_OK`.
+- Independent review passed at `c56c4e1`: the default/documentation, exclusive bind, occupied-port failure, actual printed origin, reverse rebind probe, all regressions, scope, privacy, and local-only boundaries are green. Review did not perform human QA.
 
 ## Next Action
 
-- [~] Independent review rechecks implementation `38479e5`; after PASS, product starts the app at the actual printed 8766 URL, proves a second default-port instance exits non-zero, and repeats explicit live human QA before ACCEPTED.
+- [~] Product starts implementation `38479e5` at the actual printed 8766 URL, proves root and `/api/session` reach this app and a second default-port instance exits non-zero, then repeats explicit live human QA before ACCEPTED.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: review
+- owner_lane: product
 - iteration: 3
 
 ## Blockers
