@@ -5,16 +5,32 @@ import hashlib
 import http.client
 import io
 import json
+import socket
+import subprocess
+import sys
 import tempfile
 import threading
 import unittest
 from pathlib import Path
+from urllib.parse import urlsplit
 
-from frontend.server import LOOPBACK_HOST, SECURITY_HEADERS, create_server
+from frontend.server import (
+    DEFAULT_PORT,
+    LOOPBACK_HOST,
+    SECURITY_HEADERS,
+    LocalExpenseHTTPServer,
+    build_argument_parser,
+    create_server,
+)
 
 
 FIXTURE_DIR = Path(__file__).parents[1] / "backend" / "fixtures"
 CSV_FIXTURE = FIXTURE_DIR / "td-mock-2026-06.csv"
+REPOSITORY_ROOT = Path(__file__).parents[2]
+FRONTEND_README = REPOSITORY_ROOT / "frontend" / "README.md"
+ROOT_README_PROPOSAL = (
+    REPOSITORY_ROOT / "docs" / "loop" / "lanes" / "frontend" / "README-startup-proposal.md"
+)
 
 
 class LoopbackServerTests(unittest.TestCase):
@@ -59,8 +75,147 @@ class LoopbackServerTests(unittest.TestCase):
         finally:
             connection.close()
 
+    def occupy_loopback_port(self) -> socket.socket:
+        occupied = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+        if hasattr(socket, "SO_REUSEADDR"):
+            occupied.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
+        occupied.bind((LOOPBACK_HOST, 0))
+        occupied.listen(1)
+        self.addCleanup(occupied.close)
+        return occupied
+
+    def test_default_port_parser_help_and_frontend_docs_use_8766(self) -> None:
+        self.assertEqual(DEFAULT_PORT, 8766)
+        parser = build_argument_parser()
+        args = parser.parse_args(["--database", str(self.database_path)])
+        self.assertEqual(args.port, 8766)
+        help_text = parser.format_help()
+        self.assertIn("default 8766", help_text)
+        readme = FRONTEND_README.read_text(encoding="utf-8")
+        self.assertIn("http://127.0.0.1:8766", readme)
+        self.assertNotIn("http://127.0.0.1:8765", readme)
+        proposal = ROOT_README_PROPOSAL.read_text(encoding="utf-8")
+        self.assertIn("http://127.0.0.1:8766", proposal)
+        self.assertNotIn("http://127.0.0.1:8765", proposal)
+
+    def test_every_server_construction_path_rejects_an_occupied_port(self) -> None:
+        occupied = self.occupy_loopback_port()
+        port = occupied.getsockname()[1]
+
+        created = None
+        try:
+            with self.assertRaises(OSError):
+                created = create_server(
+                    Path(self.temporary_directory.name) / "occupied-create.sqlite",
+                    port=port,
+                )
+        finally:
+            if created is not None:
+                created.server_close()
+        direct = None
+        try:
+            with self.assertRaises(OSError):
+                direct = LocalExpenseHTTPServer((LOOPBACK_HOST, port), self.server.api)
+        finally:
+            if direct is not None:
+                direct.server_close()
+
+    def test_cli_occupied_port_exits_nonzero_without_success_url(self) -> None:
+        occupied = self.occupy_loopback_port()
+        port = occupied.getsockname()[1]
+        result = subprocess.run(
+            [
+                sys.executable,
+                "-m",
+                "frontend.server",
+                "--database",
+                str(Path(self.temporary_directory.name) / "occupied-cli.sqlite"),
+                "--port",
+                str(port),
+            ],
+            cwd=REPOSITORY_ROOT,
+            capture_output=True,
+            text=True,
+            timeout=10,
+            check=False,
+        )
+        self.assertEqual(result.returncode, 1)
+        self.assertNotIn("Local expense app:", result.stdout)
+        self.assertIn("Unable to bind local expense app", result.stderr)
+        self.assertIn(f"{LOOPBACK_HOST}:{port}", result.stderr)
+
+    def test_cli_prints_the_actual_ephemeral_origin_and_it_is_reachable(self) -> None:
+        process = subprocess.Popen(
+            [
+                sys.executable,
+                "-m",
+                "frontend.server",
+                "--database",
+                str(Path(self.temporary_directory.name) / "ephemeral-cli.sqlite"),
+                "--port",
+                "0",
+            ],
+            cwd=REPOSITORY_ROOT,
+            stdout=subprocess.PIPE,
+            stderr=subprocess.PIPE,
+            text=True,
+        )
+        self.addCleanup(self._stop_process, process)
+        assert process.stdout is not None
+        startup_line = process.stdout.readline().strip()
+        self.assertTrue(startup_line.startswith("Local expense app: http://"), startup_line)
+        origin = startup_line.removeprefix("Local expense app: ")
+        parsed = urlsplit(origin)
+        self.assertEqual(parsed.hostname, LOOPBACK_HOST)
+        self.assertIsNotNone(parsed.port)
+        self.assertNotEqual(parsed.port, 0)
+
+        connection = http.client.HTTPConnection(parsed.hostname, parsed.port, timeout=10)
+        try:
+            connection.request("GET", "/")
+            root_response = connection.getresponse()
+            root_body = root_response.read()
+        finally:
+            connection.close()
+        self.assertEqual(root_response.status, 200)
+        self.assertIn(b"Monthly Expense Review", root_body)
+
+        connection = http.client.HTTPConnection(parsed.hostname, parsed.port, timeout=10)
+        try:
+            connection.request("GET", "/api/session")
+            session_response = connection.getresponse()
+            session = json.loads(session_response.read())["data"]
+        finally:
+            connection.close()
+        self.assertEqual(session_response.status, 200)
+        self.assertTrue(session["local_only"])
+
+    @staticmethod
+    def _stop_process(process: subprocess.Popen[str]) -> None:
+        try:
+            if process.poll() is None:
+                process.terminate()
+                try:
+                    process.wait(timeout=5)
+                except subprocess.TimeoutExpired:
+                    process.kill()
+                    process.wait(timeout=5)
+        finally:
+            if process.stdout is not None:
+                process.stdout.close()
+            if process.stderr is not None:
+                process.stderr.close()
+
     def test_listener_assets_api_and_headers_stay_on_one_loopback_origin(self) -> None:
         self.assertEqual(self.host, LOOPBACK_HOST)
+        self.assertFalse(self.server.allow_reuse_address)
+        self.assertFalse(self.server.allow_reuse_port)
+        exclusive_address_use = getattr(socket, "SO_EXCLUSIVEADDRUSE", None)
+        if exclusive_address_use is not None:
+            self.assertEqual(
+                self.server.socket.getsockopt(socket.SOL_SOCKET, exclusive_address_use),
+                1,
+            )
         with self.assertRaisesRegex(ValueError, "exactly 127.0.0.1"):
             create_server(self.database_path, host="0.0.0.0", port=0)
 

@@ -1,0 +1,36 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 3,
+  "checkpoint": "exclusive-loopback-startup",
+  "command": "python -m unittest tests.frontend.test_server -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T20:04:25Z",
+  "test_count": 9,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "default_origin": "http://127.0.0.1:8766",
+  "parser_help_default": 8766,
+  "frontend_docs_default": 8766,
+  "address_reuse_enabled": false,
+  "port_reuse_enabled": false,
+  "windows_exclusive_address_use": true,
+  "occupied_port": {
+    "direct_server_rejected": true,
+    "create_server_rejected": true,
+    "cli_exit_code": 1,
+    "success_url_emitted": false,
+    "automatic_fallback_used": false
+  },
+  "ephemeral_startup": {
+    "requested_port": 0,
+    "printed_allocated_nonzero_port": true,
+    "root_status": 200,
+    "root_is_expense_app": true,
+    "session_status": 200,
+    "session_local_only": true
+  },
+  "loopback_only": true,
+  "security_headers_and_host_boundary": true,
+  "no_statement_or_token_logging": true
+}

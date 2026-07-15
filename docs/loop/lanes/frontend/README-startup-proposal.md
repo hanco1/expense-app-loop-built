@@ -12,7 +12,7 @@ New-Item -ItemType Directory -Force local-data
 python -m frontend.server --database .\local-data\expenses.sqlite
 ```
 
-Open `http://127.0.0.1:8765`. The database is created at the explicit path you provide, and the server listens only on `127.0.0.1`. Stop it with Ctrl+C.
+Open the exact URL printed after startup (by default, `http://127.0.0.1:8766`). The database is created at the explicit path you provide, and the server listens only on `127.0.0.1`. If the requested port is occupied, startup exits non-zero without printing a success URL or silently choosing another port. `--port 0` remains available for an ephemeral port, and the printed URL contains the actual allocated port. Stop the process with Ctrl+C.
 
 The MVP accepts TD-style CSV and text-based PDF statements. Scanned PDFs and OCR are not supported yet. Financial data stays in the local process and database.
 

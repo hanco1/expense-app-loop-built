@@ -3,6 +3,8 @@ from __future__ import annotations
 import argparse
 import ipaddress
 import json
+import socket
+import sys
 from http import HTTPStatus
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from pathlib import Path
@@ -14,7 +16,7 @@ from contracts.local_web_api import LocalWebRequest, LocalWebResponse
 
 
 LOOPBACK_HOST = "127.0.0.1"
-DEFAULT_PORT = 8765
+DEFAULT_PORT = 8766
 STATIC_DIR = Path(__file__).with_name("static")
 STATIC_FILES: Mapping[str, tuple[str, str]] = {
     "/": ("index.html", "text/html; charset=utf-8"),
@@ -39,10 +41,15 @@ SECURITY_HEADERS: Mapping[str, str] = {
 }
 
 
+class ListenerBindError(OSError):
+    """Raised when the requested loopback endpoint cannot be bound exclusively."""
+
+
 class LocalExpenseHTTPServer(ThreadingHTTPServer):
     """HTTP listener that is structurally pinned to IPv4 loopback."""
 
-    allow_reuse_address = True
+    allow_reuse_address = False
+    allow_reuse_port = False
     daemon_threads = True
 
     def __init__(
@@ -67,7 +74,20 @@ class LocalExpenseHTTPServer(ThreadingHTTPServer):
         self.api = api
         self.static_dir = resolved_static_dir
         self.max_request_bytes = api.max_upload_bytes
-        super().__init__((host, port), LocalExpenseRequestHandler)
+        try:
+            super().__init__((host, port), LocalExpenseRequestHandler)
+        except OSError as error:
+            raise ListenerBindError(
+                f"unable to bind exclusive listener on {host}:{port}: {error}"
+            ) from error
+
+    def server_bind(self) -> None:
+        # Windows requires this option before bind to prevent another process
+        # using SO_REUSEADDR from silently sharing the requested endpoint.
+        exclusive_address_use = getattr(socket, "SO_EXCLUSIVEADDRUSE", None)
+        if exclusive_address_use is not None:
+            self.socket.setsockopt(socket.SOL_SOCKET, exclusive_address_use, 1)
+        super().server_bind()
 
 
 class LocalExpenseRequestHandler(BaseHTTPRequestHandler):
@@ -379,9 +399,17 @@ def build_argument_parser() -> argparse.ArgumentParser:
 
 def main(argv: list[str] | None = None) -> int:
     args = build_argument_parser().parse_args(argv)
-    server = create_server(args.database, port=args.port)
-    address, port = server.server_address
-    print(f"Local expense app: http://{address}:{port}", flush=True)
+    try:
+        server = create_server(args.database, port=args.port)
+    except ListenerBindError as error:
+        print(
+            f"Unable to bind local expense app at {LOOPBACK_HOST}:{args.port}: {error}",
+            file=sys.stderr,
+            flush=True,
+        )
+        return 1
+    address, bound_port = server.server_address
+    print(f"Local expense app: http://{address}:{bound_port}", flush=True)
     print(f"Database: {Path(args.database).resolve()}", flush=True)
     try:
         server.serve_forever(poll_interval=0.2)
@@ -398,6 +426,7 @@ if __name__ == "__main__":
 
 __all__ = [
     "DEFAULT_PORT",
+    "ListenerBindError",
     "LOOPBACK_HOST",
     "LocalExpenseHTTPServer",
     "SECURITY_HEADERS",
