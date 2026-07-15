@@ -2,6 +2,9 @@
   "use strict";
 
   const PIE_SCALE = 1000000000n;
+  const PIE_VISUAL_UNITS_PER_DEGREE = 1000000n;
+  const PIE_VISUAL_SCALE = 360n * PIE_VISUAL_UNITS_PER_DEGREE;
+  const PIE_MINIMUM_VISUAL_UNITS = PIE_VISUAL_UNITS_PER_DEGREE;
   const PIE_CENTER = 100;
   const PIE_RADIUS = 70;
   const VIEW_NAMES = new Set(["overview", "imports", "duplicates"]);
@@ -118,8 +121,87 @@
     return allocated;
   }
 
-  function piePointAtUnits(units) {
-    const angle = (Number(units) / Number(PIE_SCALE)) * 2 * Math.PI;
+  function allocatePieVisualUnits(exactAllocations, totalText) {
+    const total = exactMinor(totalText, "pie visual total");
+    if (total <= 0n || exactAllocations.length === 0) {
+      return [];
+    }
+    const items = exactAllocations.map((item) => ({
+      ...item,
+      amount: exactMinor(item.bucket.spending_minor, "pie visual category amount"),
+    }));
+    if (items.some((item) => item.amount <= 0n)) {
+      throw new Error("pie visual allocation requires positive category amounts");
+    }
+
+    const floored = new Set();
+    while (true) {
+      const active = items.filter((_, index) => !floored.has(index));
+      if (active.length === 0) {
+        throw new Error("pie visual allocation requires a non-floored category");
+      }
+      const remaining = PIE_VISUAL_SCALE
+        - BigInt(floored.size) * PIE_MINIMUM_VISUAL_UNITS;
+      if (remaining <= 0n) {
+        throw new Error("pie visual allocation has too many non-zero categories");
+      }
+      const activeTotal = active.reduce((sum, item) => sum + item.amount, 0n);
+      const newlyFloored = [];
+      items.forEach((item, index) => {
+        if (
+          !floored.has(index)
+          && item.amount * remaining < PIE_MINIMUM_VISUAL_UNITS * activeTotal
+        ) {
+          newlyFloored.push(index);
+        }
+      });
+      if (newlyFloored.length === 0) {
+        break;
+      }
+      newlyFloored.forEach((index) => floored.add(index));
+    }
+
+    const remaining = PIE_VISUAL_SCALE
+      - BigInt(floored.size) * PIE_MINIMUM_VISUAL_UNITS;
+    const nonFlooredTotal = items.reduce(
+      (sum, item, index) => sum + (floored.has(index) ? 0n : item.amount),
+      0n,
+    );
+    const allocated = items.map((item, index) => ({
+      bucket: item.bucket,
+      units: item.units,
+      visualUnits: floored.has(index)
+        ? PIE_MINIMUM_VISUAL_UNITS
+        : (item.amount * remaining) / nonFlooredTotal,
+    }));
+    let sum = allocated.reduce((value, item) => value + item.visualUnits, 0n);
+    if (sum < PIE_VISUAL_SCALE) {
+      let largestIndex = -1;
+      items.forEach((item, index) => {
+        if (
+          !floored.has(index)
+          && (largestIndex < 0 || item.amount > items[largestIndex].amount)
+        ) {
+          largestIndex = index;
+        }
+      });
+      if (largestIndex < 0) {
+        throw new Error("pie visual allocation cannot reconcile its remainder");
+      }
+      allocated[largestIndex].visualUnits += PIE_VISUAL_SCALE - sum;
+    }
+    sum = allocated.reduce((value, item) => value + item.visualUnits, 0n);
+    if (
+      sum !== PIE_VISUAL_SCALE
+      || allocated.some((item) => item.visualUnits < PIE_MINIMUM_VISUAL_UNITS)
+    ) {
+      throw new Error("pie visual allocation does not reconcile");
+    }
+    return allocated;
+  }
+
+  function piePointAtVisualUnits(units) {
+    const angle = (Number(units) / Number(PIE_VISUAL_SCALE)) * 2 * Math.PI;
     return {
       x: PIE_CENTER + PIE_RADIUS * Math.cos(angle),
       y: PIE_CENTER + PIE_RADIUS * Math.sin(angle),
@@ -136,19 +218,27 @@
       || typeof sliceUnits !== "bigint"
       || startUnits < 0n
       || sliceUnits <= 0n
-      || startUnits + sliceUnits > PIE_SCALE
+      || startUnits + sliceUnits > PIE_VISUAL_SCALE
     ) {
-      throw new Error("pie visual arc requires bounded positive accounting units");
+      throw new Error("pie visual arc requires bounded positive visual units");
     }
-    const start = piePointAtUnits(startUnits);
-    const end = piePointAtUnits(startUnits + sliceUnits);
+    const start = piePointAtVisualUnits(startUnits);
     const move = `M ${boundedPieCoordinate(start.x)} ${boundedPieCoordinate(start.y)}`;
-    if (sliceUnits === PIE_SCALE) {
-      const midpoint = piePointAtUnits(startUnits + PIE_SCALE / 2n);
-      return `${move} A ${PIE_RADIUS} ${PIE_RADIUS} 0 0 1 ${boundedPieCoordinate(midpoint.x)} ${boundedPieCoordinate(midpoint.y)} A ${PIE_RADIUS} ${PIE_RADIUS} 0 0 1 ${boundedPieCoordinate(end.x)} ${boundedPieCoordinate(end.y)}`;
+    const commands = [move];
+    let cursor = startUnits;
+    let remaining = sliceUnits;
+    while (remaining > 0n) {
+      const step = remaining > PIE_VISUAL_UNITS_PER_DEGREE
+        ? PIE_VISUAL_UNITS_PER_DEGREE
+        : remaining;
+      cursor += step;
+      remaining -= step;
+      const end = piePointAtVisualUnits(cursor);
+      commands.push(
+        `A ${PIE_RADIUS} ${PIE_RADIUS} 0 0 1 ${boundedPieCoordinate(end.x)} ${boundedPieCoordinate(end.y)}`,
+      );
     }
-    const largeArc = sliceUnits * 2n > PIE_SCALE ? 1 : 0;
-    return `${move} A ${PIE_RADIUS} ${PIE_RADIUS} 0 ${largeArc} 1 ${boundedPieCoordinate(end.x)} ${boundedPieCoordinate(end.y)}`;
+    return commands.join(" ");
   }
 
   function reconcileMonth(summary) {
@@ -482,8 +572,8 @@
     if (exactMinor(summary.spending_total_minor, "spending total") === 0n) {
       return;
     }
-    const allocations = allocatePieUnits(
-      summary.category_breakdown,
+    const allocations = allocatePieVisualUnits(
+      allocatePieUnits(summary.category_breakdown, summary.spending_total_minor),
       summary.spending_total_minor,
     );
     if (!allocations.some((item) => item.bucket.category === state.selectedCategory)) {
@@ -505,18 +595,16 @@
         (bucket) => `${bucket.category}, ${formatMoney(bucket.spending_minor, summary.currency)}`,
       )
       .join("; ");
-    const track = document.createElementNS(svgNamespace, "circle");
+    const track = document.createElementNS(svgNamespace, "path");
     track.setAttribute("class", "pie-track");
-    track.setAttribute("cx", "100");
-    track.setAttribute("cy", "100");
-    track.setAttribute("r", "70");
+    track.setAttribute("d", pieArcPath(0n, PIE_VISUAL_SCALE));
     svg.append(title, description, track);
 
-    let offset = 0n;
+    let visualOffset = 0n;
     allocations.forEach((item, index) => {
       const segment = document.createElementNS(svgNamespace, "path");
       segment.setAttribute("class", `pie-segment pie-color-${index % 12}`);
-      segment.setAttribute("d", pieArcPath(offset, item.units));
+      segment.setAttribute("d", pieArcPath(visualOffset, item.visualUnits));
       segment.setAttribute("tabindex", "0");
       segment.setAttribute("role", "button");
       segment.setAttribute(
@@ -526,6 +614,7 @@
       segment.dataset.category = item.bucket.category;
       segment.dataset.minor = item.bucket.spending_minor;
       segment.dataset.units = item.units.toString();
+      segment.dataset.visualUnits = item.visualUnits.toString();
       segment.classList.toggle("is-selected", state.selectedCategory === item.bucket.category);
       segment.addEventListener("click", () => selectChartCategory(item.bucket.category));
       segment.addEventListener("keydown", (event) => {
@@ -535,7 +624,7 @@
         }
       });
       svg.append(segment);
-      offset += item.units;
+      visualOffset += item.visualUnits;
 
       const legendButton = node("button", "legend-button");
       legendButton.type = "button";
@@ -1279,7 +1368,10 @@
 
   window.ExpenseAppTesting = Object.freeze({
     PIE_SCALE: PIE_SCALE.toString(),
+    PIE_VISUAL_SCALE: PIE_VISUAL_SCALE.toString(),
+    PIE_VISUAL_UNITS_PER_DEGREE: PIE_VISUAL_UNITS_PER_DEGREE.toString(),
     allocatePieUnits,
+    allocatePieVisualUnits,
     formatMoney,
     formatPercent,
     pieArcPath,

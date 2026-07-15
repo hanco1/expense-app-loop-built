@@ -73,13 +73,51 @@ class BrowserUiTests(BrowserAppTestCase):
                 {category: "Tiny", spending_minor: "1"},
                 {category: "Large", spending_minor: "900719925474099300"}
               ], "900719925474099301").map(item => item.units.toString()),
-              scale: window.ExpenseAppTesting.PIE_SCALE
+              tinyVisual: (() => {
+                const exact = window.ExpenseAppTesting.allocatePieUnits([
+                  {category: "Tiny", spending_minor: "1"},
+                  {category: "Large", spending_minor: "900719925474099300"}
+                ], "900719925474099301");
+                return window.ExpenseAppTesting.allocatePieVisualUnits(
+                  exact,
+                  "900719925474099301",
+                ).map(item => item.visualUnits.toString());
+              })(),
+              simultaneousFloors: (() => {
+                const buckets = Array.from({length: 12}, (_, index) => ({
+                  category: `Category ${index}`,
+                  spending_minor: index < 11 ? "1" : "900719925474099300",
+                }));
+                const total = "900719925474099311";
+                const exact = window.ExpenseAppTesting.allocatePieUnits(buckets, total);
+                return window.ExpenseAppTesting.allocatePieVisualUnits(exact, total)
+                  .map(item => item.visualUnits.toString());
+              })(),
+              scale: window.ExpenseAppTesting.PIE_SCALE,
+              visualScale: window.ExpenseAppTesting.PIE_VISUAL_SCALE,
+              visualDegree: window.ExpenseAppTesting.PIE_VISUAL_UNITS_PER_DEGREE
             })"""
         )
         self.assertEqual(exact["large"], "$9,007,199,254,740,993.01")
         self.assertEqual(exact["negative"], "−$4.50")
         self.assertGreater(int(exact["tiny"][0]), 0)
         self.assertEqual(sum(int(value) for value in exact["tiny"]), int(exact["scale"]))
+        visual_degree = int(exact["visualDegree"])
+        self.assertEqual(
+            [int(value) for value in exact["tinyVisual"]],
+            [visual_degree, 359 * visual_degree],
+        )
+        self.assertEqual(
+            [int(value) for value in exact["simultaneousFloors"][:11]],
+            [visual_degree] * 11,
+        )
+        self.assertEqual(
+            int(exact["simultaneousFloors"][11]), 349 * visual_degree
+        )
+        self.assertEqual(
+            sum(int(value) for value in exact["simultaneousFloors"]),
+            int(exact["visualScale"]),
+        )
 
         self.page.set_viewport_size({"width": 390, "height": 844})
         dimensions = self.page.evaluate(

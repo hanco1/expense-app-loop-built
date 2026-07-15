@@ -53,17 +53,26 @@ class LocalExpenseBrowserEndToEndTests(BrowserAppTestCase):
                 .reduce((sum, row) => sum + BigInt(row.dataset.minor), 0n);
               const transactionSpending = [...document.querySelectorAll("#transaction-table-body tr[data-spending='true']")]
                 .reduce((sum, row) => sum - BigInt(row.dataset.minor), 0n);
-              const pieUnits = [...document.querySelectorAll(".pie-segment")]
+              const segments = [...document.querySelectorAll(".pie-segment")];
+              const trackLength = document.querySelector(".pie-track").getTotalLength();
+              const pieUnits = segments
                 .reduce((sum, segment) => sum + BigInt(segment.dataset.units), 0n);
+              const visualUnits = segments
+                .reduce((sum, segment) => sum + BigInt(segment.dataset.visualUnits), 0n);
               return {
                 spending: spending.toString(),
                 categories: categories.toString(),
                 transactionSpending: transactionSpending.toString(),
                 pieUnits: pieUnits.toString(),
                 scale: window.ExpenseAppTesting.PIE_SCALE,
+                visualUnits: visualUnits.toString(),
+                visualScale: window.ExpenseAppTesting.PIE_VISUAL_SCALE,
+                minimumVisualDegrees: Math.min(
+                  ...segments.map(segment => segment.getTotalLength() * 360 / trackLength),
+                ),
                 chartLabels: document.querySelectorAll("#chart-legend .legend-button").length,
                 categoryRows: document.querySelectorAll("#category-table-body tr").length,
-                boundedArcs: [...document.querySelectorAll(".pie-segment")].every((segment) => {
+                boundedArcs: segments.every((segment) => {
                   const geometry = segment.getAttribute("d") || "";
                   const geometryValues = (geometry.match(/-?[0-9]+(?:\\.[0-9]+)?/g) || [])
                     .map(Number);
@@ -81,6 +90,8 @@ class LocalExpenseBrowserEndToEndTests(BrowserAppTestCase):
         self.assertEqual(reconciliation["categories"], reconciliation["spending"])
         self.assertEqual(reconciliation["transactionSpending"], reconciliation["spending"])
         self.assertEqual(reconciliation["pieUnits"], reconciliation["scale"])
+        self.assertEqual(reconciliation["visualUnits"], reconciliation["visualScale"])
+        self.assertGreaterEqual(reconciliation["minimumVisualDegrees"], 0.99)
         self.assertEqual(reconciliation["chartLabels"], reconciliation["categoryRows"])
         self.assertTrue(reconciliation["boundedArcs"])
         self.assertEqual(self.page.locator("#reconciliation-status").inner_text(), "Reconciled exactly")

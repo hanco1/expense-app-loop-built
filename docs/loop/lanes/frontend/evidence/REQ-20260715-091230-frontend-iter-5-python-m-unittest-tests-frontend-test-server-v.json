@@ -1,0 +1,20 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 5,
+  "checkpoint": "exclusive-loopback-startup-regression",
+  "command": "python -m unittest tests.frontend.test_server -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T23:08:22Z",
+  "test_count": 9,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "default_origin": "http://127.0.0.1:8766",
+  "exclusive_binding": true,
+  "occupied_port_cli_exit_code": 1,
+  "occupied_port_success_url_emitted": false,
+  "ephemeral_root_status": 200,
+  "ephemeral_session_status": 200,
+  "security_headers_and_host_boundary": true,
+  "no_statement_or_token_logging": true
+}

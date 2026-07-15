@@ -1,0 +1,41 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 5,
+  "checkpoint": "frozen-approved-june-pie-geometry",
+  "command": "python -m unittest tests.acceptance.test_local_web_app_pie_geometry_review -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T23:08:22Z",
+  "test_count": 1,
+  "case_families": 6,
+  "failures": 0,
+  "errors": 0,
+  "result": "OK",
+  "frozen_test_sha256": "D5EEA84080B915C6C1978A20D47C61EE06FD96DFF65E6ED46A822BD33A076912",
+  "accounting": {
+    "pie_scale": "1000000000",
+    "data_units_sum": "1000000000",
+    "category_count": 9,
+    "june_spending_minor": "277617",
+    "june_credit_minor": "72999",
+    "june_transaction_count": 22,
+    "credits_excluded": true,
+    "reconciled_exactly": true
+  },
+  "painted_ring": {
+    "sample_count": 720,
+    "empty_samples": 0,
+    "overlap_samples_at_most": 18,
+    "cyclic_runs": 9,
+    "one_run_per_category": true,
+    "all_nine_categories_visible": true,
+    "housing_more_than_half": true,
+    "geometry_uses_bounded_explicit_arcs": true,
+    "accounting_scale_used_as_svg_or_css_length": false
+  },
+  "operability": {
+    "focusable_segments": 9,
+    "matched_legends": 9,
+    "enter_selection_synchronized": true,
+    "exact_labels_preserved": true
+  }
+}
