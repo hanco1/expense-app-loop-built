@@ -59,7 +59,7 @@ policy:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: pending
-- sent_at:
+- delivery_status: sent
+- sent_at: 2026-07-15T07:47:31Z
 expected_reply:
 - LOOP_STATUS with the frozen writer/proposal matrix, case counts and IDs, artifact hashes, baseline red/green inventory, review commit/evidence, and the complete data-eng-ready acceptance contract; no implementation dispatch.
