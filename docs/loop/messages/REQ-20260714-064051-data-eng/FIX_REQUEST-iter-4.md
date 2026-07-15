@@ -104,7 +104,7 @@ policy:
 delivery:
 - channel: send_message_to_thread
 - target_thread_id: 019fxxxx-xxxx-xxxx-xxxx-xxxxxxxxxxxx
-- delivery_status: pending
-- sent_at:
+- delivery_status: sent
+- sent_at: 2026-07-15T08:00:59Z
 expected_reply:
 - IMPLEMENTATION_DONE iteration 4 with the centralized underlying write-boundary design, implementation commit, changed files, unchanged four hashes, all eleven command exits, flat evidence paths, and no scope or dependency expansion.

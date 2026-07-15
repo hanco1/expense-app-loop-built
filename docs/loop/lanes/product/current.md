@@ -3,8 +3,8 @@
 current_request_id: REQ-20260714-064051-data-eng
 status: FIX_REQUESTED
 iteration: 4
-last_updated: 2026-07-15T08:00:40Z
-heartbeat: 2026-07-15T08:00:40Z
+last_updated: 2026-07-15T08:00:59Z
+heartbeat: 2026-07-15T08:00:59Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -14,7 +14,7 @@ model_observed: current-host-default (highest)
 
 ## Next Action
 
-- Deliver the committed FIX_REQUEST to data-eng; its later claim is the only remaining counted transition and reaches raw 7/7.
+- Await data-eng's claim and class-wide implementation; the claim is the only remaining counted transition and reaches raw 7/7.
 
 ## Blockers
 
