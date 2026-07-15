@@ -1,0 +1,19 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 1,
+  "checkpoint": "local-web-api-human-decisions",
+  "command": "python -m unittest tests.backend.test_local_web_api_decisions -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T08:40:41Z",
+  "test_count": 2,
+  "failures": 0,
+  "errors": 0,
+  "category_history_count": 2,
+  "invalid_category_appended_rows": 0,
+  "duplicate_history_count": 2,
+  "tim_hortons_initial_state": "pending",
+  "tim_hortons_distinct_included_count": 2,
+  "invalid_component_status": 409,
+  "invalid_component_appended_rows": 0,
+  "run_detail_effective_exclusion_visible": true
+}

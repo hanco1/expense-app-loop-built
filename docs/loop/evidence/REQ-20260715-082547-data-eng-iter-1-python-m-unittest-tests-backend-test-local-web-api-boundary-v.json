@@ -1,0 +1,21 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 1,
+  "checkpoint": "local-web-api-local-boundary",
+  "command": "python -m unittest tests.backend.test_local_web_api_boundary -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T08:40:41Z",
+  "test_count": 2,
+  "failures": 0,
+  "errors": 0,
+  "listener_used": false,
+  "network_used": false,
+  "subprocess_used": false,
+  "ocr_used": false,
+  "telemetry_used": false,
+  "raw_content_logged": false,
+  "new_dependency_added": false,
+  "project_dependency": "pypdf==6.12.2",
+  "csv_sha256": "9F93F107DDD02AEE2FB0A0AE19EB962180C680D1FB06D4D90959C96ED8CD7BAA",
+  "pdf_sha256": "F4B6B524D7C6140EE3F3E24CE87C4A36F0B40619395B5DC17B03F1B99DBC11F8"
+}

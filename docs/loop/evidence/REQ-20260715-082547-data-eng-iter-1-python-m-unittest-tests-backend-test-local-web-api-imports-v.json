@@ -1,0 +1,28 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 1,
+  "checkpoint": "local-web-api-import-run-read-model",
+  "command": "python -m unittest tests.backend.test_local_web_api_imports -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T08:40:41Z",
+  "test_count": 2,
+  "failures": 0,
+  "errors": 0,
+  "csv": {
+    "source_records": 23,
+    "parsed": 22,
+    "failed": 1,
+    "occurrences": 22,
+    "failure_locator": "csv-row:21",
+    "failure_code": "missing_amount"
+  },
+  "pdf": {
+    "source_records": 12,
+    "parsed": 12,
+    "failed": 0,
+    "occurrences": 12
+  },
+  "persistent_states": ["active", "failed", "undone"],
+  "newest_first_stable": true,
+  "retained_input_exposed": false
+}

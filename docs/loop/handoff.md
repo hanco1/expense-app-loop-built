@@ -28,15 +28,17 @@ the next actor can continue from repo files plus the latest message alone.
 - The unchanged write-boundary matrix passes 145/145, the unchanged component-state matrix passes 56/56, backend discovery passes 52/52, all four frozen hashes match, and all eleven iteration-4 evidence records are exit 0.
 - Independent review passed at `329fa51` and delivered at `1e0d0f4`; product accepted implementation `9268a5e` and restored the standing `max_fix_cycles: 3` in the same checkpoint.
 - Product specified the next dependency in `docs/product/local-web-api.md`: a local JSON-ready application facade, persistent run listing, exact string money, CSRF protection, and approved-fixture end-to-end checks before the browser UI starts.
+- Data-eng implemented the facade at `efff2f4`: typed in-process request/response contracts, persistent newest-first run discovery, raw-byte fixture imports, exact string-money JSON, CSRF on every mutation, stable errors, current duplicate/inclusion state, and a no-listener/no-network/no-raw-content boundary.
+- All nine declared gates are exit 0, backend discovery passes 65/65, fixture hashes are unchanged, and exact May/June totals remain 50340/60000/12 and 277617/72999/22. IMPLEMENTATION_DONE reached product and REVIEW_REQUEST reached the verified review lane.
 
 ## Next Action
 
-- [~] Data-eng implements `REQ-20260715-082547-data-eng` and routes the nine-gate result to independent review.
+- [~] Review independently validates implementation commit `efff2f4`; product retains final acceptance authority.
 
 ## Active Request
 
 - request_id: REQ-20260715-082547-data-eng
-- owner_lane: data-eng
+- owner_lane: review
 - iteration: 1
 
 ## Blockers

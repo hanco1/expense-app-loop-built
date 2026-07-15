@@ -1,0 +1,16 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 1,
+  "checkpoint": "local-web-api-session-security",
+  "command": "python -m unittest tests.backend.test_local_web_api_security -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T08:40:41Z",
+  "test_count": 2,
+  "failures": 0,
+  "errors": 0,
+  "session_status": 200,
+  "csrf_rejection_status": 403,
+  "rejected_csrf_write_count": 0,
+  "cors_allowance_present": false,
+  "typed_request_response": true
+}

@@ -1,0 +1,17 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 1,
+  "checkpoint": "local-web-api-error-privacy",
+  "command": "python -m unittest tests.backend.test_local_web_api_errors -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T08:40:41Z",
+  "test_count": 3,
+  "failures": 0,
+  "errors": 0,
+  "verified_statuses": [400, 404, 409, 413, 415, 422, 500],
+  "failed_run_inspectable": true,
+  "raw_content_exposed": false,
+  "traceback_exposed": false,
+  "mixed_currency_status": 409,
+  "error_envelope_fields": ["code", "details", "message"]
+}

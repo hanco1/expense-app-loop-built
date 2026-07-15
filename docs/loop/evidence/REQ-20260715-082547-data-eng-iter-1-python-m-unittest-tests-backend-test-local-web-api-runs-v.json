@@ -1,0 +1,19 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 1,
+  "checkpoint": "local-web-api-idempotency-undo",
+  "command": "python -m unittest tests.backend.test_local_web_api_runs -v",
+  "exit_code": 0,
+  "ran_at": "2026-07-15T08:40:41Z",
+  "test_count": 1,
+  "failures": 0,
+  "errors": 0,
+  "distinct_run_count": 3,
+  "exact_reimport_linked": true,
+  "june_spending_minor_integer": 277617,
+  "june_spending_minor_json": "277617",
+  "june_transaction_count": 22,
+  "repeated_undo_status": 409,
+  "correction_history_count_after_restore": 1,
+  "correction_survived_all_support_loss": true
+}
