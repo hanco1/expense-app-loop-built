@@ -3,8 +3,8 @@
 current_request_id: REQ-20260715-091230-frontend
 status: REVIEWING
 iteration: 3
-last_updated: 2026-07-15T20:12:42Z
-heartbeat: 2026-07-15T20:12:42Z
+last_updated: 2026-07-15T20:15:22Z
+heartbeat: 2026-07-15T20:15:22Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -22,10 +22,11 @@ model_observed: current-host-default (highest)
 - Frontend implemented the class-wide repair at `38479e5` with handoff `2b09659`: default 8766, non-reusable/exclusive loopback binding, clear exit-1 bind failure with no success URL, and actual allocated-port output for `--port 0`.
 - Product mirrored all six iteration-3 evidence files. Startup tests are 9/9, unchanged acceptance 6/6, frontend discovery 13/13, real Chromium 1/1, backend 68/68, and `SHIP_CHECK_OK`.
 - Independent review commit `c56c4e1` returned PASS: all six gates, reverse exclusive-rebind probing, frozen hashes, scope, privacy, local-only behavior, and misuse checks are green. Review did not perform or claim human QA.
+- Product live verification passed: dashboard PID 73908 remains on 8765; expense app PID 176376 printed `http://127.0.0.1:8766`, serves the `Monthly Expense Review` root and `/api/session` at HTTP 200, and a competing default instance exits 1 with a clear bind error and no success URL.
 
 ## Next Action
 
-- Product starts implementation `38479e5` on the actual printed 8766 URL, verifies root and `/api/session`, proves a second default-port startup exits non-zero, and requests renewed explicit human QA.
+- Human opens the exact live URL `http://127.0.0.1:8766`, confirms it is the expense app rather than the loop dashboard, and reports explicit PASS or the next concrete issue. Product does not ACCEPT or restore the temporary cap before that response.
 
 ## Blockers
 

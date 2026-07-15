@@ -46,10 +46,11 @@ the next actor can continue from repo files plus the latest message alone.
 - Frontend implemented the exclusive-binding repair at `38479e5` and finalized handoff at `2b09659`. The default is 8766, Windows uses exclusive address binding, reuse is disabled, occupied ports exit 1 without a success URL or fallback, and `--port 0` prints the actual reachable allocation.
 - Product mirrored all six flat iteration-3 evidence files. Startup tests pass 9/9, unchanged acceptance 6/6, frontend discovery 13/13, Chromium E2E 1/1, backend discovery 68/68, and the completion gate returns `SHIP_CHECK_OK`.
 - Independent review passed at `c56c4e1`: the default/documentation, exclusive bind, occupied-port failure, actual printed origin, reverse rebind probe, all regressions, scope, privacy, and local-only boundaries are green. Review did not perform human QA.
+- Product started the live app as PID 176376. The exact printed `http://127.0.0.1:8766` origin serves the expense-app root and `/api/session` at HTTP 200, dashboard PID 73908 remains on 8765, and a second default instance exits 1 with no success URL.
 
 ## Next Action
 
-- [~] Product starts implementation `38479e5` at the actual printed 8766 URL, proves root and `/api/session` reach this app and a second default-port instance exits non-zero, then repeats explicit live human QA before ACCEPTED.
+- [~] Human opens `http://127.0.0.1:8766` and returns explicit PASS or the next concrete issue. Product retains REVIEWING and the temporary cap until then.
 
 ## Active Request
 
