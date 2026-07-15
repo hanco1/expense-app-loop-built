@@ -1,0 +1,60 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 5,
+  "baseline_commit": "4b88b11",
+  "phase": "pre_implementation_minimum_arc_freeze",
+  "ran_at": "2026-07-15T22:53:43Z",
+  "command": "python -m unittest tests.acceptance.test_local_web_app_minimum_arc_review -v",
+  "exit_code": 1,
+  "test_count": 1,
+  "failing_subtests": 2,
+  "scenario_count": 2,
+  "scenarios": {
+    "MA-01-one-unit-near-full": {
+      "exact_data_units": {"Housing": "1", "Groceries": "999999999"},
+      "expected_visual_degrees": {"Housing": 1, "Groceries": 359},
+      "empty_samples_3600": 3600,
+      "path_degree_sum": 0,
+      "cyclic_runs": [null],
+      "actual_visual_degrees": {"Housing": 0, "Groceries": 0},
+      "actual_visible_samples": {"Housing": 0, "Groceries": 0},
+      "result": "RED"
+    },
+    "MA-02-canonical-count-simultaneous-floors": {
+      "canonical_category_count": 12,
+      "sub_floor_category_count": 11,
+      "exact_data_units": "eleven categories at 1; Uncategorized at 999999989; sum 1000000000",
+      "expected_visual_degrees": "eleven categories at 1 degree; Uncategorized at 349 degrees",
+      "empty_samples_3600": 2117,
+      "path_degree_sum": 360.633197,
+      "cyclic_runs": [null, "Uncategorized"],
+      "sub_floor_visible_samples": 0,
+      "uncategorized_actual_degrees": 360.633191,
+      "uncategorized_expected_degrees": 349,
+      "uncategorized_actual_visible_samples": 1483,
+      "uncategorized_expected_visible_samples": 3490,
+      "result": "RED"
+    }
+  },
+  "green_guardrails": [
+    "exact minor-unit spending and credit totals",
+    "independently calculated displayed percentage text",
+    "category and included-transaction reconciliation",
+    "unchanged exact data-units and PIE_SCALE=1000000000 sum",
+    "zero-spending categories absent from chart, legend, and category table",
+    "positive credits visible in transaction/credit totals and excluded from pie spending"
+  ],
+  "frozen_hashes": {
+    "minimum_arc_acceptance": "9FABFD79773E1419363E73508D2FB2125B5E6D1F087661C18AE559762984C88D",
+    "minimum_arc_boundary": "34B7562E606A2B9C691D4629FCB6CB442CD83A28689472189289C8C48B326AED",
+    "iteration_4_geometry_acceptance": "D5EEA84080B915C6C1978A20D47C61EE06FD96DFF65E6ED46A822BD33A076912",
+    "iteration_4_geometry_boundary": "EA19310EDC2DE2DA13AD447872E569BB845F410B74E9AA21EDE54C23A2F2C4D0",
+    "prior_acceptance": "4EB538618C7455BB857DA7F30F1341F77AE6EA3086B151E87AFA6940B4D3C7D7",
+    "iteration_4_tiny_slice_acceptance": "0A108B0EED3264FB90C31B77B8A7700B333F5CAEAB6A934FDFA3BC0C0CDBA5C1"
+  },
+  "implementation_changed": false,
+  "prior_frozen_artifacts_changed": false,
+  "root_lifecycle_changed": false,
+  "frontend_dispatched": false,
+  "human_qa_performed": false
+}
