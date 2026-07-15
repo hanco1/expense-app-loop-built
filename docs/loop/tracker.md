@@ -35,5 +35,5 @@ Phase dashboard for the loop. Keep checkpoints small and verifiable. Use the sta
 - The human approved the operating flow and two wholly synthetic TD-style fixtures on 2026-07-13. These fixtures may be committed and are the end-to-end input for the ingestion slice; the real TD statement remains final-local-QA only.
 - REQ-20260713-073512-data-eng accepted the CSV/text-PDF ingestion slice at commit `06ac048`: backend 31/31, frozen numeric matrix 282/282, independent review PASS, and `max_fix_cycles` restored to 3.
 - REQ-20260714-064051-data-eng accepted the analysis core at commit `9268a5e`: frozen public-write and component-state matrices passed 145/145 and 56/56, backend discovery passed 52/52, independent review returned PASS, and `max_fix_cycles` was restored to 3.
-- REQ-20260715-082547-data-eng is implementing the local JSON-ready facade and persistent run listing that the browser UI will consume; it must preserve exact money as strings and all accepted local-only invariants.
+- REQ-20260715-082547-data-eng accepted the local JSON-ready facade at `0362cb0`: independent review PASS, unchanged boundary acceptance 4/4, backend discovery 68/68, exact string money, persistent run listing, and all local-only invariants preserved.
 - Record verification commands, evidence paths, and blockers next to each checkpoint as it closes.
