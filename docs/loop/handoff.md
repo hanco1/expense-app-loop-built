@@ -36,20 +36,22 @@ the next actor can continue from repo files plus the latest message alone.
 - Independent review passed at `d66a5d4` and delivered at `40660f9`; product accepted `0362cb0` after C1-C7 and INV-1 through INV-8 remained green with no scope, privacy, traceability, misuse, or non-UI human-QA blocker.
 - Product specified the complete user-facing slice in `docs/product/local-web-app.md` and created `REQ-20260715-091230-frontend`: loopback-only same-origin serving, picker/drop imports, run/duplicate/category review, exact monthly dashboard, reconciled pie chart, browser E2E, and final human-QA readiness.
 - Frontend implemented that slice at `aaa931d` with lane handoff `3225194`; product committed root README/evidence at `f70d6a7` and independently reproduced frontend 8/8, Chromium E2E 1/1, backend 68/68, and `SHIP_CHECK_OK`.
+- Independent review at `6fe6083` kept those original gates green but found two blocker classes: unsupported public HTTP methods return default HTML 501 before Host/security handling, and four successful mutation families can be falsely reported failed when their follow-up canonical refresh is unavailable.
+- Product routed the consolidated iteration-2 repair to frontend. The unchanged review acceptance hash is `4EB538618C7455BB857DA7F30F1341F77AE6EA3086B151E87AFA6940B4D3C7D7`; live human QA remains deferred until a later independent code PASS.
 
 ## Next Action
 
-- [~] Review independently assesses `aaa931d`; product retains final acceptance and the mandatory live human-QA gate.
+- [~] Frontend claims iteration 2 and closes both class-wide browser-boundary blockers, then returns unchanged review acceptance plus all original gates for independent re-review.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: review
-- iteration: 1
+- owner_lane: frontend
+- iteration: 2
 
 ## Blockers
 
-- None. No system/browser/runtime installation occurred; human QA is expected after independent review, not an implementation blocker.
+- Implementation `aaa931d` is blocked by the public-method Host/security boundary and post-commit refresh semantics. No system/browser/runtime installation occurred.
 
 ## Pending Inbox Deliveries
 

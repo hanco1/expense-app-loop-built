@@ -76,3 +76,4 @@
 | 2026-07-15T09:37:00Z | REQ-20260715-091230-frontend | Reconciled browser MVP and routed independent review | aaa931d/3225194/f70d6a7; frontend 8/8; Chromium E2E 1/1; backend 68/68; SHIP_CHECK_OK; human QA retained |
 | 2026-07-15T09:42:22Z | REQ-20260715-091230-frontend | Prepared VERIFY manifest syntax supplement | unchanged four commands and C1-C7; no state, scope, implementation, evidence, or human-QA change |
 | 2026-07-15T09:42:55Z | REQ-20260715-091230-frontend | Delivered committed VERIFY manifest to review | product snapshot 308c758; durable inbox plus verified review thread; code-blocker review remains independent |
+| 2026-07-15T09:47:46Z | REQ-20260715-091230-frontend | Routed consolidated browser-boundary fixes | review 6fe6083/12d600a; acceptance 6 methods with four committed-mutation families and eight public method/Host cells red; frontend owns iteration 2; human QA remains held |
