@@ -1,0 +1,75 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 3,
+  "reviewed_commit": "38479e5",
+  "verdict": "PASS",
+  "ran_at": "2026-07-15T20:11:56Z",
+  "human_qa": "NOT_PERFORMED_READY_FOR_PRODUCT_RENEWAL",
+  "commands": [
+    {
+      "command": "python -m unittest tests.frontend.test_server -v",
+      "exit_code": 0,
+      "test_count": 9,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_local_web_app_review -v",
+      "exit_code": 0,
+      "test_count": 6,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest discover -s tests/frontend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "test_count": 13,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest tests.frontend.test_browser_e2e -v",
+      "exit_code": 0,
+      "test_count": 1,
+      "browser": "existing Chromium runtime",
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "test_count": 68,
+      "result": "OK"
+    },
+    {
+      "command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260715-091230-frontend",
+      "exit_code": 0,
+      "result": "SHIP_CHECK_OK REQ-20260715-091230-frontend"
+    },
+    {
+      "command": "reverse exclusive-rebind probe",
+      "exit_code": 0,
+      "result": "EXCLUSIVE_REBIND_REJECTED"
+    },
+    {
+      "command": "python multi_agent_loop_doctor.py --loop-dir docs/loop --json",
+      "exit_code": 0,
+      "result": "ok true; durable REVIEWING owner review iteration 3; current human-QA hold recognized"
+    }
+  ],
+  "criteria": {
+    "default_8766_and_documentation": "PASS",
+    "exclusive_nonreusable_bind": "PASS",
+    "occupied_direct_create_cli_paths": "PASS",
+    "nonzero_no_success_output_or_fallback": "PASS",
+    "actual_server_address_and_ephemeral_origin": "PASS",
+    "root_and_api_session_reachable": "PASS",
+    "prior_frontend_backend_privacy_contract": "PASS"
+  },
+  "scope_creep": "none",
+  "looks_done_but_wrong": "none found",
+  "ease_of_misuse": "No remaining wrong-but-accepted port path found; occupied explicit endpoints fail and port 0 reports the actual allocation without fallback.",
+  "privacy_local_boundary": "PASS; exact IPv4 loopback only, no CORS, remote assets, network client, telemetry, OCR, raw data logging, or dependency change.",
+  "dashboard_implementation_changed": false,
+  "frozen_acceptance_sha256": "4EB538618C7455BB857DA7F30F1341F77AE6EA3086B151E87AFA6940B4D3C7D7",
+  "csv_fixture_sha256": "9F93F107DDD02AEE2FB0A0AE19EB962180C680D1FB06D4D90959C96ED8CD7BAA",
+  "pdf_fixture_sha256": "F4B6B524D7C6140EE3F3E24CE87C4A36F0B40619395B5DC17B03F1B99DBC11F8",
+  "root_lane_evidence_pairs_byte_identical": true,
+  "acceptance_note": "Product retains renewed live human-QA and final acceptance authority and must restore max_fix_cycles to 3 with ACCEPTED."
+}
