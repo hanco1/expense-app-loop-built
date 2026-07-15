@@ -54,6 +54,7 @@ the next actor can continue from repo files plus the latest message alone.
 - The request is BLOCKED at raw fix-cycle use 7/7. Product recommends temporary `max_fix_cycles: 9` for one bounded iteration-5 repair that guarantees visible geometry for every exact non-zero allocation; no dispatch occurs without explicit human authority, and the cap returns to 3 only with a later ACCEPTED checkpoint.
 - The human authorized iteration 5 and temporary `max_fix_cycles: 9`, rejecting any further coordinate-precision patching. The new product contract sets a one-degree visual floor for every non-zero category, distributes the remaining circle proportionally among larger categories, and leaves amounts, percentages, `data-units`, `PIE_SCALE`, reconciliation, and credits exact and unchanged.
 - Review froze the iteration-5 contract at `4b3e0d8`: exactly two real-Chromium scenarios cover `1 + 999999999` and 12 canonical categories with 11 simultaneous one-unit floors. Both are geometry-red on `4b88b11` while all numerical, reconciliation, zero-category, and credit-exclusion checks are green. Product verified both hashes and dispatched the immutable contract to frontend at raw use 8/9.
+- Frontend claimed iteration 5 at `de20862`, reaching the human-authorized raw limit 9/9 with both frozen hashes verified. The class-wide one-degree water-filling implementation is active; no further automatic fix round is available.
 
 ## Next Action
 
