@@ -1,0 +1,89 @@
+{
+  "request_id": "REQ-20260715-091230-frontend",
+  "iteration": 4,
+  "reviewed_commit": "4b88b11",
+  "verdict": "BLOCKED",
+  "severity": "blocker",
+  "ran_at": "2026-07-15T21:38:17Z",
+  "human_qa": "NOT_PERFORMED_PRODUCT_HOLD",
+  "commands": [
+    {
+      "command": "python -m unittest tests.acceptance.test_local_web_app_pie_geometry_review -v",
+      "exit_code": 0,
+      "test_count": 1,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest tests.frontend.test_server -v",
+      "exit_code": 0,
+      "test_count": 9,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_local_web_app_review -v",
+      "exit_code": 0,
+      "test_count": 6,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest discover -s tests/frontend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "test_count": 13,
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest tests.frontend.test_browser_e2e -v",
+      "exit_code": 0,
+      "test_count": 1,
+      "browser": "existing Chromium runtime",
+      "result": "OK"
+    },
+    {
+      "command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v",
+      "exit_code": 0,
+      "test_count": 68,
+      "result": "OK"
+    },
+    {
+      "command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260715-091230-frontend",
+      "exit_code": 0,
+      "result": "SHIP_CHECK_OK REQ-20260715-091230-frontend"
+    },
+    {
+      "command": "python -m unittest tests.acceptance.test_local_web_app_tiny_slice_review -v",
+      "exit_code": 1,
+      "test_count": 1,
+      "result": "FAILED",
+      "snapshot": {
+        "units": {"Tiny": "1", "Large": "999999999"},
+        "svg_lengths": {"Tiny": 0, "Large": 0},
+        "visible_counts_720": {"Tiny": 0, "Large": 0},
+        "tiny_selected": true,
+        "legend_selected": true
+      }
+    }
+  ],
+  "criteria": {
+    "frozen_approved_june_pg01_pg06": "PASS",
+    "every_nonzero_category_visible": "FAIL",
+    "exact_bigint_and_reconciliation": "PASS",
+    "prior_server_security_refresh_behavior": "PASS",
+    "frontend_browser_regression": "PASS",
+    "backend_privacy_local_boundary": "PASS"
+  },
+  "scope_creep": "none",
+  "looks_done_but_wrong": "Exact units, focus and legend selection succeed while both rendered paths have zero length and zero visible samples.",
+  "ease_of_misuse": "A supported one-unit minimum allocation and its near-full complement collapse after six-decimal endpoint rounding.",
+  "frozen_hashes": {
+    "pie_geometry_acceptance": "D5EEA84080B915C6C1978A20D47C61EE06FD96DFF65E6ED46A822BD33A076912",
+    "pie_geometry_boundary": "EA19310EDC2DE2DA13AD447872E569BB845F410B74E9AA21EDE54C23A2F2C4D0",
+    "prior_acceptance": "4EB538618C7455BB857DA7F30F1341F77AE6EA3086B151E87AFA6940B4D3C7D7",
+    "tiny_slice_acceptance": "0A108B0EED3264FB90C31B77B8A7700B333F5CAEAB6A934FDFA3BC0C0CDBA5C1"
+  },
+  "fixture_hashes": {
+    "csv": "9F93F107DDD02AEE2FB0A0AE19EB962180C680D1FB06D4D90959C96ED8CD7BAA",
+    "pdf": "F4B6B524D7C6140EE3F3E24CE87C4A36F0B40619395B5DC17B03F1B99DBC11F8"
+  },
+  "root_lane_evidence_pairs_byte_identical": true,
+  "policy": "raw fix-cycle use is 7/7; review did not dispatch another iteration or change max_fix_cycles; human authority is required"
+}
