@@ -43,20 +43,22 @@ the next actor can continue from repo files plus the latest message alone.
 - Independent review passed at `9e8e183`: C1-C7 and INV-1..8 are green, all five gates pass, both blocker classes are closed, and no scope, privacy, traceability, or misuse finding remains. The request is held at REVIEWING for explicit human QA at `http://127.0.0.1:8765`.
 - Live human QA failed because the documented/default port `8765` served the loop dashboard while the expense-app process silently co-bound the same Windows port. Product stopped only the app process; the dashboard remains on 8765.
 - The human explicitly requested iteration 3: move the stable app default to `8766`, derive startup output from the actual bound listener, and reject an occupied requested port with a clear non-zero startup failure. Product temporarily raised `max_fix_cycles` to 5 for this bounded round and must restore it to 3 only with ACCEPTED.
+- Frontend implemented the exclusive-binding repair at `38479e5` and finalized handoff at `2b09659`. The default is 8766, Windows uses exclusive address binding, reuse is disabled, occupied ports exit 1 without a success URL or fallback, and `--port 0` prints the actual reachable allocation.
+- Product mirrored all six flat iteration-3 evidence files. Startup tests pass 9/9, unchanged acceptance 6/6, frontend discovery 13/13, Chromium E2E 1/1, backend discovery 68/68, and the completion gate returns `SHIP_CHECK_OK`.
 
 ## Next Action
 
-- [~] Frontend closes the default-port/exclusive-bind class with red-capable tests; independent review rechecks it, then product starts the app on the actual printed URL and repeats live human QA before ACCEPTED.
+- [~] Independent review rechecks implementation `38479e5`; after PASS, product starts the app at the actual printed 8766 URL, proves a second default-port instance exits non-zero, and repeats explicit live human QA before ACCEPTED.
 
 ## Active Request
 
 - request_id: REQ-20260715-091230-frontend
-- owner_lane: frontend
+- owner_lane: review
 - iteration: 3
 
 ## Blockers
 
-- The current listener permits a wrong-service/co-bound outcome on Windows and the documented default collides with the loop dashboard. No system/browser/runtime installation is required for the fix.
+- No known code blocker. Review and renewed live human QA are required before ACCEPTED; no system/browser/runtime installation is required.
 
 ## Pending Inbox Deliveries
 

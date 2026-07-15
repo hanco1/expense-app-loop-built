@@ -1,10 +1,10 @@
 # Product Current State
 
 current_request_id: REQ-20260715-091230-frontend
-status: FIX_REQUESTED
+status: REVIEWING
 iteration: 3
-last_updated: 2026-07-15T19:58:20Z
-heartbeat: 2026-07-15T19:58:20Z
+last_updated: 2026-07-15T20:08:06Z
+heartbeat: 2026-07-15T20:08:06Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -19,11 +19,13 @@ model_observed: current-host-default (highest)
 - Independent review commit `9e8e183` passed C1-C7 and INV-1 through INV-8 with all five gates green, no scope/privacy/misuse finding, and the two blocker classes closed. Code review is PASS.
 - Live human QA failed: `http://127.0.0.1:8765` reached the loop dashboard (PID 73908), while the expense-app process (PID 164384) had silently co-bound 8765 and did not receive requests. Product stopped only PID 164384 and preserved the dashboard.
 - The human explicitly requested a bounded iteration-3 repair: stable default `8766`, startup output from the actual bound listener, and exclusive bind semantics that exit non-zero on any occupied requested port. The anti-thrash cap is temporarily `5` for this round and returns to `3` only with ACCEPTED.
+- Frontend implemented the class-wide repair at `38479e5` with handoff `2b09659`: default 8766, non-reusable/exclusive loopback binding, clear exit-1 bind failure with no success URL, and actual allocated-port output for `--port 0`.
+- Product mirrored all six iteration-3 evidence files. Startup tests are 9/9, unchanged acceptance 6/6, frontend discovery 13/13, real Chromium 1/1, backend 68/68, and `SHIP_CHECK_OK`.
 
 ## Next Action
 
-- Frontend implements the committed iteration-3 FIX_REQUEST, returns red-capable occupied-port/startup evidence, and hands off to independent review before product restarts the live app at the actual new URL for renewed human QA.
+- Review independently validates implementation `38479e5` and all six gates. After code PASS, product starts the app on the actual printed 8766 URL, verifies live occupied-port rejection, and requests renewed explicit human QA.
 
 ## Blockers
 
-- Blocker: the current server can silently co-bind an occupied Windows port and the documented default collides with the loop dashboard. No dependency or runtime installation is needed.
+- No known implementation blocker. Final acceptance remains held for independent review PASS and renewed explicit live human QA.
