@@ -1,0 +1,44 @@
+{
+  "request_id": "REQ-20260715-082547-data-eng",
+  "iteration": 1,
+  "reviewed_commit": "efff2f4",
+  "verdict": "FIX_REQUESTED",
+  "severity": "blocker",
+  "ran_at": "2026-07-15T08:51:11Z",
+  "commands": [
+    {"command": "python -m unittest tests.backend.test_local_web_api_security -v", "exit_code": 0, "tests_run": 2},
+    {"command": "python -m unittest tests.backend.test_local_web_api_imports -v", "exit_code": 0, "tests_run": 2},
+    {"command": "python -m unittest tests.backend.test_local_web_api_runs -v", "exit_code": 0, "tests_run": 1},
+    {"command": "python -m unittest tests.backend.test_local_web_api_months -v", "exit_code": 0, "tests_run": 1},
+    {"command": "python -m unittest tests.backend.test_local_web_api_decisions -v", "exit_code": 0, "tests_run": 2},
+    {"command": "python -m unittest tests.backend.test_local_web_api_errors -v", "exit_code": 0, "tests_run": 3},
+    {"command": "python -m unittest tests.backend.test_local_web_api_boundary -v", "exit_code": 0, "tests_run": 2},
+    {"command": "python -m unittest discover -s tests/backend -p \"test_*.py\" -v", "exit_code": 0, "tests_run": 65},
+    {"command": "python completion_gate.py --loop-dir docs/loop --request-id REQ-20260715-082547-data-eng", "exit_code": 0, "output": "SHIP_CHECK_OK REQ-20260715-082547-data-eng"},
+    {"command": "python -m unittest tests.acceptance.test_local_web_api_review -v", "exit_code": 1, "tests_run": 4, "failures": 5, "failure_inventory": ["UNC database path reaches sqlite persistence", "accepted non-ASCII CSRF token returns 400 on exact-token write", "two mixed-currency run details each return 400", "two concurrent undo calls both return 200"]},
+    {"command": "Get-FileHash -Algorithm SHA256 -LiteralPath tests/backend/fixtures/td-mock-2026-06.csv,tests/backend/fixtures/td-mock-2026-05.pdf", "exit_code": 0, "hashes": {"csv": "9F93F107DDD02AEE2FB0A0AE19EB962180C680D1FB06D4D90959C96ED8CD7BAA", "pdf": "F4B6B524D7C6140EE3F3E24CE87C4A36F0B40619395B5DC17B03F1B99DBC11F8"}}
+  ],
+  "criteria_results": {
+    "C1": "fail: accepted Unicode CSRF token cannot authorize a write",
+    "C2": "fail: mixed-currency state hides retained run detail",
+    "C3": "fail: concurrent repeated undo returns two successes",
+    "C4": "pass",
+    "C5": "pass",
+    "C6": "fail: run-detail conflict is misclassified as generic 400 and removes inspectability",
+    "C7": "fail: UNC database path escapes the local persistence boundary"
+  },
+  "invariants": {
+    "INV-1": "pass",
+    "INV-2": "pass",
+    "INV-3": "pass",
+    "INV-4": "fail: undo state transition and run inspection",
+    "INV-5": "pass",
+    "INV-6": "fail: mixed-currency state hides run traceability",
+    "INV-7": "pass",
+    "INV-8": "fail: UNC persistence path"
+  },
+  "scope_creep": "none",
+  "looks_done_but_wrong": "declared tests cover only local temp paths, ASCII tokens, sequential same-facade undo, and single-currency run details",
+  "ease_of_misuse": "confirmed through public from_database, constructor, and dispatch calls",
+  "requested_fix": "centralize local-path enforcement, make undo state validation and transition atomic, keep run detail independent of aggregate conflicts, and fail fast or correctly compare every accepted CSRF token"
+}
