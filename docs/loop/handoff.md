@@ -48,10 +48,11 @@ the next actor can continue from repo files plus the latest message alone.
 - Independent review passed at `c56c4e1`: the default/documentation, exclusive bind, occupied-port failure, actual printed origin, reverse rebind probe, all regressions, scope, privacy, and local-only boundaries are green. Review did not perform human QA.
 - Product started the live app as PID 176376. The exact printed `http://127.0.0.1:8766` origin serves the expense-app root and `/api/session` at HTTP 200, dashboard PID 73908 remains on 8765, and a second default instance exits 1 with no success URL.
 - Human QA is not a final PASS because the donut renders repeated colored stripes. The live chart has nine correct category allocations, but Chromium clamps the 1e9-scale SVG dash values near 33554400px before path normalization, so each shortened dash pattern repeats around the circumference.
+- The human approved iteration 4 with temporary `max_fix_cycles: 7`, restored to 3 only with ACCEPTED. Product added the bounded-geometry contract and asked review to freeze a real-browser red test before the sole frontend FIX_REQUEST transition.
 
 ## Next Action
 
-- [!] Raw fix-cycle usage is 5/5. Human approval is required to raise the temporary cap to 7 and run one bounded iteration-4 repair that decouples exact BigInt allocation from bounded visual SVG coordinates, then repeats independent review and live QA.
+- [~] Review freezes a complete non-repeating visible-arc acceptance test; product then dispatches the one bounded iteration-4 frontend repair, followed by independent review and renewed live QA.
 
 ## Active Request
 
@@ -61,7 +62,7 @@ the next actor can continue from repo files plus the latest message alone.
 
 ## Blockers
 
-- The chart-rendering defect is diagnosed, but the request is at the human-authorized 5/5 fix-cycle cap. No system/browser/runtime installation is required.
+- No external blocker. Frontend implementation is intentionally held until the review-owned red geometry test is frozen; no system/browser/runtime installation is required.
 
 ## Pending Inbox Deliveries
 

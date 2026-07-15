@@ -80,6 +80,13 @@ horizontal page scrolling.
 - The category table displays exact amount and percentage. The pie chart has a
   text alternative/legend and a clear zero-spending state; tiny non-zero
   categories remain represented and selectable without changing their amount.
+- Exact BigInt allocation and visual SVG coordinates are separate concerns.
+  No 1e9-scale accounting unit may be written directly into CSS/SVG length
+  geometry. The rendered chart must show exactly one contiguous, non-repeating
+  visible arc per non-zero category, cover one complete circumference without
+  overlap or gaps, and preserve each category's proportional share within a
+  browser-pixel tolerance. For the approved June oracle, nine categories render
+  and Housing is one dominant arc covering more than half of the circle.
 - Every category amount must equal the sum of its included spending rows, and
   all category amounts must equal the displayed spending total. Tests assert
   reconciliation before any visual assertion.
@@ -141,7 +148,8 @@ Live and automated browser checks use only the two committed synthetic fixtures:
   persistence, keyboard operation, and error/empty states.
 - A browser end-to-end test starts the real loopback adapter with a temporary
   database, imports both approved fixtures, checks the exact May/June oracle,
-  validates pie/legend reconciliation and the visible bad row, exercises one
+  validates pie/legend reconciliation, non-repeating visible arc geometry, and
+  the visible bad row, exercises one
   correction, duplicate decision, re-import, and undo, then confirms persistence
   after a page reload.
 - Full backend discovery remains green. Final review includes privacy inspection

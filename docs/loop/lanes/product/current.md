@@ -3,8 +3,8 @@
 current_request_id: REQ-20260715-091230-frontend
 status: BLOCKED
 iteration: 3
-last_updated: 2026-07-15T21:05:45Z
-heartbeat: 2026-07-15T21:05:45Z
+last_updated: 2026-07-15T21:08:14Z
+heartbeat: 2026-07-15T21:08:14Z
 model_observed: current-host-default (highest)
 
 ## Current Checkpoint
@@ -24,11 +24,12 @@ model_observed: current-host-default (highest)
 - Independent review commit `c56c4e1` returned PASS: all six gates, reverse exclusive-rebind probing, frozen hashes, scope, privacy, local-only behavior, and misuse checks are green. Review did not perform or claim human QA.
 - Product live verification passed: dashboard PID 73908 remains on 8765; expense app PID 176376 printed `http://127.0.0.1:8766`, serves the `Monthly Expense Review` root and `/api/session` at HTTP 200, and a competing default instance exits 1 with a clear bind error and no success URL.
 - Renewed human QA is not a final PASS: the donut renders repeated colored stripes instead of nine contiguous category arcs. Live DOM shows Housing's intended `666385709 333614291` dash pair is computed by Chromium as approximately `3.35544e+07px, 3.35544e+07px`; the 1e9 visual scale overflows the SVG length clamp and repeats a shortened pattern around the circle. Category amounts and exact BigInt reconciliation remain correct.
+- The human approved iteration 4 with temporary `max_fix_cycles: 7`, restored to 3 only with ACCEPTED. Product strengthened the chart contract to separate exact accounting units from bounded visual geometry and requested a pre-implementation review-owned real-browser red test.
 
 ## Next Action
 
-- Human decides whether to raise `max_fix_cycles` temporarily from 5 to 7 for one bounded iteration-4 repair that preserves exact BigInt accounting but maps the SVG rendering to a safe visual coordinate scale, with red-capable geometry and browser coverage. Restore the cap to 3 only with ACCEPTED.
+- Review freezes a red-capable real-browser geometry contract without changing implementation: one contiguous visible arc per category, nine June arcs, Housing over half the circle, tiny slices visible/selectable, no repeated runs, and exact reconciliation unchanged. Product then issues the sole iteration-4 FIX_REQUEST to frontend.
 
 ## Blockers
 
-- Blocked by the 5/5 anti-thrash cap. The chart-rendering defect is diagnosed, but product cannot dispatch iteration 4 without explicit human authority.
+- Implementation remains held until review freezes the iteration-4 visual geometry acceptance. The human-authorized cap is now 7; no system dependency is needed.
