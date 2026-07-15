@@ -59,9 +59,11 @@ class LocalWebApi:
         if type(max_upload_bytes) is not int or max_upload_bytes <= 0:
             raise ValueError("max_upload_bytes must be a positive integer")
         if csrf_token is not None and (
-            not isinstance(csrf_token, str) or not csrf_token
+            not isinstance(csrf_token, str)
+            or not csrf_token
+            or not csrf_token.isascii()
         ):
-            raise ValueError("csrf_token must be non-empty text")
+            raise ValueError("csrf_token must be non-empty ASCII text")
         self.store = store
         self.imports = StatementImportService(store)
         self.analysis = AnalysisService(store)
@@ -316,15 +318,14 @@ class LocalWebApi:
         return self._success(self._serialize_run(run_id), status=201)
 
     def _undo_run(self, run_id: str) -> LocalWebResponse:
-        summary = self.store.get_import_run_summary(run_id)
-        if summary["state"] != "active":
+        if not self.store.undo_import_run_if_active(run_id):
+            summary = self.store.get_import_run_summary(run_id)
             raise _ApiError(
                 409,
                 "run_state_conflict",
                 "only an active import run can be undone",
                 {"run_id": run_id, "state": summary["state"]},
             )
-        self.store.undo_import_run(run_id)
         return self._success(self._serialize_run(run_id))
 
     def _set_category(
@@ -456,11 +457,12 @@ class LocalWebApi:
     def _analysis_transactions_by_identity(
         self,
     ) -> dict[str, AnalysisTransaction]:
-        transactions: dict[str, AnalysisTransaction] = {}
-        for month in self.analysis.list_months():
-            for transaction in self.analysis.get_month_summary(month).transactions:
-                transactions[transaction.identity_id] = transaction
-        return transactions
+        # Run inspection needs effective inclusion/category state but must not
+        # perform the single-currency monthly aggregation used by month reads.
+        return {
+            transaction.identity_id: transaction
+            for transaction in self.analysis._active_transactions()
+        }
 
     @staticmethod
     def _serialize_run_summary(summary: Mapping[str, Any]) -> dict[str, Any]:

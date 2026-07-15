@@ -104,6 +104,7 @@ class LocalWebApiErrorTests(LocalWebApiTestCase):
         self.assertEqual(unexpected.json()["error"]["code"], "internal_error")
 
     def test_mixed_currency_analysis_state_is_a_conflict(self) -> None:
+        runs: list[tuple[str, str]] = []
         for label, currency in (("CAD", "CAD"), ("USD", "USD")):
             run_id = self.store.create_import_run(
                 f"synthetic-mixed-{label}",
@@ -133,6 +134,7 @@ class LocalWebApiErrorTests(LocalWebApiTestCase):
                 amount_minor=-100,
                 currency=currency,
             )
+            runs.append((run_id, identity_id))
 
         response = self.api.dispatch("GET", "/api/months/2026-07")
         self.assertEqual(response.status, 409)
@@ -140,6 +142,13 @@ class LocalWebApiErrorTests(LocalWebApiTestCase):
             response.json()["error"]["code"],
             "analysis_state_conflict",
         )
+        for run_id, identity_id in runs:
+            with self.subTest(run_id=run_id):
+                detail = self.api.dispatch("GET", f"/api/import-runs/{run_id}")
+                self.assertEqual(detail.status, 200, detail.json())
+                payload = detail.json()["data"]
+                self.assertEqual(payload["summary"]["run_id"], run_id)
+                self.assertEqual(payload["records"][0]["identity_id"], identity_id)
 
 
 if __name__ == "__main__":

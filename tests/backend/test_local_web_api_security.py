@@ -1,11 +1,12 @@
 from __future__ import annotations
 
+from backend.local_web_api import LocalWebApi
+from contracts.local_web_api import LocalWebRequest, LocalWebResponse
 from tests.backend.local_web_api_support import (
     CSV_FIXTURE,
     CSRF_TOKEN,
     LocalWebApiTestCase,
 )
-from contracts.local_web_api import LocalWebRequest, LocalWebResponse
 
 
 class LocalWebApiSecurityTests(LocalWebApiTestCase):
@@ -51,6 +52,14 @@ class LocalWebApiSecurityTests(LocalWebApiTestCase):
         self.assertEqual(wrong.status, 403)
         self.assertEqual(missing.json()["error"]["code"], "csrf_failed")
         self.assertEqual(self.store.entity_counts(), counts_before)
+
+    def test_unsupported_csrf_text_is_rejected_before_session_exposure(self) -> None:
+        with self.assertRaisesRegex(ValueError, "ASCII"):
+            LocalWebApi(
+                self.store,
+                csrf_token="synthetic-茂-token",
+                max_upload_bytes=1_000_000,
+            )
 
 
 if __name__ == "__main__":

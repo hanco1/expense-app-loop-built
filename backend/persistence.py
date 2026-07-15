@@ -5,7 +5,7 @@ from collections.abc import Iterable, Iterator
 from contextlib import contextmanager
 from dataclasses import dataclass
 from datetime import UTC, date, datetime
-from os import PathLike
+from os import PathLike, fspath
 from pathlib import Path
 from typing import AbstractSet, Any, Protocol
 from uuid import uuid4
@@ -420,7 +420,12 @@ class CoreStore:
     def __init__(self, database_path: str | PathLike[str]) -> None:
         if not isinstance(database_path, (str, PathLike)):
             raise TypeError("database_path must be a filesystem path")
-        self.database_path = Path(database_path)
+        path_text = fspath(database_path)
+        if not isinstance(path_text, str):
+            raise TypeError("database_path must be a text filesystem path")
+        if path_text.replace("/", "\\").startswith("\\\\"):
+            raise ValueError("database_path must identify a local filesystem path")
+        self.database_path = Path(path_text)
         if not self.database_path.parent.is_dir():
             raise FileNotFoundError(
                 f"database parent directory does not exist: {self.database_path.parent}"
@@ -852,6 +857,14 @@ class CoreStore:
         )
 
     def undo_import_run(self, run_id: str) -> None:
+        self._undo_import_run(run_id, require_active=False)
+
+    def undo_import_run_if_active(self, run_id: str) -> bool:
+        """Atomically undo an active run, returning false on a state conflict."""
+
+        return self._undo_import_run(run_id, require_active=True)
+
+    def _undo_import_run(self, run_id: str, *, require_active: bool) -> bool:
         self._require_nonempty_text(run_id, "run_id")
         with self._connection() as connection, connection:
             connection.execute("BEGIN IMMEDIATE")
@@ -861,6 +874,8 @@ class CoreStore:
             ).fetchone()
             if run is None:
                 raise KeyError(f"import run not found: {run_id}")
+            if require_active and run["state"] != "active":
+                return False
             connection.execute(
                 "UPDATE imported_occurrences "
                 "SET inclusion_state = 'excluded', exclusion_reason = 'run_undone' "
@@ -871,6 +886,7 @@ class CoreStore:
                 "UPDATE import_runs SET state = 'undone' WHERE run_id = ?",
                 (run_id,),
             )
+        return True
 
     def get_occurrence_provenance(self, occurrence_id: str) -> dict[str, Any]:
         return self._fetch_one(

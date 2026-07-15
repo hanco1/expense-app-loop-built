@@ -7,6 +7,8 @@ import subprocess
 from pathlib import Path
 from unittest.mock import patch
 
+from backend.local_web_api import LocalWebApi
+from backend.persistence import CoreStore
 from tests.backend.local_web_api_support import LocalWebApiTestCase
 
 
@@ -61,6 +63,32 @@ class LocalWebApiBoundaryTests(LocalWebApiTestCase):
             Path(__file__).parents[2] / "backend" / "requirements.txt"
         ).read_text(encoding="utf-8")
         self.assertEqual(requirements.strip(), "pypdf==6.12.2")
+
+    def test_public_database_construction_rejects_unc_before_persistence(self) -> None:
+        unc_paths = (
+            r"\\server\share\expenses.sqlite",
+            "//server/share/expenses.sqlite",
+            r"\\?\UNC\server\share\expenses.sqlite",
+        )
+        with (
+            patch("backend.persistence.Path.is_dir", return_value=True),
+            patch("backend.persistence.Path.exists", return_value=False),
+            patch("backend.persistence.sqlite3.connect") as connect,
+        ):
+            for database_path in unc_paths:
+                with self.subTest(factory="CoreStore", database_path=database_path):
+                    with self.assertRaisesRegex(ValueError, "local"):
+                        CoreStore(database_path)
+                with self.subTest(
+                    factory="LocalWebApi.from_database",
+                    database_path=database_path,
+                ):
+                    with self.assertRaisesRegex(ValueError, "local"):
+                        LocalWebApi.from_database(
+                            database_path,
+                            csrf_token="synthetic-local-token",
+                        )
+        connect.assert_not_called()
 
 
 if __name__ == "__main__":

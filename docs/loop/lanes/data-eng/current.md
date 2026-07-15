@@ -1,19 +1,19 @@
 # Data Eng Current State
 
 current_request_id: REQ-20260715-082547-data-eng
-status: REVIEWING
-iteration: 1
-last_updated: 2026-07-15T08:43:59Z
-heartbeat: 2026-07-15T08:43:59Z
+status: IMPLEMENTING
+iteration: 2
+last_updated: 2026-07-15T08:55:09Z
+heartbeat: 2026-07-15T08:55:09Z
 model_observed: gpt-5.6-sol xhigh (highest)
 
 ## Current Checkpoint
 
-- Implementation commit `efff2f4` adds the local JSON-ready in-process facade and persistent newest-first import-run listing on top of the accepted import, analysis, and persistence services. All nine declared gates are green, including backend discovery 65/65.
+- Fixing four independently reproduced public-boundary blockers in `efff2f4`: UNC persistence, concurrent undo atomicity, mixed-currency run-detail inspectability, and accepted Unicode CSRF configuration.
 
 ## Next Action
 
-- Independent review validates commit `efff2f4` and the nine flat evidence records; product retains final acceptance authority.
+- Add focused regressions, make the unchanged review-owned acceptance green, run all ten iteration-2 gates, and route independent re-review.
 
 ## Blockers
 
