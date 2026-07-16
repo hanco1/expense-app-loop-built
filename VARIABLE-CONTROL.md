@@ -11,7 +11,7 @@ Two builds of the same local-first Canadian expense-analysis web app:
   multi-agent loop.
 
 Both used codex **`gpt-5.6-sol` at `xhigh`** reasoning effort. Full scored comparison:
-https://github.com/hanco1/multi-loops-agents/blob/main/COMPARISON.md
+https://github.com/hanco1/codex-app-loop-crew/blob/main/COMPARISON.md
 
 ## What was held constant
 

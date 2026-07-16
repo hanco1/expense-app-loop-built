@@ -1,4 +1,4 @@
-> Part of a controlled A/B comparison: this is the **multi-agent loop** arm (built with the codex-agent-loop-orchestrator skill; the full `docs/loop/` decision ledger is included). See the [solo arm](https://github.com/hanco1/expense-app-solo-session-built) and the [full comparison](https://github.com/hanco1/multi-loops-agents/blob/main/COMPARISON.md).
+> Part of a controlled A/B comparison: this is the **multi-agent loop** arm (built with the codex-agent-loop-orchestrator skill; the full `docs/loop/` decision ledger is included). See the [solo arm](https://github.com/hanco1/expense-app-solo-session-built) and the [full comparison](https://github.com/hanco1/codex-app-loop-crew/blob/main/COMPARISON.md).
 
 
 ![Monthly Expense Review — reconciled monthly dashboard with minimum-visible-arc category donut and exact category sums (synthetic mock data)](assets/screenshot.png)
@@ -75,7 +75,7 @@ read these in order:
    "minimum-visible-arc" rule fixes the whole class of geometry bugs, and it is finally accepted.
 
 That five-round trail — machine-green at step 2, but two real visual bugs only caught by the human and the
-independent reviewer afterwards — is exactly the difference the [comparison](https://github.com/hanco1/multi-loops-agents/blob/main/COMPARISON.md)
+independent reviewer afterwards — is exactly the difference the [comparison](https://github.com/hanco1/codex-app-loop-crew/blob/main/COMPARISON.md)
 measures against the solo build.
 
 ## Start the local web app
