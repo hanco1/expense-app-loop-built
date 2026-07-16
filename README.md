@@ -1,3 +1,5 @@
+> Part of a controlled A/B comparison: this is the **multi-agent loop** arm (built with the codex-agent-loop-orchestrator skill; the full `docs/loop/` decision ledger is included). See the [solo arm](https://github.com/hanco1/expense-app-solo-session-built) and the [full comparison](https://github.com/hanco1/multi-loops-agents/blob/main/COMPARISON.md).
+
 ## Start the local web app
 
 Create a local data directory, then run the loopback-only server from the repository root:
