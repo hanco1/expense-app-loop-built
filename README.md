@@ -3,6 +3,9 @@
 
 ![Monthly Expense Review — reconciled monthly dashboard with minimum-visible-arc category donut and exact category sums (synthetic mock data)](assets/screenshot.png)
 
+
+> Reproducibility: this arm's full "conversation" is the inter-agent ledger under [`docs/loop/messages/`](docs/loop/messages) and [`docs/loop/loop-run-log.md`](docs/loop/loop-run-log.md); the requirements it was given are in [`docs/loop/goal.md`](docs/loop/goal.md). How variables were controlled vs the solo build: [VARIABLE-CONTROL.md](VARIABLE-CONTROL.md).
+
 ## Start the local web app
 
 Create a local data directory, then run the loopback-only server from the repository root:
